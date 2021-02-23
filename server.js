@@ -14,6 +14,10 @@ app.get('/', (req, res) => res.send('Api Stated..'));
 // Define routes
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/institute', require('./routes/api/institute'));
+app.use('/api/subject', require('./routes/api/subject'));
+// app.use('/api/pedagogy', require('./routes/api/pedagogy'));
+// app.use('/api/acedemic-year', require('./routes/api/acedemicYear'));
 
 const PORT = process.env.PORT || 5500;
 
