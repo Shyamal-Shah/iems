@@ -1,8 +1,8 @@
-// const express = require('express');
-// const router = express.Router();
-// const { check, validationResult } = require('express-validator');
-// const Subject = require('../../models/Subject');
-// const InstituteDegree = require('../../models/InstituteDegree');
+const express = require('express');
+const router = express.Router();
+const { check, validationResult } = require('express-validator');
+const Subject = require('../../models/Subject');
+const InstituteDegree = require('../../models/InstituteDegree');
 
 // // @router POST api/subject
 // // @desc Add new Subjects
@@ -113,4 +113,4 @@
 //   }
 // });
 
-// module.exports = router;
+module.exports = router;

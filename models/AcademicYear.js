@@ -5,6 +5,11 @@ const AcademicYearSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    degreeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'institute_degree',
+      required: true,
+    },
     semesters: [
       {
         semesterNo: {
@@ -13,7 +18,7 @@ const AcademicYearSchema = new mongoose.Schema(
         },
         subjects: [
           {
-            subjectName: {
+            subjectId: {
               type: mongoose.Schema.Types.ObjectId,
               ref: 'subject',
               required: true,
@@ -22,11 +27,6 @@ const AcademicYearSchema = new mongoose.Schema(
         ],
       },
     ],
-    degreeId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'institute_degree',
-      required: true,
-    },
   },
   { timestamps: true }
 );
