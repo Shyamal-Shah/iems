@@ -1,9 +1,12 @@
 import React, { Fragment } from 'react';
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { logout } from '../../actions/auth';
 
 const Navbar = () => {
+  const { isAuthenticated, loading } = useSelector((state) => state.Auth);
+  const dispatch = useDispatch();
+
   const authLinks = (
     <Fragment>
       <li className='nav-item'>
@@ -39,12 +42,15 @@ const Navbar = () => {
         </Link>
       </li>
       <li className='nav-item'>
-        <Link
+        <a
           className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
-          to='/login'
+          href='#!'
+          onClick={() => {
+            dispatch(logout());
+          }}
         >
           Logout
-        </Link>
+        </a>
       </li>
     </Fragment>
   );
@@ -61,7 +67,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className='navbar navbar-expand-lg fixed-top'
+      className='navbar navbar-expand-lg fixed-top '
       style={{ backgroundColor: '#f1f1f1' }}
     >
       <Link className='navbar-brand' to='/'>
@@ -79,7 +85,7 @@ const Navbar = () => {
         data-toggle='collapse'
         data-target='#collapsibleNavbar'
       >
-        <span className='navbar-toggler-icon text-light'></span>
+        <span class='bi bi-list-nested text-success'></span>
       </button>
 
       <div
@@ -87,8 +93,9 @@ const Navbar = () => {
         id='collapsibleNavbar'
       >
         <ul className='navbar-nav pt-3'>
-          {authLinks}
-          {guestLinks}
+          {!loading && (
+            <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>
+          )}
         </ul>
       </div>
     </nav>

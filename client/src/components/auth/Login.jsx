@@ -1,10 +1,18 @@
 import React, { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { login } from '../../actions/auth';
 
 const Login = () => {
+  const dispatch = useDispatch();
+
+  const isAuthenticated = useSelector((state) => state.Auth.isAuthenticated);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
   const { email, password } = formData;
 
   const onChange = (e) =>
@@ -15,21 +23,24 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const user = {
-      email,
-      password,
-    };
-    console.log('Success', user);
+    dispatch(login({ email, password }));
   };
+
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
 
   return (
     <Fragment>
       <div className='row'>
-        <div className='col'></div>
-        <div className='col'>
-          <div className='card m-4 shadow p-2'>
+        <div className='col-md'></div>
+        <div className='col-md'>
+          <div className='card my-4 shadow p-2'>
             <div className='card-body'>
-              <p className='text-align-center card-header h2'>Login</p>
+              <p className='text-align-center card-header h2'>
+                <span class='bi bi-list-nested text-success'></span>
+                Login
+              </p>
               <form
                 className='pt-4'
                 onSubmit={(e) => {
@@ -53,7 +64,7 @@ const Login = () => {
                           onChange(e);
                         }}
                         value={email}
-                        required
+                        // required
                       />
                     </div>
                   </div>
@@ -75,7 +86,7 @@ const Login = () => {
                           onChange(e);
                         }}
                         value={password}
-                        required
+                        // required
                       />
                     </div>
                   </div>
@@ -91,7 +102,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <div className='col'></div>
+        <div className='col-md'></div>
       </div>
     </Fragment>
   );
