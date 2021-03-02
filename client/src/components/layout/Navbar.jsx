@@ -36,9 +36,9 @@ const Navbar = () => {
       <li className='nav-item'>
         <Link
           className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
-          to='seatingArangement'
+          to='seatingArrangement'
         >
-          Seating Arangement
+          Seating Arrangement
         </Link>
       </li>
       <li className='nav-item'>
@@ -85,7 +85,7 @@ const Navbar = () => {
         data-toggle='collapse'
         data-target='#collapsibleNavbar'
       >
-        <span class='bi bi-list-nested text-success'></span>
+        <span className='bi bi-list-nested text-success'></span>
       </button>
 
       <div

@@ -7,3 +7,6 @@ export const LOGOUT = 'LOGOUT';
 
 export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
+
+export const INSTITUTES_LOADED = 'INSTITUTES_LOADED';
+export const INSTITUTES_ERROR = 'INSTITUTES_ERROR';

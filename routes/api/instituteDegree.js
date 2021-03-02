@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const auth = require('../../middleware/auth');
 const InstituteDegree = require('../../models/InstituteDegree');
 
 // @router POST api/institute
@@ -41,7 +42,7 @@ router.post(
 // @router GET api/institute/?id&?instituteName&?degreeName
 // @desc Get institutes and degrees based on query
 // @access Public
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     if (req.query.id) {
       if (req.query.id.length != 24) {
@@ -74,7 +75,7 @@ router.get('/', async (req, res) => {
       }
       return res.json(institute);
     } else if (Object.keys(req.query).length == 0) {
-      let institutes = await InstituteDegree.find().select('instituteName');
+      let institutes = await InstituteDegree.find();
       res.json(institutes);
     } else {
       res.status(400).send('Bad request');
