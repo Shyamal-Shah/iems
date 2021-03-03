@@ -2,7 +2,9 @@ import React from 'react';
 import DropDown from '../layout/DropDown';
 import Component from './Compoenet';
 
+
 const Pedagogy = () => {
+  
   return (
     <form>
 
@@ -63,5 +65,6 @@ const Pedagogy = () => {
 
   );
 };
+
 
 export default Pedagogy;
