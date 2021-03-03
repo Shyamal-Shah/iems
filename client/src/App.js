@@ -14,6 +14,7 @@ import NEList from './components/NEList/NEList';
 import SeatingArrangement from './components/SeatingArrangement/SeatingArrangement';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap';
+import '@fortawesome/fontawesome-free/css/all.css'
 import PrivateRoute from './components/routing/PrivateRoute';
 
 import { Provider } from 'react-redux';

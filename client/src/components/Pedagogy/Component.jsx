@@ -2,7 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DropDown from '../layout/DropDown';
 
-const Component = ({ index }) => {
+const Component = ({
+  index,
+  cName,
+  cMode,
+  cWeightage = '',
+  onNameChanged,
+  onModeChanged,
+  onWeightageChanged,
+}) => {
   return (
     <div className='row'>
       <div className='col'>
@@ -14,20 +22,32 @@ const Component = ({ index }) => {
             'Project',
             'Quizes',
             'Research Work',
-            'Attendence',
+            'Attendance',
           ]}
+          isDisabled={false}
+          id={'ddC' + index + '-Name'}
+          value={cName}
+          onChange={(e) => {
+            onNameChanged(e);
+          }}
         />
       </div>
       <div className='col'>
         <DropDown
           title={'C' + index + '-Mode'}
           options={['Online', 'Offline']}
+          isDisabled={false}
+          id={'ddC' + index + '-Mode'}
+          value={cMode}
+          onChange={(e) => {
+            onModeChanged(e);
+          }}
         />
       </div>
 
       <div className='col'>
-        <div class='mb-3 form-group'>
-          <label for={'txt' + index + '-Weightage'} class='form-label'>
+        <div className='mb-3 form-group'>
+          <label htmlFor={'txt' + index + '-Weightage'} className='form-label'>
             {'C' + index + '-Weightage'}
           </label>
           <input
@@ -35,6 +55,12 @@ const Component = ({ index }) => {
             type='tel'
             id={'txt' + index + '-Weightage'}
             pattern='^(\d|1\d|2\d|30)$'
+            value={cWeightage}
+            required
+            title='Please enter weightage less than 30.'
+            onChange={(e) => {
+              onWeightageChanged(e);
+            }}
           />
         </div>
       </div>

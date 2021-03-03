@@ -1,20 +1,21 @@
-import { INSTITUTES_LOADED, INSTITUTES_ERROR } from "../actions/types";
+import { AY_LOADED, AY_ERROR } from '../actions/types';
 
 const initialState = {
-  institutes: [],
+  academicYears: [],
   loading: true,
   error: {},
 };
-const InstituteDegree = (state = initialState, action) => {
+
+const AcademicYear = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case INSTITUTES_LOADED:
+    case AY_LOADED:
       return {
         ...state,
-        institutes: payload,
+        academicYears: payload,
         loading: false,
       };
-    case INSTITUTES_ERROR:
+    case AY_ERROR:
       return {
         ...state,
         error: payload,
@@ -25,4 +26,4 @@ const InstituteDegree = (state = initialState, action) => {
   }
 };
 
-export default InstituteDegree;
+export default AcademicYear;

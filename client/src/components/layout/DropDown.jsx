@@ -1,14 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const DropDown = ({ title, options }) => {
+const DropDown = ({
+  id,
+  title,
+  options,
+  onChange,
+  value,
+  isDisabled = true,
+}) => {
   return (
     <div className='mb-3 form-group'>
-      <label htmlFor={'dp' + title} className='form-label'>
+      <label htmlFor={id} className='form-label'>
         {title}
       </label>
-      <select className='form-select form-control' id={'dp' + title}>
-        <option selected disabled>
+      <select
+        id={id}
+        className='form-select form-control'
+        onChange={(e) => onChange(e)}
+        value={value ? value : ''}
+        disabled={isDisabled}
+        required
+      >
+        <option value='' disabled>
           Select Option
         </option>
         {options.map((option) => (
