@@ -1,7 +1,7 @@
 import { INSTITUTES_LOADED, INSTITUTES_ERROR } from "../actions/types";
 
 const initialState = {
-  institutes: null,
+  institutes: [],
   loading: true,
   error: {},
 };

@@ -1,16 +1,19 @@
 import React,{useEffect} from 'react';
 import DropDown from './DropDown';
-import {connect} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import PropTypes from 'prop-types';
 import {getInstitutes} from '../../actions/institutes_degree'
 import {getAcademicYear} from '../../actions/academic_year'
 
-const Dashboard = ({getInstitutes,institutes,getAcademicYear,academicYear}) => {
-  
+const Dashboard = () => {
+  const dispatch = useDispatch()
+  const {institutes, loading, error } = useSelector(state => state.InstituteDegree)
+  const {academicYear } = useSelector(state => state.AcademicYear)
+
   useEffect(()=>{
-    getInstitutes();
-    getAcademicYear();
-  },[getInstitutes,institutes,getAcademicYear,academicYear])
+    dispatch(getInstitutes());
+    dispatch(getAcademicYear());
+  },[loading])
 
   return (
     <div className='row py-3' style={{ minHeight: '' }}>
@@ -21,14 +24,14 @@ const Dashboard = ({getInstitutes,institutes,getAcademicYear,academicYear}) => {
             <form>
               <DropDown
                 title='Institute'
-                options={['CSPIT', 'DEPSTAR', 'RPCC']}
+                options={institutes.map(inst=>{ return inst.instituteName})}
               />
               
               <DropDown
                 title='Degree'
                 options={['B.tech(CE)', 'B.tech(CSE)', 'B.tech(IT)']}
               />
-              <DropDown title='Academic Year' options={['2020-2021']} />
+              <DropDown title='Academic Year' options={academicYear.map(ay=>{ return ay.year})} />
               <DropDown title='Semesters' options={['Even', 'Odd']} />
               <DropDown
                 title='Semester No.'
@@ -43,16 +46,6 @@ const Dashboard = ({getInstitutes,institutes,getAcademicYear,academicYear}) => {
   );
 };
 
-Dashboard.propTypes = {
-  getInstitutes:PropTypes.func.isRequired,
-  institutes:PropTypes.object.isRequired,
-  getAcademicYear:PropTypes.func.isRequired,
-  academicYear:PropTypes.array.isRequired,
-}
 
-const mapStateToProps = state =>({
-  institutes:state.institutes,
-  academicYear:state.academicYear
-})
 
-export default connect(mapStateToProps,{getInstitutes,getAcademicYear})(Dashboard);
+export default (Dashboard);
