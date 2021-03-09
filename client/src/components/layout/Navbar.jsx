@@ -1,17 +1,26 @@
 import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { logout } from '../../actions/auth';
 
 const Navbar = () => {
   const { isAuthenticated, loading } = useSelector((state) => state.Auth);
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const authLinks = (
     <Fragment>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          to='/dashboard'
+        >
+          Dashboard
+        </Link>
+      </li>
+      <li className='nav-item'>
+        <Link
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
           to='/pedagogy'
         >
           Pedagogy
@@ -19,7 +28,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
           to='examSchedule'
         >
           Exam Schedule
@@ -27,7 +36,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
           to='/neList'
         >
           Not-eligibilty List
@@ -35,7 +44,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
           to='seatingArrangement'
         >
           Seating Arrangement
@@ -43,7 +52,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <a
-          className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
           href='#!'
           onClick={() => {
             dispatch(logout());
@@ -57,11 +66,24 @@ const Navbar = () => {
   const guestLinks = (
     <li className='nav-item'>
       <Link
-        className='nav-link btn btn-outline-info tab px-3 ml-3 mb-3'
+        className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
         to='/login'
       >
         Login
       </Link>
+    </li>
+  );
+  const dashboardLinks = (
+    <li className='nav-item'>
+      <a
+        className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+        href='#!'
+        onClick={() => {
+          dispatch(logout());
+        }}
+      >
+        Logout
+      </a>
     </li>
   );
 
@@ -71,13 +93,14 @@ const Navbar = () => {
       style={{ backgroundColor: '#f1f1f1' }}
     >
       <Link className='navbar-brand' to='/'>
-        <img
+        {/* <img
           src='https://www.charusat.ac.in/images/logo.png'
           className='logo img-fluid'
           alt='Logo'
           width='180px'
           height='70px'
-        />
+        /> */}
+        <p className='h1 px-3'>IEMS</p>
       </Link>
       <button
         className='navbar-toggler'
@@ -85,7 +108,7 @@ const Navbar = () => {
         data-toggle='collapse'
         data-target='#collapsibleNavbar'
       >
-        <span className='bi bi-list-nested text-success'></span>
+        <i className='fas fa-stream text-info border p-2 rounded'></i>
       </button>
 
       <div
@@ -93,9 +116,11 @@ const Navbar = () => {
         id='collapsibleNavbar'
       >
         <ul className='navbar-nav pt-3'>
-          {!loading && (
-            <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>
-          )}
+          {location.pathname === '/dashboard'
+            ? dashboardLinks
+            : !loading && (
+                <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>
+              )}
         </ul>
       </div>
     </nav>

@@ -14,7 +14,7 @@ export const getInstitutes = () => async (dispatch) => {
   } catch (e) {
     dispatch({
       type: INSTITUTES_ERROR,
-      payload: { msg: e.response.statusText, status: e.response.status },
+      payload: e.errors,
     });
   }
 };

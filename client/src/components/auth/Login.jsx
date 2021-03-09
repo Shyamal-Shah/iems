@@ -37,8 +37,7 @@ const Login = () => {
         <div className='col-md'>
           <div className='card my-4 shadow p-2'>
             <div className='card-body'>
-              <p className='text-align-center card-header h2'>
-                <span className='bi bi-list-nested text-success'></span>
+              <p className='card-header h2'>
                 Login
               </p>
               <form

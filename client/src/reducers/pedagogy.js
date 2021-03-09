@@ -1,21 +1,21 @@
-import { AY_LOADED, AY_ERROR } from "../actions/types";
+import { PEDAGOGY_ADDED, PEDAGOGY_ERROR } from "../actions/types";
 
-const initialState = {
-  academicYears: [],
+const inistialState = {
+  pedagogy: null,
   loading: true,
   error: {},
 };
 
-const AcademicYear = (state = initialState, action) => {
+const Pedagogy = (state = inistialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case AY_LOADED:
+    case PEDAGOGY_ADDED:
       return {
         ...state,
-        academicYears: payload,
+        pedagogy: [payload, ...state.Pedagogy],
         loading: false,
       };
-    case AY_ERROR:
+    case PEDAGOGY_ERROR:
       return {
         ...state,
         error: payload,
@@ -26,4 +26,4 @@ const AcademicYear = (state = initialState, action) => {
   }
 };
 
-export default AcademicYear;
+export default Pedagogy;

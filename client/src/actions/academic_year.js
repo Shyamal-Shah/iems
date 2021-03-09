@@ -3,6 +3,8 @@ import axios from "axios";
 // Importing action types
 import { AY_LOADED, AY_ERROR } from "./types";
 
+// Importing action types
+
 // Get everything from academic year
 export const getAcademicYear = () => async (dispatch) => {
   try {
