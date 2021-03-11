@@ -23,10 +23,12 @@ router.post(
     if (degreeId.length != 24) {
       return res
         .status(400)
-        .json({ errors: [{ msg: 'Invalid degreeId. No degree found' }] });
+        .json({ errors: [{ msg: 'Invalid degreeId No degree found' }] });
     }
     try {
-      let instDeg = await InstituteDegree.findById(degreeId);
+      let instDeg = await InstituteDegree.find({
+        degrees: { $elemMatch: { _id: degreeId } },
+      });
       if (!instDeg) {
         return res
           .status(400)
@@ -52,7 +54,7 @@ router.post(
   }
 );
 
-// @router GET api/subject/?id&?subjectName&?subjectCode&degreeId
+// @router GET api/subject/?id&?subjectName&?subjectCode&?degreeId
 // @desc Get Subjects based on ids or subjectName or subjectCode
 // @access public
 router.get('/', async (req, res) => {
@@ -67,7 +69,7 @@ router.get('/', async (req, res) => {
       if (!subject) {
         return res
           .status(400)
-          .json({ error: [{ msg: 'Record with this id does not exist.' }] });
+          .json({ errors: [{ msg: 'Record with this id does not exist.' }] });
       }
       res.json(subject);
     } else if (req.query.subjectName) {
@@ -77,7 +79,7 @@ router.get('/', async (req, res) => {
       if (!subject)
         return res
           .status(400)
-          .json({ error: [{ msg: 'Subject does not exists.' }] });
+          .json({ errors: [{ msg: 'Subject does not exists.' }] });
       res.json(subject);
     } else if (req.query.subjectCode) {
       let subject = await Subject.findOne({
@@ -85,30 +87,31 @@ router.get('/', async (req, res) => {
       });
       if (!subject)
         return res.status(400).json({
-          error: [{ msg: 'Subject with this code does not exists.' }],
+          errors: [{ msg: 'Subject with this code does not exists.' }],
         });
       res.json(subject);
     } else if (req.query.degreeId) {
-      if (req.query.id.length != 24) {
+      if (req.query.degreeId.length != 24) {
         return res
           .status(400)
           .json({ errors: [{ msg: 'Invalid degreeId. No subjects found.' }] });
       }
+      console.log(req.query.degreeId);
       let subjects = await Subject.find({
         degreeId: req.query.degreeId,
       });
       if (subjects.length == 0)
         return res.status(400).json({
-          error: [
+          errors: [
             { msg: 'Subjects that belong to this degreeId does not exists.' },
           ],
         });
-      res.json(subject);
+      res.json(subjects);
     } else if (Object.keys(req.query).length == 0) {
       let subjects = await Subject.find({});
       return res.json(subjects);
     } else {
-      res.status(400).send('Bad request');
+      res.status(400).send('Bad Request');
     }
   } catch (err) {
     console.error(err.message);

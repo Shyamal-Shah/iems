@@ -1,4 +1,4 @@
-import { INSTITUTES_LOADED, INSTITUTES_ERROR } from "../actions/types";
+import { INSTITUTES_LOADED, INSTITUTES_ERROR } from '../actions/types';
 
 const initialState = {
   institutes: [],
@@ -17,6 +17,7 @@ const InstituteDegree = (state = initialState, action) => {
     case INSTITUTES_ERROR:
       return {
         ...state,
+        institutes: [],
         error: payload,
         loading: false,
       };

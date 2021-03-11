@@ -23,7 +23,7 @@ const Component = ({
             'Quizes',
             'Research Work',
             'Attendance',
-          ]}
+          ].sort()}
           isDisabled={false}
           id={'ddC' + index + '-Name'}
           value={cName}
@@ -35,7 +35,7 @@ const Component = ({
       <div className='col'>
         <DropDown
           title={'C' + index + '-Mode'}
-          options={['Online', 'Offline']}
+          options={['Online', 'Offline'].sort()}
           isDisabled={false}
           id={'ddC' + index + '-Mode'}
           value={cMode}
@@ -54,7 +54,7 @@ const Component = ({
             className='form-control'
             type='tel'
             id={'txt' + index + '-Weightage'}
-            pattern='^(\d|1\d|2\d|30)$'
+            pattern='^(0\d|1\d|2\d|30)$'
             value={cWeightage}
             required
             title='Please enter weightage less than 30.'

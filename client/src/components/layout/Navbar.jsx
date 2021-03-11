@@ -12,7 +12,7 @@ const Navbar = () => {
     <Fragment>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           to='/dashboard'
         >
           Dashboard
@@ -20,7 +20,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           to='/pedagogy'
         >
           Pedagogy
@@ -28,7 +28,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           to='examSchedule'
         >
           Exam Schedule
@@ -36,7 +36,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           to='/neList'
         >
           Not-eligibilty List
@@ -44,7 +44,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           to='seatingArrangement'
         >
           Seating Arrangement
@@ -52,7 +52,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <a
-          className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
           href='#!'
           onClick={() => {
             dispatch(logout());
@@ -66,7 +66,7 @@ const Navbar = () => {
   const guestLinks = (
     <li className='nav-item'>
       <Link
-        className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+        className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
         to='/login'
       >
         Login
@@ -76,7 +76,7 @@ const Navbar = () => {
   const dashboardLinks = (
     <li className='nav-item'>
       <a
-        className='nav-link btn btn-outline-info px-3 ml-3 mb-3'
+        className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
         href='#!'
         onClick={() => {
           dispatch(logout());
@@ -89,7 +89,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className='navbar navbar-expand-lg fixed-top '
+      className='navbar navbar-expand-lg fixed-top p-1 shadow-sm '
       style={{ backgroundColor: '#f1f1f1' }}
     >
       <Link className='navbar-brand' to='/'>
@@ -112,10 +112,10 @@ const Navbar = () => {
       </button>
 
       <div
-        className='collapse navbar-collapse justify-content-end'
+        className='collapse navbar-collapse justify-content-end align-items-center'
         id='collapsibleNavbar'
       >
-        <ul className='navbar-nav pt-3'>
+        <ul className='navbar-nav'>
           {location.pathname === '/dashboard'
             ? dashboardLinks
             : !loading && (
