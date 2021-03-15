@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const PedagogySchema = new mongoose.Schema(
   {
     subject: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'subject',
+      ref: "subjects",
       required: true,
     },
     components: [
@@ -26,4 +26,4 @@ const PedagogySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = Pedagody = mongoose.model('pedagogies', PedagogySchema);
+module.exports = Pedagody = mongoose.model("pedagogies", PedagogySchema);

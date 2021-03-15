@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const SubjectSchema = new mongoose.Schema(
   {
@@ -12,11 +12,11 @@ const SubjectSchema = new mongoose.Schema(
     },
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'institute_degree',
+      ref: "institute_degrees",
       required: true,
     },
   },
   { timestamps: true }
 );
 
-module.exports = Subject = mongoose.model('subjects', SubjectSchema);
+module.exports = Subject = mongoose.model("subjects", SubjectSchema);

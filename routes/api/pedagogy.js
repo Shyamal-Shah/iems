@@ -1,18 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require("express-validator");
 
-const Pedagogy = require('../../models/Pedagogy');
-const Subject = require('../../models/Subject');
+const Pedagogy = require("../../models/Pedagogy");
+const Subject = require("../../models/Subject");
 
 // @router POST api/pedagogy
 // @desc Add new pedagogy
 // @access public
 router.post(
-  '/',
+  "/",
   [
-    check('subject', 'Id of subject is required').notEmpty(),
-    check('components', 'Components are required').isArray({ min: 1 }),
+    check("subject", "Id of subject is required").notEmpty(),
+    check("components", "Components are required").isArray({ min: 1 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -25,7 +25,7 @@ router.post(
       if (!subjectOb) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid subject. No subject found' }] });
+          .json({ errors: [{ msg: "Invalid subject. No subject found" }] });
       }
 
       let pedagogy = await Pedagogy.findOne({ subject: subject });
@@ -45,10 +45,10 @@ router.post(
       }
 
       await pedagogy.save();
-      res.json({ msg: 'Pedagogy added.', pedagogy });
+      res.json({ msg: "Pedagogy added.", pedagogy });
     } catch (err) {
       console.log(err.message);
-      return res.status(500).send('Server Error.');
+      return res.status(500).send("Server Error.");
     }
   }
 );
@@ -57,13 +57,13 @@ router.post(
 // @desc Get pedagogy
 // @access public
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     if (req.query.id) {
       if (req.query.id != 24) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Id. No record found' }] });
+          .json({ errors: [{ msg: "Invalid Id. No record found" }] });
       }
       let pedagogy = await Pedagogy.findById(req.query.id);
       return res.json(pedagogy);
@@ -73,13 +73,17 @@ router.get('/', async (req, res) => {
       });
       return res.json(pedagogy);
     } else if (Object.keys(req.query).length == 0) {
-      let pedagogies = await Pedagogy.find({});
+      let pedagogies = await Pedagogy.find({}).populate("subjects", [
+        "subjectName",
+      ]);
       return res.json(pedagogies);
     } else {
-      res.status(400).send('Bad request');
+      res.status(400).send("Bad request");
     }
   } catch (e) {
     console.log(e.message);
-    return res.status(500).send('Server Error.');
+    return res.status(500).send("Server Error.");
   }
 });
+
+module.exports = router;
