@@ -14,9 +14,9 @@ The Internal Exam Management System helps exam coordinator to manage and create 
   <li>Install dependencies of server side.</li> 
     npm install
   <li>Install dependencies of client side.</li> 
-    cd client
+    cd client<br />
     npm install
   <li>Start development server.</li>
-    cd ..
+    cd .. <br />
     npm run dev
 </ol
