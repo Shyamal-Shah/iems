@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router-dom';
 import ExcelJS from 'exceljs';
@@ -45,8 +45,6 @@ function DataExport() {
           break;
         case 'Semester Number':
           dispatch(getPedagogySN({ semesterNo, academicYear: AYId }));
-          break;
-        default:
           break;
       }
     }
@@ -124,44 +122,7 @@ function DataExport() {
     ));
   };
 
-  const addPedagogies = (pedagogies, worksheet, row) => {
-    for (let i = 0; i < pedagogies.length; i++) {
-      const { subject, components } = pedagogies[i];
-      // Row For SubjectName
-      worksheet.mergeCells(`B${row}:K${row}`);
-      let cell = worksheet.getCell(`B${row}`);
-      cell.fill = subHeaderFill;
-      cell.border = border;
-      cell.value =
-        subject.subjectCode + ' - ' + subject.subjectName.toUpperCase();
-      row++;
-      // Loop Through components
-      for (let k = 0; k <= components.length; k++) {
-        cell = worksheet.getCell(`B${row}`);
-        cell.value = k !== 0 ? k : 'Sr.No';
-        cell.border = border;
-        worksheet.mergeCells(`C${row}:E${row}`);
-        cell = worksheet.getCell(`C${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].name : 'Component';
-        worksheet.mergeCells(`F${row}:H${row}`);
-        cell = worksheet.getCell(`F${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].mode : 'Mode';
-        worksheet.mergeCells(`I${row}:K${row}`);
-        cell = worksheet.getCell(`I${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].weightAge : 'WeightAge';
-        row++;
-      }
-    }
-    return { worksheet, row };
-  };
-
-  const excelExport = (btn) => {
+  const excelExport = () => {
     var ExcelJSWorkbook = new ExcelJS.Workbook();
     var worksheet = ExcelJSWorkbook.addWorksheet('Pedagogy');
     const headers = [
@@ -176,6 +137,7 @@ function DataExport() {
     ];
 
     for (let i = 2; i <= 11; i++) {
+      worksheet.getColumn(i).border = border;
       worksheet.getColumn(i).font = headerFont;
       worksheet.getColumn(i).alignment = alignment;
     }
@@ -183,56 +145,46 @@ function DataExport() {
       worksheet.mergeCells(`B${i}:K${i}`);
       const cell = worksheet.getCell(`B${i}`);
       cell.fill = headerFill;
-      cell.border = border;
       cell.value = headers[i - 1].toUpperCase();
     }
 
     switch (expType) {
       case 'Academic Year':
-        for (let i = 1, row = 5; i <= 8; i++) {
-          worksheet.mergeCells(`B${row}:K${row}`);
-          let cell = worksheet.getCell(`B${row}`);
-          cell.fill = subHeaderFill;
-          cell.border = border;
-          cell.value = `Semester: ${i}`;
-          row++;
-          const x = addPedagogies(
-            pedagogies.filter((pedagogy) => pedagogy.semester === i),
-            worksheet,
-            row
-          );
-          worksheet = x.worksheet;
-          row = x.row;
-        }
         break;
       case 'Semester Group':
-        for (
-          let i = semesterGroup === 'Even' ? 2 : 1, row = 5;
-          i <= 8;
-          i += 2
-        ) {
+        break;
+      case 'Semester Number':
+        for (let i = 0, row = 5; i < pedagogies.length; i++) {
+          const { subject, components } = pedagogies[i];
+          // Row For SubjectName
           worksheet.mergeCells(`B${row}:K${row}`);
           let cell = worksheet.getCell(`B${row}`);
           cell.fill = subHeaderFill;
-          cell.border = border;
-          cell.value = `Semester: ${i}`;
+          cell.value =
+            subject.subjectCode + ' - ' + subject.subjectName.toUpperCase();
           row++;
-          const x = addPedagogies(
-            pedagogies.filter((pedagogy) => pedagogy.semester === i),
-            worksheet,
-            row
-          );
-          worksheet = x.worksheet;
-          row = x.row;
+          // Loop Through components
+          for (let k = 0; k <= components.length; k++) {
+            cell = worksheet.getCell(`B${row}`);
+            cell.value = k !== 0 ? k : 'Sr.No';
+            worksheet.mergeCells(`C${row}:E${row}`);
+            cell = worksheet.getCell(`C${row}`);
+            cell.font = dataFont;
+            cell.value = k !== 0 ? components[k - 1].name : 'Component';
+            worksheet.mergeCells(`F${row}:H${row}`);
+            cell = worksheet.getCell(`F${row}`);
+            cell.font = dataFont;
+            cell.value = k !== 0 ? components[k - 1].mode : 'Mode';
+            worksheet.mergeCells(`I${row}:K${row}`);
+            cell = worksheet.getCell(`I${row}`);
+            cell.font = dataFont;
+            cell.value = k !== 0 ? components[k - 1].weightAge : 'WeightAge';
+            row++;
+          }
         }
         break;
-      case 'Semester Number':
-        const x = addPedagogies(pedagogies, worksheet, 5);
-        worksheet = x.worksheet;
-        break;
-      default:
-        break;
     }
+
     ExcelJSWorkbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: 'application/octet-stream' }),
@@ -256,8 +208,8 @@ function DataExport() {
             </p>
             <button
               type='button'
-              className='btn btn-light float-right'
-              onClick={(e) => excelExport(e)}
+              className='btn btn-success float-right m-3'
+              onClick={excelExport}
             >
               Export Data <i className='fa fa-download'></i>
             </button>

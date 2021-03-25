@@ -29,7 +29,7 @@ const Navbar = () => {
       <li className='nav-item'>
         <Link
           className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
-          to='examSchedule'
+          to='/examSchedule'
         >
           Exam Schedule
         </Link>

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import DropDown from './DropDown';
 import { getInstitutes } from '../../actions/institutes_degree';
+import { oddSems, evenSems } from '../../utils/defaults';
 import { getAcademicYear } from '../../actions/academic_year';
 
 import {
@@ -22,9 +23,6 @@ const Dashboard = () => {
     dispatch(getInstitutes());
   }, [dispatch]);
 
-  const oddSems = ['1', '3', '5', '7'];
-  const evenSems = ['2', '4', '6', '8'];
-
   const currentState = useSelector((state) => state.CurrentState);
 
   const {
@@ -39,8 +37,8 @@ const Dashboard = () => {
     !loading && (
       <Fragment>
         <div className='row py-3'>
-          <div className='col-lg'></div>
-          <div className='col-lg'>
+          <div className='col-lg-4'></div>
+          <div className='col-lg-4'>
             <form>
               <div className='card h-100 shadow'>
                 <div className='card-body'>
@@ -53,12 +51,12 @@ const Dashboard = () => {
                       })}
                       isDisabled={false}
                       value={institute}
-                      onChange={async (e) => {
-                        await dispatch(updateInstitute(e.target.value));
-                        await dispatch(updateDegree(null));
-                        await dispatch(updateAcademicYear(null));
-                        await dispatch(updateSemesterGroup(null));
-                        await dispatch(updateSemesterNo(null));
+                      onChange={(e) => {
+                        dispatch(updateInstitute(e.target.value));
+                        dispatch(updateDegree(null));
+                        dispatch(updateAcademicYear(null));
+                        dispatch(updateSemesterGroup(null));
+                        dispatch(updateSemesterNo(null));
                         let drp = document.getElementById('ddDegree');
                         drp.disabled = false;
                       }}
@@ -78,11 +76,11 @@ const Dashboard = () => {
                       }
                       value={degree}
                       isDisabled={institute ? false : true}
-                      onChange={async (e) => {
-                        await dispatch(updateDegree(e.target.value));
-                        await dispatch(updateAcademicYear(null));
-                        await dispatch(updateSemesterGroup(null));
-                        await dispatch(updateSemesterNo(null));
+                      onChange={(e) => {
+                        dispatch(updateDegree(e.target.value));
+                        dispatch(updateAcademicYear(null));
+                        dispatch(updateSemesterGroup(null));
+                        dispatch(updateSemesterNo(null));
                         dispatch(
                           getAcademicYear({
                             degreeId: institutes
@@ -108,10 +106,10 @@ const Dashboard = () => {
                       isDisabled={
                         degree !== null && institute !== null ? false : true
                       }
-                      onChange={async (e) => {
-                        await dispatch(updateAcademicYear(e.target.value));
-                        await dispatch(updateSemesterGroup(null));
-                        await dispatch(updateSemesterNo(null));
+                      onChange={(e) => {
+                        dispatch(updateAcademicYear(e.target.value));
+                        dispatch(updateSemesterGroup(null));
+                        dispatch(updateSemesterNo(null));
                         let drp = document.getElementById('ddSemesterGroup');
                         drp.disabled = false;
                       }}
@@ -130,9 +128,9 @@ const Dashboard = () => {
                               ? false
                               : true
                           }
-                          onChange={async (e) => {
+                          onChange={(e) => {
                             dispatch(updateSemesterGroup(e.target.value));
-                            await dispatch(updateSemesterNo(null));
+                            dispatch(updateSemesterNo(null));
                             let drp = document.getElementById('ddSemesterNo');
                             drp.disabled = false;
                           }}
@@ -206,7 +204,7 @@ const Dashboard = () => {
               </div>
             </form>
           </div>
-          <div className='col-md'></div>
+          <div className='col-lg-4'></div>
         </div>
       </Fragment>
     )

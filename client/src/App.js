@@ -46,7 +46,7 @@ const App = () => {
               <PrivateRoute exact path='/pedagogy' component={Pedagogy} />
               <PrivateRoute
                 exact
-                path='/pedagogy/export-data'
+                path='/pedagogy/export-data/:expType'
                 component={DataExport}
               />
               <PrivateRoute

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { setAlert } from './alert';
-import { PEDAGOGY_ERROR, PEDAGOGY_LOADED } from './types';
+import { PEDAGOGIES_LOADED, PEDAGOGY_ERROR, PEDAGOGY_LOADED } from './types';
 
-export const addPedagogy = (formData) => async (dispatch) => {
+export const addPedagogy = (formData, semesterNo, academicYear) => async (
+  dispatch
+) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -21,6 +23,8 @@ export const addPedagogy = (formData) => async (dispatch) => {
   var obj = {
     subject: subjectName,
     components,
+    semester: semesterNo,
+    academicYear,
   };
   try {
     const res = await axios.post(`/api/pedagogy`, obj, config);
@@ -42,6 +46,72 @@ export const getPedagogy = ({ subjectId }) => async (dispatch) => {
       payload: res.data,
     });
   } catch (err) {
+    dispatch({
+      type: PEDAGOGY_ERROR,
+    });
+  }
+};
+
+export const getPedagogyAY = ({ academicYear }) => async (dispatch) => {
+  try {
+    const res = await axios.get('/api/pedagogy/', {
+      params: {
+        academicYear,
+      },
+    });
+    dispatch({
+      type: PEDAGOGIES_LOADED,
+      payload: res.data,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: PEDAGOGY_ERROR,
+    });
+  }
+};
+
+export const getPedagogySG = ({ semesterGroup, academicYear }) => async (
+  dispatch
+) => {
+  try {
+    const res = await axios.get('/api/pedagogy/', {
+      params: {
+        semesterGroup,
+        academicYear,
+      },
+    });
+    dispatch({
+      type: PEDAGOGIES_LOADED,
+      payload: res.data,
+    });
+    return;
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: PEDAGOGY_ERROR,
+    });
+  }
+};
+
+export const getPedagogySN = ({ semesterNo, academicYear }) => async (
+  dispatch
+) => {
+  try {
+    const res = await axios.get('/api/pedagogy/', {
+      params: {
+        semesterNo,
+        academicYear,
+      },
+    });
+    dispatch({
+      type: PEDAGOGIES_LOADED,
+      payload: res.data,
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
     dispatch({
       type: PEDAGOGY_ERROR,
     });

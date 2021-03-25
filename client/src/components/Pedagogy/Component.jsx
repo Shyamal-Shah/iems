@@ -54,7 +54,7 @@ const Component = ({
             className='form-control'
             type='tel'
             id={'txt' + index + '-Weightage'}
-            pattern='^(0\d|1\d|2\d|30)$'
+            pattern='^(0\d|\d|1\d|2\d|30)$'
             value={cWeightage}
             required
             title='Please enter weightage less than 30.'

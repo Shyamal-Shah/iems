@@ -7,6 +7,7 @@ const DropDown = ({
   options,
   onChange,
   value,
+  isRequired = true,
   isDisabled = true,
 }) => {
   return (
@@ -20,7 +21,7 @@ const DropDown = ({
         onChange={(e) => onChange(e)}
         value={value ? value : ''}
         disabled={isDisabled}
-        required
+        required={isRequired}
       >
         <option value='' disabled>
           Select Option
