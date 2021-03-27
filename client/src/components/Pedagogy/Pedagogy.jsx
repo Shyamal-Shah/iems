@@ -373,4 +373,5 @@ const Pedagogy = () => {
   );
 };
 
+
 export default Pedagogy;

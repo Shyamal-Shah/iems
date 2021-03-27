@@ -1,8 +1,9 @@
 import {
   PEDAGOGIES_LOADED,
   PEDAGOGY_ERROR,
-  PEDAGOGY_LOADED,
+  PEDAGOGY_LOADED, 
 } from '../actions/types';
+
 
 const inistialState = {
   pedagogy: null,
@@ -20,6 +21,11 @@ const Pedagogy = (state = inistialState, action) => {
     case PEDAGOGIES_LOADED:
       return {
         pedagogy: null,
+        pedagogies: payload,
+      };
+    case PEDAGOGIES_LOADED:
+      return {
+        ...state,
         pedagogies: payload,
       };
     case PEDAGOGY_ERROR:
