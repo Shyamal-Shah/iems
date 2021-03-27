@@ -13,6 +13,11 @@ const auth = require('../../middleware/auth');
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    if (!user) {
+      return res.json(400).json({
+        errors: [{ msg: 'User with this Id does not exists.' }],
+      });
+    }
     res.json(user);
   } catch (err) {
     return res.status(500).send('Server Error.');

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { setAlert } from './alert';
 import {
   AUTH_ERROR,
+  DELETE_CURRENT,
   LOGIN_FAILED,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -51,5 +52,8 @@ export const login = ({ email, password }) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   dispatch({
     type: LOGOUT,
+  });
+  dispatch({
+    type: DELETE_CURRENT,
   });
 };

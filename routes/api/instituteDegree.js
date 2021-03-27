@@ -24,7 +24,7 @@ router.post(
       if (institute) {
         return res
           .status(400)
-          .json({ error: [{ msg: 'Institute already exists.' }] });
+          .json({ errors: [{ msg: 'Institute already exists.' }] });
       }
       institute = new InstituteDegree({
         instituteName,
@@ -54,7 +54,7 @@ router.get('/', auth, async (req, res) => {
       if (!institute) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Id. No record found' }] });
+          .json({ errors: [{ msg: 'Record with this id does not exist.' }] });
       }
       return res.json(institute);
     } else if (req.query.instituteName) {
@@ -62,20 +62,25 @@ router.get('/', auth, async (req, res) => {
         instituteName: req.query.instituteName,
       });
       if (!institute) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'Invalid Id. No record found' }] });
+        return res.status(400).json({
+          errors: [{ msg: 'Institute with this name does not exists.' }],
+        });
       }
       if (req.query.degreeName) {
         let inst = institute;
         inst.degrees = institute.degrees.filter(
           (degree) => degree.degreeName == req.query.degreeName
         );
+        if (inst.degrees.length == 0) {
+          return res.status(400).json({
+            errors: [{ msg: 'This degree does not belong to this institute.' }],
+          });
+        }
         return res.json(inst);
       }
       return res.json(institute);
     } else if (Object.keys(req.query).length == 0) {
-      let institutes = await InstituteDegree.find();
+      let institutes = await InstituteDegree.find({}).sort({'instituteName':1});
       res.json(institutes);
     } else {
       res.status(400).send('Bad request');

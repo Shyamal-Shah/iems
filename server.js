@@ -18,6 +18,7 @@ app.use("/api/institute", require("./routes/api/instituteDegree"));
 app.use("/api/subject", require("./routes/api/subject"));
 app.use("/api/pedagogy", require("./routes/api/pedagogy"));
 app.use("/api/academic-year", require("./routes/api/academicYear"));
+app.use("/api/exam-schedule", require("./routes/api/examSchedule"));
 
 const PORT = process.env.PORT || 5500;
 

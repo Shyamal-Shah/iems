@@ -1,6 +1,6 @@
 import axios from "axios";
-import { PEDAGOGY_ADDED, PEDAGOGY_ERROR } from "./types";
 import { setAlert } from "./alert";
+import { PEDAGOGIES_LOADED, PEDAGOGY_ERROR, PEDAGOGY_LOADED } from "./types";
 
 export const addPedagogy = (formData) => async (dispatch) => {
   const config = {
@@ -10,6 +10,7 @@ export const addPedagogy = (formData) => async (dispatch) => {
   };
 
   const { subjectName, noOfComponents } = formData;
+
   var components = [];
   for (var i = 0; i < noOfComponents; i++) {
     var name = formData["c" + i + "-Name"];
@@ -18,22 +19,45 @@ export const addPedagogy = (formData) => async (dispatch) => {
     components.push({ name, mode, weightAge });
   }
   var obj = {
-    subjectName,
+    subject: subjectName,
     components,
   };
   try {
     const res = await axios.post(`/api/pedagogy`, obj, config);
-    console.log(res);
+    dispatch(setAlert(res.data.msg, "success"));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const getPedagogy = ({ subjectId }) => async (dispatch) => {
+  try {
+    const res = await axios.get("/api/pedagogy/", {
+      params: {
+        subjectId,
+      },
+    });
     dispatch({
-      type: PEDAGOGY_ADDED,
+      type: PEDAGOGY_LOADED,
       payload: res.data,
     });
-
-    dispatch(setAlert("Pedagogy created", "success"));
-  } catch (e) {
+  } catch (err) {
     dispatch({
       type: PEDAGOGY_ERROR,
-      payload: { msg: e.response.statusText, status: e.response.status },
+    });
+  }
+};
+
+export const getPedagogies = () => async (dispatch) => {
+  try {
+    const res = await axios.get("/api/pedagogy/");
+    dispatch({
+      type: PEDAGOGIES_LOADED,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: PEDAGOGY_ERROR,
     });
   }
 };

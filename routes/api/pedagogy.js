@@ -30,20 +30,13 @@ router.post(
 
       let pedagogy = await Pedagogy.findOne({ subject: subject });
       if (pedagogy) {
-        components.forEach((component) => {
-          let flag = true;
-          pedagogy.components.forEach((com) => {
-            if (com.name === component.name) flag = false;
-          });
-          if (flag) pedagogy.components.unshift(component);
-        });
+        pedagogy.components = components;
       } else {
         pedagogy = new Pedagogy({
           subject,
           components,
         });
       }
-
       await pedagogy.save();
       res.json({ msg: "Pedagogy added.", pedagogy });
     } catch (err) {
@@ -66,16 +59,23 @@ router.get("/", async (req, res) => {
           .json({ errors: [{ msg: "Invalid Id. No record found" }] });
       }
       let pedagogy = await Pedagogy.findById(req.query.id);
+      if (!pedagogy) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Record with this id does not exist." }] });
+      }
       return res.json(pedagogy);
-    } else if (req.query.subjectName) {
+    } else if (req.query.subjectId) {
       let pedagogy = await Pedagogy.findOne({
         subject: req.query.subjectId,
       });
+      if (!pedagogy)
+        return res.status(400).json({
+          errors: [{ msg: "Pedagogy for this subject does not exists." }],
+        });
       return res.json(pedagogy);
     } else if (Object.keys(req.query).length == 0) {
-      let pedagogies = await Pedagogy.find({}).populate("subjects", [
-        "subjectName",
-      ]);
+      let pedagogies = await Pedagogy.find({}).populate("subject");
       return res.json(pedagogies);
     } else {
       res.status(400).send("Bad request");

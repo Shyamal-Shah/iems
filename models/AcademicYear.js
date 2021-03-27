@@ -20,7 +20,7 @@ const AcademicYearSchema = new mongoose.Schema(
           {
             subjectId: {
               type: mongoose.Schema.Types.ObjectId,
-              ref: 'subject',
+              ref: 'subjects',
               required: true,
             },
           },

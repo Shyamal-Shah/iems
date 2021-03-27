@@ -1,25 +1,29 @@
-import { PEDAGOGY_ADDED, PEDAGOGY_ERROR } from "../actions/types";
+import {
+  PEDAGOGIES_LOADED,
+  PEDAGOGY_ERROR,
+  PEDAGOGY_LOADED,
+} from "../actions/types";
 
 const inistialState = {
   pedagogy: null,
-  loading: true,
-  error: {},
 };
 
 const Pedagogy = (state = inistialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case PEDAGOGY_ADDED:
+    case PEDAGOGY_LOADED:
       return {
         ...state,
-        pedagogy: [payload, ...state.Pedagogy],
-        loading: false,
+        pedagogy: payload,
+      };
+    case PEDAGOGIES_LOADED:
+      return {
+        ...state,
+        pedagogies: payload,
       };
     case PEDAGOGY_ERROR:
       return {
-        ...state,
-        error: payload,
-        loading: false,
+        pedagogy: null,
       };
     default:
       return state;

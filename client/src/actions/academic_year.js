@@ -1,22 +1,28 @@
 import axios from "axios";
-
-// Importing action types
-import { AY_LOADED, AY_ERROR } from "./types";
+import { setAlert } from "./alert";
+import { AY_ERROR, AY_LOADED } from "./types";
 
 // Importing action types
 
 // Get everything from academic year
-export const getAcademicYear = () => async (dispatch) => {
+export const getAcademicYear = ({ degreeId }) => async (dispatch) => {
   try {
-    const res = await axios.get("/api/academic-year");
+    const res = await axios.get("/api/academic-year", {
+      params: {
+        degreeId,
+      },
+    });
     dispatch({
       type: AY_LOADED,
       payload: res.data,
     });
-  } catch (e) {
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+    }
     dispatch({
       type: AY_ERROR,
-      payload: { msg: e.response.statusText, status: e.response.status },
     });
   }
 };

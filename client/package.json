@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^12.7.3",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "http-proxy-middleware": "^1.0.6",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "popper.js": "^1.16.1",
