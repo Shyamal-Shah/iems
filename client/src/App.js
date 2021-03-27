@@ -23,6 +23,7 @@ import Alert from './components/layout/Alert';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
 import DataExport from './components/Pedagogy/DataExport';
+import Admin from './components/Admin/Admin';
 
 if (localStorage.getItem('token')) {
   setAuthToken(localStorage.getItem('token'));
@@ -60,6 +61,7 @@ const App = () => {
                 path='/seatingArrangement'
                 component={SeatingArrangement}
               />
+              <PrivateRoute exact path='/admin' component={Admin} />
             </Switch>
           </section>
         </Fragment>

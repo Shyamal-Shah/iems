@@ -147,9 +147,10 @@ const Pedagogy = () => {
   }, [formData, subjectName]);
 
   useEffect(() => {
-    if (total > 30) {
-      dispatch(setAlert('Total Weightage cannot excced 30.', 'danger'));
-      console.log(total, ' Total');
+    if (total !== 30) {
+      document.getElementById('lblTotal').style.color = 'red';
+    } else {
+      document.getElementById('lblTotal').style.color = 'green';
     }
   }, [total, dispatch]);
 
@@ -158,7 +159,7 @@ const Pedagogy = () => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (total <= 30) {
+        if (total === 30) {
           dispatch(
             addPedagogy(
               formData,
@@ -359,7 +360,9 @@ const Pedagogy = () => {
               {subjectName && renderComponents()}
               <div className='d-flex justify-content-between p-2'>
                 <p className='h4'>Total:</p>
-                <p className='h4'>{total}</p>
+                <p id='lblTotal' className='h4'>
+                  {total}
+                </p>
               </div>
               <input type='submit' value='Submit' className='btn btn-primary' />
             </div>
