@@ -1,14 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 const Alert = () => {
   const alerts = useSelector((state) => state.Alert);
-  const ref = useRef(null);
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.focus();
-    }
-  }, [ref.current]);
   return (
     alerts !== null &&
     alerts.length > 0 &&
@@ -17,7 +11,6 @@ const Alert = () => {
         <div
           tabIndex='-1'
           key={id}
-          ref={ref}
           className={'alert alert-' + alertType}
           role='alert'
         >

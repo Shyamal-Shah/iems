@@ -6,6 +6,15 @@ const PedagogySchema = new mongoose.Schema(
       ref: "subjects",
       required: true,
     },
+    academicYear: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'academicYear',
+      required: true,
+    },
+    semester: {
+      type: Number,
+      required: true,
+    },
     components: [
       {
         name: {

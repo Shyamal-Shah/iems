@@ -14,14 +14,22 @@ import { getInstitutes } from '../../actions/institutes_degree';
 import { getAcademicYear } from '../../actions/academic_year';
 import { setAlert } from '../../actions/alert';
 import { Link } from 'react-router-dom';
+import { oddSems, evenSems } from '../../utils/defaults';
 
 const Pedagogy = () => {
   const dispatch = useDispatch();
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
-  const currentState = useSelector((state) => state.CurrentState);
   const { pedagogy } = useSelector((state) => state.Pedagogy);
+  const currentState = useSelector((state) => state.CurrentState);
 
+  const [total, setTotal] = useState(0);
+  const [formData, setFormData] = useState({
+    subjectName: null,
+    noOfComponents: 1,
+  });
+
+  // Destructure currentState
   const {
     institute,
     degree,
@@ -30,6 +38,10 @@ const Pedagogy = () => {
     semesterNo,
   } = currentState;
 
+  // Destructure formData
+  const { subjectName, noOfComponents } = formData;
+
+  // Filter subjects based on semester number
   const getSubjects = (semNo) => {
     return academicYears
       .filter((ay) => ay.year === academicYear)[0]
@@ -42,16 +54,13 @@ const Pedagogy = () => {
       });
   };
 
-  const [formData, setFormData] = useState({
-    subjectName: null,
-    noOfComponents: 1,
-  });
+  const [subjects, setSubjects] = useState(
+    academicYear && semesterNo && institute && degree && semesterGroup
+      ? getSubjects(semesterNo).sort()
+      : []
+  );
 
-  const { subjectName, noOfComponents } = formData;
-
-  const oddSems = ['1', '3', '5', '7'];
-  const evenSems = ['2', '4', '6', '8'];
-
+  // Render pedagogy components onto the screen
   const renderComponents = () => {
     const components = [];
     for (let index = 0; index < noOfComponents; index++) {
@@ -86,16 +95,19 @@ const Pedagogy = () => {
     return components;
   };
 
+  // Fetch from institues if not available
   useEffect(() => {
     if (institute == null) {
       dispatch(getInstitutes());
     }
-  }, [dispatch, institute]);
+  }, []);
 
+  // Fetch pedagogy for current subject
   useEffect(() => {
     subjectName && dispatch(getPedagogy({ subjectId: subjectName }));
   }, [subjectName, dispatch]);
 
+  // Update number of components based on pedagogy object
   useEffect(() => {
     if (subjectName && pedagogy !== null) {
       setFormData({ ...formData, noOfComponents: pedagogy.components.length });
@@ -104,6 +116,7 @@ const Pedagogy = () => {
     }
   }, [pedagogy]);
 
+  // Add component to formdata if subjectName or number of components change
   useEffect(() => {
     if (subjectName && pedagogy !== null) {
       const fd = { ...formData };
@@ -121,14 +134,7 @@ const Pedagogy = () => {
     }
   }, [noOfComponents, subjectName]);
 
-  const [subjects, setSubjects] = useState(
-    academicYear && semesterNo && institute && degree && semesterGroup
-      ? getSubjects(semesterNo).sort()
-      : []
-  );
-
-  const [total, setTotal] = useState(0);
-
+  // Total
   useEffect(() => {
     if (subjectName) {
       let t = 0;
@@ -142,8 +148,8 @@ const Pedagogy = () => {
 
   useEffect(() => {
     if (total > 30) {
-      console.log('hello');
       dispatch(setAlert('Total Weightage cannot excced 30.', 'danger'));
+      console.log(total, ' Total');
     }
   }, [total, dispatch]);
 
@@ -153,14 +159,20 @@ const Pedagogy = () => {
       onSubmit={(e) => {
         e.preventDefault();
         if (total <= 30) {
-          dispatch(addPedagogy(formData));
+          dispatch(
+            addPedagogy(
+              formData,
+              semesterNo,
+              academicYears.filter((ay) => ay.year === academicYear)[0]._id
+            )
+          );
         } else {
           dispatch(setAlert('Total Weightage cannot excced 30.', 'danger'));
         }
       }}
     >
       <div className='row py-3'>
-        <div className='col-md-3 pb-3'>
+        <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
               <Fragment>
@@ -172,12 +184,12 @@ const Pedagogy = () => {
                   })}
                   isDisabled={false}
                   value={institute}
-                  onChange={async (e) => {
-                    await dispatch(updateInstitute(e.target.value));
-                    await dispatch(updateDegree(null));
-                    await dispatch(updateAcademicYear(null));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateInstitute(e.target.value));
+                    dispatch(updateDegree(null));
+                    dispatch(updateAcademicYear(null));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     let drp = document.getElementById('ddDegree');
                     drp.disabled = false;
                   }}
@@ -195,11 +207,11 @@ const Pedagogy = () => {
                   }
                   value={degree}
                   isDisabled={institute ? false : true}
-                  onChange={async (e) => {
-                    await dispatch(updateDegree(e.target.value));
-                    await dispatch(updateAcademicYear(null));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateDegree(e.target.value));
+                    dispatch(updateAcademicYear(null));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     dispatch(
                       getAcademicYear({
                         degreeId: institutes
@@ -223,10 +235,10 @@ const Pedagogy = () => {
                   isDisabled={
                     degree !== null && institute !== null ? false : true
                   }
-                  onChange={async (e) => {
-                    await dispatch(updateAcademicYear(e.target.value));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateAcademicYear(e.target.value));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     let drp = document.getElementById('ddSemesterGroup');
                     drp.disabled = false;
                   }}
@@ -245,9 +257,9 @@ const Pedagogy = () => {
                           ? false
                           : true
                       }
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         dispatch(updateSemesterGroup(e.target.value));
-                        await dispatch(updateSemesterNo(null));
+                        dispatch(updateSemesterNo(null));
                         let drp = document.getElementById('ddSemesterNo');
                         drp.disabled = false;
                       }}
@@ -270,6 +282,8 @@ const Pedagogy = () => {
                       onChange={(e) => {
                         dispatch(updateSemesterNo(e.target.value));
                         setSubjects(getSubjects(e.target.value));
+                        setFormData({ subjectName: null, noOfComponents: 1 });
+                        setTotal(0);
                       }}
                     />
                   </div>
@@ -278,7 +292,7 @@ const Pedagogy = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-3 pb-3'>
+        <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
               <h3 className='text-center'>PEDAGOGY</h3>
@@ -289,10 +303,10 @@ const Pedagogy = () => {
                 <select
                   id='ddSubjects'
                   className='form-select form-control'
-                  onChange={async (e) => {
+                  onChange={(e) => {
                     setFormData({
-                      ...formData,
                       subjectName: e.target.value,
+                      noOfComponents: 1,
                     });
                   }}
                   value={subjectName ? subjectName : ''}
@@ -312,7 +326,7 @@ const Pedagogy = () => {
               <DropDown
                 title='Number of Components'
                 id='ddNoOfComponents'
-                isDisabled={false}
+                isDisabled={semesterNo && subjectName ? false : true}
                 value={noOfComponents}
                 onChange={(e) => {
                   setFormData({ ...formData, noOfComponents: e.target.value });
@@ -322,14 +336,18 @@ const Pedagogy = () => {
               <DropDown
                 title='Export Data For'
                 id='ddExpData'
-                isDisabled={false}
+                isDisabled={semesterNo ? false : true}
                 value={expType}
                 onChange={(e) => {
                   setExpType(e.target.value);
                 }}
+                isRequired={false}
                 options={['Academic Year', 'Semester Group', 'Semester Number']}
               />
-              <Link to='/pedagogy/export-data' className='btn btn-dark'>
+              <Link
+                to={'/pedagogy/export-data/' + expType}
+                className={expType ? 'btn btn-dark' : 'btn btn-dark disabled'}
+              >
                 Export Data
               </Link>
             </div>
@@ -338,7 +356,7 @@ const Pedagogy = () => {
         <div className='col-md-6 pb-3'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
-              {renderComponents()}
+              {subjectName && renderComponents()}
               <div className='d-flex justify-content-between p-2'>
                 <p className='h4'>Total:</p>
                 <p className='h4'>{total}</p>
