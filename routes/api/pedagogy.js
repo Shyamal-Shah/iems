@@ -1,15 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require("express-validator");
 
-const Pedagogy = require('../../models/Pedagogy');
-const Subject = require('../../models/Subject');
+const Pedagogy = require("../../models/Pedagogy");
+const Subject = require("../../models/Subject");
 
 // @router POST api/pedagogy
 // @desc Add new pedagogy
 // @access public
 router.post(
-  '/',
+  "/",
   [
     check('subject', 'Id of subject is required').notEmpty(),
     check('semester', 'Semester number is required').notEmpty(),
@@ -27,7 +27,7 @@ router.post(
       if (!subjectOb) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid subject. No subject found' }] });
+          .json({ errors: [{ msg: "Invalid subject. No subject found" }] });
       }
 
       let pedagogy = await Pedagogy.findOne({ subject: subject });
@@ -42,10 +42,10 @@ router.post(
         });
       }
       await pedagogy.save();
-      res.json({ msg: 'Pedagogy added.', pedagogy });
+      res.json({ msg: "Pedagogy added.", pedagogy });
     } catch (err) {
       console.log(err.message);
-      return res.status(500).send('Server Error.');
+      return res.status(500).send("Server Error.");
     }
   }
 );
@@ -54,19 +54,19 @@ router.post(
 // @desc Get pedagogy
 // @access public
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     if (req.query.id) {
       if (req.query.id.length != 24) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Id. No record found' }] });
+          .json({ errors: [{ msg: "Invalid Id. No record found" }] });
       }
       let pedagogy = await Pedagogy.findById(req.query.id);
       if (!pedagogy) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Record with this id does not exist.' }] });
+          .json({ errors: [{ msg: "Record with this id does not exist." }] });
       }
       return res.json(pedagogy);
     }
@@ -131,18 +131,18 @@ router.get('/', async (req, res) => {
       });
       if (!pedagogy)
         return res.status(400).json({
-          errors: [{ msg: 'Pedagogy for this subject does not exists.' }],
+          errors: [{ msg: "Pedagogy for this subject does not exists." }],
         });
       return res.json(pedagogy);
     } else if (Object.keys(req.query).length == 0) {
-      let pedagogies = await Pedagogy.find({}).populate('subject');
+      let pedagogies = await Pedagogy.find({}).populate("subject");
       return res.json(pedagogies);
     } else {
-      res.status(400).send('Bad request');
+      res.status(400).send("Bad request");
     }
   } catch (e) {
     console.log(e.message);
-    return res.status(500).send('Server Error.');
+    return res.status(500).send("Server Error.");
   }
 });
 

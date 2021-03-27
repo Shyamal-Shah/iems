@@ -7,7 +7,7 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
 ) => {
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   };
 
@@ -15,9 +15,9 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
 
   var components = [];
   for (var i = 0; i < noOfComponents; i++) {
-    var name = formData['c' + i + '-Name'];
-    var mode = formData['c' + i + '-Mode'];
-    var weightAge = formData['c' + i + '-Weightage'];
+    var name = formData["c" + i + "-Name"];
+    var mode = formData["c" + i + "-Mode"];
+    var weightAge = formData["c" + i + "-Weightage"];
     components.push({ name, mode, weightAge });
   }
   var obj = {
@@ -28,7 +28,7 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
   };
   try {
     const res = await axios.post(`/api/pedagogy`, obj, config);
-    dispatch(setAlert(res.data.msg, 'success'));
+    dispatch(setAlert(res.data.msg, "success"));
   } catch (err) {
     console.log(err);
   }
@@ -36,7 +36,7 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
 
 export const getPedagogy = ({ subjectId }) => async (dispatch) => {
   try {
-    const res = await axios.get('/api/pedagogy/', {
+    const res = await axios.get("/api/pedagogy/", {
       params: {
         subjectId,
       },

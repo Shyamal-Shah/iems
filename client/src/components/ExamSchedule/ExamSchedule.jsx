@@ -3,6 +3,7 @@ import moment from 'moment';
 import DropDown from '../layout/DropDown';
 import Component from './Component';
 import { useDispatch, useSelector } from 'react-redux';
+
 import {
   updateInstitute,
   updateAcademicYear,
@@ -19,6 +20,7 @@ const ExamSchedule = () => {
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
   const currentState = useSelector((state) => state.CurrentState);
+
   const {
     institute,
     degree,
@@ -28,12 +30,20 @@ const ExamSchedule = () => {
   } = currentState;
 
   const [formData, setFormData] = useState({
-    examFrom: moment().format('yyyy-MM-DD'),
-    examTo: moment().add(7, 'days').format('yyyy-MM-DD'),
-    unitTest: '',
+    examFrom: moment().format("yyyy-MM-DD"),
+    examTo: moment().add(7, "days").format("yyyy-MM-DD"),
+    unitTest: "",
+    noOfComponents: 1,
+    academicYear,
+    semesterNo,
   });
 
+  const [subjects, setSubjects] = useState([]);
+
   const { examFrom, examTo, unitTest } = formData;
+
+  const oddSems = ["1", "3", "5", "7"];
+  const evenSems = ["2", "4", "6", "8"];
 
   const onDateChange = (e) => {
     setFormData({
@@ -166,52 +176,75 @@ const ExamSchedule = () => {
                   </div>
                 </div>
               </Fragment>
+
             </div>
           </div>
         </div>
-        <div className='col-md-3'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
-              <h3 className='text-center'>EXAM SCHEDULE</h3>
+        <div className="col-md-3">
+          <div className="card h-100 shadow">
+            <div className="card-body">
+              <h3 className="text-center">EXAM SCHEDULE</h3>
               <DropDown
-                title='Internal-Examination'
-                options={['Unit Test-1', 'Unit Test-2']}
-                id='ddIE'
+                title="Internal-Examination"
+                options={["Unit Test 1", "Unit Test 2"]}
+                id="ddIE"
+                // onClick={(e) => {
+                //   subjects.map((value, index) => {
+                //     setFormData({
+                //       ...formData,
+                //       [index + "-subjectName"]: value["name"],
+                //     });
+                //   });
+                // }}
                 onChange={(e) => {
                   setFormData({
                     ...formData,
                     unitTest: e.target.value,
                   });
+
+                  pedagogies.forEach((ped) => {
+                    ped.components.forEach((com) => {
+                      if (e.target.value.includes(com["name"])) {
+                        setSubjects((s) => [...s, ped.subject]);
+                      }
+                    });
+                  });
+                  subjects.map((value, index) => {
+                    setFormData({
+                      ...formData,
+                      [index + "-subjectName"]: value["name"],
+                    });
+                  });
                 }}
                 isDisabled={false}
                 value={unitTest}
               />
-              <p className='h5'>Exam-week</p>
+              <p className="h5">Exam-week</p>
 
-              <div className='form-group'>
-                <label htmlFor='example-date-input'>From</label>
+              <div className="form-group">
+                <label htmlFor="example-date-input">From</label>
                 <div>
                   <input
-                    className='form-control'
-                    type='date'
+                    className="form-control"
+                    type="date"
                     value={examFrom}
-                    min={moment().format('yyyy-MM-DD')}
-                    name='examFrom'
+                    min={moment().format("yyyy-MM-DD")}
+                    name="examFrom"
                     onChange={(e) => {
                       onDateChange(e);
                     }}
                   />
                 </div>
               </div>
-              <div className='form-group'>
-                <label htmlFor='example-date-input'>To</label>
+              <div className="form-group">
+                <label htmlFor="example-date-input">To</label>
                 <div>
                   <input
-                    className='form-control'
-                    type='date'
+                    className="form-control"
+                    type="date"
                     value={examTo}
                     min={examFrom}
-                    name='examTo'
+                    name="examTo"
                     onChange={(e) => {
                       onDateChange(e);
                     }}
@@ -221,11 +254,47 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
-        <div className='col-md-6'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
-              <Component />
-              <input type='submit' className='btn btn-primary' />
+        <div className="col-md-6">
+          <div className="card h-100 shadow">
+            <div className="card-body">
+              {subjects.map((value, index) => {
+                return (
+                  <Component
+                    subjectName={[
+                      value["subjectCode"] + "_" + value["subjectName"],
+                    ]}
+                    key={index}
+                    examFrom={formData.examFrom}
+                    examTo={formData.examTo}
+                    index
+                    onSubjectNameChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        [index + "-subjectName"]: e.target.value,
+                      });
+                    }}
+                    onFromDateChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        [index + "-from"]: moment(e.target.value).format(
+                          "MM-DD-YYYY,HH:mm"
+                        ),
+                        // [index+'-from']:
+                      });
+                    }}
+                    onToDateChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        [index + "-to"]: moment(e.target.value).format(
+                          "MM-DD-YYYY:HH:mm"
+                        ),
+                        // [index+'-from']:
+                      });
+                    }}
+                  />
+                );
+              })}
+              <input type="submit" className="btn btn-primary" />
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { AY_LOADED, AY_ERROR } from '../actions/types';
+import { AY_LOADED, AY_ERROR } from "../actions/types";
 
 const initialState = {
   academicYears: [],

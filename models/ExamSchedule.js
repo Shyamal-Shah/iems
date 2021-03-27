@@ -1,31 +1,29 @@
 const mongoose = require("mongoose");
-const PedagogySchema = new mongoose.Schema(
+const ExamScheduleSchema = new mongoose.Schema(
   {
-    subject: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "subjects",
-      required: true,
-    },
     academicYear: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'academicYear',
+      type: String,
       required: true,
     },
     semester: {
       type: Number,
       required: true,
     },
-    components: [
+    schedule: [
       {
-        name: {
+        subjectCode: {
           type: String,
           required: true,
         },
-        mode: {
+        subjectName: {
           type: String,
           required: true,
         },
-        weightAge: {
+        from: {
+          type: String,
+          required: true,
+        },
+        to: {
           type: String,
           required: true,
         },
@@ -35,4 +33,7 @@ const PedagogySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = Pedagody = mongoose.model("pedagogies", PedagogySchema);
+module.exports = ExamSchedule = mongoose.model(
+  "examschedule",
+  ExamScheduleSchema
+);
