@@ -1,23 +1,37 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const ExamScheduleSchema = new mongoose.Schema(
   {
     academicYear: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'academicYear',
       required: true,
     },
     semester: {
       type: Number,
       required: true,
     },
+    testName: {
+      type: String,
+      required: true,
+    },
+    examWeekFrom:{
+      type: String,
+      required: true,
+    },examWeekTo:{
+      type: String,
+      required: true,
+    },
     schedule: [
       {
-        subjectCode: {
-          type: String,
-          required: true,
+        subjectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'subjects',
         },
         subjectName: {
           type: String,
-          required: true,
+        },
+        subjectCode: {
+          type: String,
         },
         from: {
           type: String,
@@ -29,11 +43,23 @@ const ExamScheduleSchema = new mongoose.Schema(
         },
       },
     ],
+    createdUserID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+    },
+    modifiedUserID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+    },
+    recStatus: {
+      type: String,
+      default: 'A',
+    },
   },
   { timestamps: true }
 );
 
 module.exports = ExamSchedule = mongoose.model(
-  "examschedule",
+  'tblExamSchedule',
   ExamScheduleSchema
 );

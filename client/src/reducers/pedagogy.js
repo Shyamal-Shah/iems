@@ -23,11 +23,6 @@ const Pedagogy = (state = inistialState, action) => {
         pedagogy: null,
         pedagogies: payload,
       };
-    case PEDAGOGIES_LOADED:
-      return {
-        ...state,
-        pedagogies: payload,
-      };
     case PEDAGOGY_ERROR:
       return {
         pedagogy: null,

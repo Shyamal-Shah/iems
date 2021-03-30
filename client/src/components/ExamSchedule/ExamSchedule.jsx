@@ -1,9 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import moment from 'moment';
 import DropDown from '../layout/DropDown';
-import Component from './Component';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { getPedagogySN } from '../../actions/pedagogy';
 import {
   updateInstitute,
   updateAcademicYear,
@@ -14,54 +12,108 @@ import {
 import { getInstitutes } from '../../actions/institutes_degree';
 import { getAcademicYear } from '../../actions/academic_year';
 import { oddSems, evenSems } from '../../utils/defaults';
+import moment from 'moment';
+import Component from './Component';
+import {
+  addExamSchedule,
+  getExamScheduleSN,
+} from '../../actions/exam_schedule';
+import { EXAM_SCHEDULE_ERROR } from '../../actions/types';
 
 const ExamSchedule = () => {
   const dispatch = useDispatch();
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
-  const currentState = useSelector((state) => state.CurrentState);
-
   const {
     institute,
     degree,
     academicYear,
     semesterGroup,
     semesterNo,
-  } = currentState;
+  } = useSelector((state) => state.CurrentState);
+  const { pedagogies } = useSelector((state) => state.Pedagogy);
+  const { examSchedule } = useSelector((state) => state.ExamSchedule);
 
-  const [formData, setFormData] = useState({
-    examFrom: moment().format("yyyy-MM-DD"),
-    examTo: moment().add(7, "days").format("yyyy-MM-DD"),
-    unitTest: "",
-    noOfComponents: 1,
-    academicYear,
-    semesterNo,
-  });
-
-  const [subjects, setSubjects] = useState([]);
-
-  const { examFrom, examTo, unitTest } = formData;
-
-  const oddSems = ["1", "3", "5", "7"];
-  const evenSems = ["2", "4", "6", "8"];
-
-  const onDateChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
+  // Fetch from institues if not available
   useEffect(() => {
     if (institute == null) {
       dispatch(getInstitutes());
     }
   }, [dispatch, institute]);
 
+  const [formData, setFormData] = useState({
+    testName: '',
+    examWeekFrom: moment().format('yyyy-MM-DD'),
+    examWeekTo: moment().add(7, 'days').format('yyyy-MM-DD'),
+    subjects: [],
+  });
+
+  const { testName, examWeekFrom, examWeekTo, subjects } = formData;
+
+  useEffect(() => {
+    if (academicYear && semesterGroup && semesterNo) {
+      const AYId = academicYears.filter((ay) => ay.year === academicYear)[0]
+        ._id;
+      dispatch(getPedagogySN({ semesterNo, academicYear: AYId }));
+      dispatch(
+        getExamScheduleSN({
+          semesterNo,
+          academicYear: AYId,
+          testName,
+        })
+      );
+    }
+    setFormData({ ...formData, testName: '', subjects: [] });
+  }, [dispatch, semesterNo, academicYear, semesterGroup]);
+
+  useEffect(() => {
+    testName &&
+      dispatch(
+        getExamScheduleSN({
+          semesterNo,
+          academicYear: academicYears.filter(
+            (ay) => ay.year === academicYear
+          )[0]._id,
+          testName,
+        })
+      );
+  }, [testName]);
+
+  useEffect(() => {
+    if (examSchedule) {
+      let fd = { ...formData };
+      fd.examWeekFrom = examSchedule.examWeekFrom;
+      fd.examWeekTo = examSchedule.examWeekTo;
+      for (let i = 0; i < examSchedule.schedule.length; i++) {
+        fd[i + '-from'] = examSchedule.schedule[i].from;
+        fd[i + '-to'] = examSchedule.schedule[i].to;
+      }
+      setFormData(fd);
+    } else {
+      setFormData({
+        testName,
+        examWeekFrom,
+        examWeekTo,
+        subjects,
+      });
+    }
+  }, [examSchedule]);
+
   return (
-    <form>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        dispatch(
+          addExamSchedule(
+            formData,
+            academicYears.filter((ay) => ay.year === academicYear)[0]._id,
+            semesterNo
+          )
+        );
+      }}
+    >
       <div className='row py-3'>
-        <div className='col-md-3'>
+        <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
               <Fragment>
@@ -73,12 +125,12 @@ const ExamSchedule = () => {
                   })}
                   isDisabled={false}
                   value={institute}
-                  onChange={async (e) => {
-                    await dispatch(updateInstitute(e.target.value));
-                    await dispatch(updateDegree(null));
-                    await dispatch(updateAcademicYear(null));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateInstitute(e.target.value));
+                    dispatch(updateDegree(null));
+                    dispatch(updateAcademicYear(null));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     let drp = document.getElementById('ddDegree');
                     drp.disabled = false;
                   }}
@@ -96,11 +148,11 @@ const ExamSchedule = () => {
                   }
                   value={degree}
                   isDisabled={institute ? false : true}
-                  onChange={async (e) => {
-                    await dispatch(updateDegree(e.target.value));
-                    await dispatch(updateAcademicYear(null));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateDegree(e.target.value));
+                    dispatch(updateAcademicYear(null));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     dispatch(
                       getAcademicYear({
                         degreeId: institutes
@@ -124,10 +176,10 @@ const ExamSchedule = () => {
                   isDisabled={
                     degree !== null && institute !== null ? false : true
                   }
-                  onChange={async (e) => {
-                    await dispatch(updateAcademicYear(e.target.value));
-                    await dispatch(updateSemesterGroup(null));
-                    await dispatch(updateSemesterNo(null));
+                  onChange={(e) => {
+                    dispatch(updateAcademicYear(e.target.value));
+                    dispatch(updateSemesterGroup(null));
+                    dispatch(updateSemesterNo(null));
                     let drp = document.getElementById('ddSemesterGroup');
                     drp.disabled = false;
                   }}
@@ -146,9 +198,9 @@ const ExamSchedule = () => {
                           ? false
                           : true
                       }
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         dispatch(updateSemesterGroup(e.target.value));
-                        await dispatch(updateSemesterNo(null));
+                        dispatch(updateSemesterNo(null));
                         let drp = document.getElementById('ddSemesterNo');
                         drp.disabled = false;
                       }}
@@ -170,131 +222,117 @@ const ExamSchedule = () => {
                       options={'Even' === semesterGroup ? evenSems : oddSems}
                       onChange={(e) => {
                         dispatch(updateSemesterNo(e.target.value));
-                        setFormData({ subjectName: null, noOfComponents: 1 });
                       }}
                     />
                   </div>
                 </div>
               </Fragment>
-
             </div>
           </div>
         </div>
-        <div className="col-md-3">
-          <div className="card h-100 shadow">
-            <div className="card-body">
-              <h3 className="text-center">EXAM SCHEDULE</h3>
+        <div className='col-md-3 pb-3 pr-1'>
+          <div className='card h-100 shadow'>
+            <div className='card-body'>
+              <h3 className='text-center'>EXAM SCHEDULE</h3>
               <DropDown
-                title="Internal-Examination"
-                options={["Unit Test 1", "Unit Test 2"]}
-                id="ddIE"
-                // onClick={(e) => {
-                //   subjects.map((value, index) => {
-                //     setFormData({
-                //       ...formData,
-                //       [index + "-subjectName"]: value["name"],
-                //     });
-                //   });
-                // }}
+                title='Internal-Examination'
+                options={['Unit Test 1', 'Unit Test 2']}
+                id='ddIE'
                 onChange={(e) => {
-                  setFormData({
-                    ...formData,
-                    unitTest: e.target.value,
-                  });
-
-                  pedagogies.forEach((ped) => {
-                    ped.components.forEach((com) => {
-                      if (e.target.value.includes(com["name"])) {
-                        setSubjects((s) => [...s, ped.subject]);
+                  let subjects = [];
+                  pedagogies.forEach((pedagogy) => {
+                    pedagogy.components.forEach((component) => {
+                      if (e.target.value === component['name']) {
+                        subjects.push(pedagogy.subject);
                       }
                     });
                   });
-                  subjects.map((value, index) => {
-                    setFormData({
-                      ...formData,
-                      [index + "-subjectName"]: value["name"],
-                    });
+                  setFormData({
+                    ...formData,
+                    testName: e.target.value,
+                    subjects,
                   });
                 }}
-                isDisabled={false}
-                value={unitTest}
+                isDisabled={semesterNo ? false : true}
+                value={testName}
               />
-              <p className="h5">Exam-week</p>
-
-              <div className="form-group">
-                <label htmlFor="example-date-input">From</label>
+              <p className='h5'>Exam-week</p>
+              <div className='form-group'>
+                <label htmlFor='example-date-input'>From</label>
                 <div>
                   <input
-                    className="form-control"
-                    type="date"
-                    value={examFrom}
-                    min={moment().format("yyyy-MM-DD")}
-                    name="examFrom"
+                    className='form-control'
+                    type='date'
+                    value={examWeekFrom}
+                    min={moment().format('yyyy-MM-DD')}
+                    name='examWeekFrom'
                     onChange={(e) => {
-                      onDateChange(e);
+                      setFormData({
+                        ...formData,
+                        examWeekFrom: e.target.value,
+                        examWeekTo: moment(e.target.value)
+                          .add(7, 'days')
+                          .format('yyyy-MM-DD'),
+                      });
                     }}
+                    disabled={semesterNo ? false : true}
                   />
                 </div>
               </div>
-              <div className="form-group">
-                <label htmlFor="example-date-input">To</label>
+              <div className='form-group'>
+                <label htmlFor='example-date-input'>To</label>
                 <div>
                   <input
-                    className="form-control"
-                    type="date"
-                    value={examTo}
-                    min={examFrom}
-                    name="examTo"
+                    className='form-control'
+                    type='date'
+                    value={examWeekTo}
+                    min={examWeekFrom}
+                    name='examWeekTo'
                     onChange={(e) => {
-                      onDateChange(e);
+                      setFormData({
+                        ...formData,
+                        examWeekTo: e.target.value,
+                      });
                     }}
+                    disabled={semesterNo ? false : true}
                   />
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="card h-100 shadow">
-            <div className="card-body">
-              {subjects.map((value, index) => {
-                return (
-                  <Component
-                    subjectName={[
-                      value["subjectCode"] + "_" + value["subjectName"],
-                    ]}
-                    key={index}
-                    examFrom={formData.examFrom}
-                    examTo={formData.examTo}
-                    index
-                    onSubjectNameChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        [index + "-subjectName"]: e.target.value,
-                      });
-                    }}
-                    onFromDateChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        [index + "-from"]: moment(e.target.value).format(
-                          "MM-DD-YYYY,HH:mm"
-                        ),
-                        // [index+'-from']:
-                      });
-                    }}
-                    onToDateChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        [index + "-to"]: moment(e.target.value).format(
-                          "MM-DD-YYYY:HH:mm"
-                        ),
-                        // [index+'-from']:
-                      });
-                    }}
-                  />
-                );
-              })}
-              <input type="submit" className="btn btn-primary" />
+        <div className='col-md-6 pb-3'>
+          <div className='card h-100 shadow'>
+            <div className='card-body'>
+              {subjects.map((subject, index) => (
+                <Component
+                  index={index}
+                  key={index}
+                  newSubject={false}
+                  subjectName={subject.subjectCode + ' ' + subject.subjectName}
+                  examWeekFrom={examWeekFrom}
+                  examWeekTo={examWeekTo}
+                  examFrom={formData[index + '-from']}
+                  examTo={formData[index + '-to']}
+                  onFromDateChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      [index + '-from']: moment(e.target.value).format(
+                        'MM-DD-YYYY,HH:mm'
+                      ),
+                    });
+                  }}
+                  onToDateChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      [index + '-to']: moment(e.target.value).format(
+                        'MM-DD-YYYY,HH:mm'
+                      ),
+                    });
+                  }}
+                />
+              ))}
+              <input type='submit' className='btn btn-primary' />
             </div>
           </div>
         </div>

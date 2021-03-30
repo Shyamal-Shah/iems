@@ -17,7 +17,8 @@ const Component = ({
         <DropDown
           title={'C' + index + '-Name'}
           options={[
-            'Unit Test',
+            'Unit Test 1',
+            'Unit Test 2',
             'Assignment',
             'Project',
             'Quizes',
