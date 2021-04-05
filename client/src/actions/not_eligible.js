@@ -2,13 +2,16 @@ import axios from "axios";
 import { NOT_ELIGIBLE_ERROR, LOADED_ELIGIBLE_STUDENT } from "./types";
 import { setAlert } from "./alert";
 
+// Add the not eligible students
 export const addNE = (formData) => async (dispatch) => {
+  // Set the header of the api
   const config = {
     headers: {
       "Content-Type": "application/json",
     },
   };
 
+  // Get values from formData
   const {
     academicYear,
     nameOfComponents,
@@ -16,9 +19,13 @@ export const addNE = (formData) => async (dispatch) => {
     subjectName,
     studentId,
   } = formData;
+
+  // set the student array
   var temp = [];
-  for (var i = 0; i < studentId.length; i++) {
-    temp.push({ studentId: studentId[i] });
+  if (studentId) {
+    for (var i = 0; i < studentId.length; i++) {
+      temp.push({ studentId: studentId[i] });
+    }
   }
   var obj = {
     academicYear,
@@ -27,8 +34,8 @@ export const addNE = (formData) => async (dispatch) => {
     componentName: nameOfComponents,
     students: temp,
   };
-  console.log(obj);
 
+  // Add the not eligible students via api
   try {
     const res = await axios.post(`/api/not-eligible`, obj, config);
     dispatch(setAlert(res.data.msg, "success"));
@@ -37,6 +44,7 @@ export const addNE = (formData) => async (dispatch) => {
   }
 };
 
+// Get the not eligible students
 export const getNEStudents = ({
   academicYear,
   semester,

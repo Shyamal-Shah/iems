@@ -14,7 +14,11 @@ import { getAcademicYear } from "../../actions/academic_year";
 import { oddSems, evenSems } from "../../utils/defaults";
 import { useDispatch, useSelector } from "react-redux";
 import { addNE } from "../../actions/not_eligible";
+
+// Main component for rendering the not eligible page
+
 const NEList = () => {
+  // Get the values from the state
   const dispatch = useDispatch();
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
@@ -28,6 +32,8 @@ const NEList = () => {
     semesterNo,
   } = currentState;
 
+  // Declaring and initializing the formData
+
   const [formData, setFormData] = useState({
     academicYear: "",
     subjectName: "",
@@ -36,9 +42,13 @@ const NEList = () => {
     studentId: [],
   });
 
+  // Student array list
   const [students, setStudents] = useState([]);
+
+  // Get the input of student id
   const [inputStudent, setInputStudent] = useState("");
 
+  // Get the subject according to academic year and semester
   const getSubjects = (semNo) => {
     return academicYears
       .filter((ay) => ay.year === academicYear)[0]
@@ -71,12 +81,14 @@ const NEList = () => {
     setInputStudent(e.target.value);
   };
 
+  // Get value from input field and add it to student array
   function setStudentsArray() {
     students.push(inputStudent);
     setInputStudent("");
     console.log(students);
   }
 
+  // Removing the value from student array
   function removeStudentsArray(i) {
     const list = students.filter((item, j) => i !== j);
     setStudents(list);
@@ -288,7 +300,6 @@ const NEList = () => {
                 <input
                   className="form-control"
                   placeholder="Student Id"
-                  // pattern="^([A-Z][A-Z][-][0-9]+)_([a-zA-Z ]+)$"
                   title="Example: 18CE000"
                   required
                   value={inputStudent ? inputStudent : ""}
@@ -311,6 +322,7 @@ const NEList = () => {
                 />
               </div>
               <div className="col-lg">
+                {/* Checking if student array is not null then render the table otherwise null */}
                 {students ? (
                   <table class="table table-borderless">
                     <thead>
@@ -357,8 +369,9 @@ const NEList = () => {
                     studentId: students,
                     semester: semesterNo,
                   });
+                  console.log(formData);
                   dispatch(addNE(formData));
-                  setStudents([]);
+                  // setStudents([]);
                 }}
               />
             </div>
