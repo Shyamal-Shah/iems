@@ -6,6 +6,7 @@ import AcademicYear from "./academic_year";
 import InstituteDegree from "./institute_degree";
 import Pedagogy from "./pedagogy";
 import ExamSchedule from "./exam_schedule";
+import NotEligible from "./not_eligible";
 
 export default combineReducers({
   Alert,
@@ -15,4 +16,5 @@ export default combineReducers({
   InstituteDegree,
   Pedagogy,
   ExamSchedule,
+  NotEligible,
 });
