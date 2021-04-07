@@ -1,5 +1,9 @@
 import axios from 'axios';
-import { EXAM_SCHEDULE_ERROR, EXAM_SCHEDULE_LOADED } from './types';
+import {
+  EXAM_SCHEDULES_LOADED,
+  EXAM_SCHEDULE_ERROR,
+  EXAM_SCHEDULE_LOADED,
+} from './types';
 import { setAlert } from './alert';
 
 export const addExamSchedule = (formData, academicYear, semesterNo) => async (
@@ -55,6 +59,33 @@ export const getExamScheduleSN = ({
       payload: res.data,
     });
     return res.data;
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: EXAM_SCHEDULE_ERROR,
+    });
+  }
+};
+
+export const getExamScheduleSG = ({
+  semesterGroup,
+  academicYear,
+  testName,
+}) => async (dispatch) => {
+  semesterGroup = semesterGroup ? semesterGroup : 'NA';
+  try {
+    const res = await axios.get('/api/exam-schedule/', {
+      params: {
+        semesterGroup,
+        academicYear,
+        testName,
+      },
+    });
+    dispatch({
+      type: EXAM_SCHEDULES_LOADED,
+      payload: res.data,
+    });
+    return;
   } catch (err) {
     console.log(err);
     dispatch({

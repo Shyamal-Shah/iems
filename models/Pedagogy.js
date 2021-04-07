@@ -1,9 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
+// Pedagogy Schema containing subject(Foregin Key), academicYear(Foregin Key),
+// semester, name, mode, component, createdUserID(Foreign Key), recStatus,
+// modifiedUserID(Foreign Key) and timeStamps for created and modified time
 const PedagogySchema = new mongoose.Schema(
   {
     subject: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "subjects",
+      ref: 'subjects',
       required: true,
     },
     academicYear: {
@@ -32,7 +36,9 @@ const PedagogySchema = new mongoose.Schema(
       },
     ],
   },
+  // Creates timestamps for record created and when it is modified
   { timestamps: true }
 );
 
-module.exports = Pedagody = mongoose.model("pedagogies", PedagogySchema);
+// Export the schema with table name tblPedagogies
+module.exports = Pedagody = mongoose.model('pedagogies', PedagogySchema);

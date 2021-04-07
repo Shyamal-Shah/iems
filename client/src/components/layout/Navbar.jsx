@@ -8,6 +8,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
+  // Lists of links to be displayed when logged in
   const authLinks = (
     <Fragment>
       <li className='nav-item'>
@@ -45,7 +46,7 @@ const Navbar = () => {
       <li className='nav-item'>
         <Link
           className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
-          to='seatingArrangement'
+          to='/seatingArrangement'
         >
           Seating Arrangement
         </Link>
@@ -63,6 +64,8 @@ const Navbar = () => {
       </li>
     </Fragment>
   );
+  
+  // Lists of links to be displayed when user is not logged in
   const guestLinks = (
     <li className='nav-item'>
       <Link
@@ -73,6 +76,8 @@ const Navbar = () => {
       </Link>
     </li>
   );
+
+  // Links to be displayed on Dashboard.js
   const dashboardLinks = (
     <li className='nav-item'>
       <a
@@ -87,6 +92,7 @@ const Navbar = () => {
     </li>
   );
 
+  // Navbar component that is rendered
   return (
     <nav
       className='navbar navbar-expand-lg fixed-top p-1 shadow-sm '

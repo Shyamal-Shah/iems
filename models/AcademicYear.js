@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+
+// Academic Year schema containing year, degreeId (Foreign Key), semesterNo, 
+// subjectId (Foreign Key), createdUserID(Foreign Key), recStatus, modifiedUserID
+// (Foreign Key) and timeStamps for created and modified time
 const AcademicYearSchema = new mongoose.Schema(
   {
     year: {
@@ -28,9 +32,11 @@ const AcademicYearSchema = new mongoose.Schema(
       },
     ],
   },
+  // Creates timestamps for record created and when it is modified
   { timestamps: true }
 );
 
+// Export the schema with table name tblAcademicYear
 module.exports = AcademicYear = mongoose.model(
   'academicYear',
   AcademicYearSchema

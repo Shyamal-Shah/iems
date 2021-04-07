@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// Reusable dropdown component with label
 const DropDown = ({
   id,
   title,

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DropDown from '../layout/DropDown';
 
+// Reusable component for each pedagogy containing Name, Mode and weightage of each pedagogy
 const Component = ({
   index,
   cName,

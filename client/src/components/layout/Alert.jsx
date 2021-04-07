@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+// Render an alert message if alert state is changed
 const Alert = () => {
   const alerts = useSelector((state) => state.Alert);
   return (

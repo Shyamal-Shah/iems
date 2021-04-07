@@ -6,20 +6,27 @@ const InstituteDegree = require('../../models/InstituteDegree');
 
 // @router POST api/institute
 // @desc Add new Degree
-// @access Public
+// @access PRIVATE
 router.post(
   '/',
+  // Check if minimum 1 degree and name of institute is supplied
   [
+    auth,
     check('instituteName', 'Institute name is required.').notEmpty(),
     check('degrees', 'Degrees are required.').isArray({ min: 1 }),
   ],
   async (req, res) => {
+    // If any argument check fails return the array of errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    // Destructure instituteName and degrees from req.body
     const { instituteName, degrees } = req.body;
+
+    // Try all the mongoDb operations
     try {
+      // If record does not exists add a new record
       let institute = await InstituteDegree.findOne({ instituteName });
       if (institute) {
         return res
@@ -33,6 +40,7 @@ router.post(
       await institute.save();
       res.json({ msg: 'Record added.', institute });
     } catch (err) {
+      // Catch any error that occurs due to mongoDb operations
       console.error(err.message);
       return res.status(500).send('Server Error.');
     }
@@ -41,10 +49,11 @@ router.post(
 
 // @router GET api/institute/?id&?instituteName&?degreeName
 // @desc Get institutes and degrees based on query
-// @access Public
+// @access PRIVATE
 router.get('/', auth, async (req, res) => {
   try {
     if (req.query.id) {
+      // Find record based on the id if the length of passed id is equal to 24
       if (req.query.id.length != 24) {
         return res
           .status(400)
@@ -58,6 +67,7 @@ router.get('/', auth, async (req, res) => {
       }
       return res.json(institute);
     } else if (req.query.instituteName) {
+      // Find record if instituteName is passed
       let institute = await InstituteDegree.findOne({
         instituteName: req.query.instituteName,
       });
@@ -66,6 +76,7 @@ router.get('/', auth, async (req, res) => {
           errors: [{ msg: 'Institute with this name does not exists.' }],
         });
       }
+      // Filter records with degreeName if degreeName is also passed
       if (req.query.degreeName) {
         let inst = institute;
         inst.degrees = institute.degrees.filter(
@@ -80,12 +91,16 @@ router.get('/', auth, async (req, res) => {
       }
       return res.json(institute);
     } else if (Object.keys(req.query).length == 0) {
-      let institutes = await InstituteDegree.find({}).sort({'instituteName':1});
+      // If no queries is passed return all the records
+      let institutes = await InstituteDegree.find({}).sort({
+        instituteName: 1,
+      });
       res.json(institutes);
     } else {
       res.status(400).send('Bad request');
     }
   } catch (err) {
+    // Catch any error that occurs due to mongoDb operations
     console.log(err.message);
     return res.status(500).send('Server Error.');
   }
@@ -93,17 +108,23 @@ router.get('/', auth, async (req, res) => {
 
 // @router PUT api/institute/:instituteId
 // @desc Add more degrees to an institute
-// @access Public
+// @access PRIVATE
 router.put(
   '/:instituteId',
-  [check('degrees', 'Degrees are required.').isArray({ min: 1 })],
+  // Check if atleast one degree is passed
+  [auth, check('degrees', 'Degrees are required.').isArray({ min: 1 })],
   async (req, res) => {
+    // If any argument check fails return the array of errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    // Destructure degrees from req.body
     const { degrees } = req.body;
+
+    // Try all the mongoDb operations
     try {
+      // Add new degrees to the end if it already does not exists
       let institute = await InstituteDegree.findById(req.params.instituteId);
       if (!institute) {
         return res.status(400).json({
@@ -120,6 +141,7 @@ router.put(
       await institute.save();
       res.json(institute);
     } catch (err) {
+      // Catch any error that occurs due to mongoDb operations
       console.error(err.message);
       return res.status(500).send('Server Error.');
     }

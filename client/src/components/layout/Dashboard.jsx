@@ -15,29 +15,31 @@ import {
 } from '../../actions/current';
 
 const Dashboard = () => {
+  // Create an object to dispatch actions using useDispatch
   const dispatch = useDispatch();
+
+  // Get data from current state using useSelector
   const { institutes, loading } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
-
-  useEffect(() => {
-    dispatch(getInstitutes());
-  }, [dispatch]);
-
-  const currentState = useSelector((state) => state.CurrentState);
-
   const {
     institute,
     degree,
     academicYear,
     semesterGroup,
     semesterNo,
-  } = currentState;
+  } = useSelector((state) => state.CurrentState);
+
+  // Get institutes as soon as this component loads
+  useEffect(() => {
+    dispatch(getInstitutes());
+  }, [dispatch]);
 
   return (
     !loading && (
       <Fragment>
         <div className='row py-3'>
           <div className='col-lg-4'></div>
+          {/* Card 2: Render dropdowns for subject name, number of components type of export*/}
           <div className='col-lg-4'>
             <form>
               <div className='card h-100 shadow'>
@@ -211,6 +213,4 @@ const Dashboard = () => {
   );
 };
 
-
-
-export default (Dashboard);
+export default Dashboard;

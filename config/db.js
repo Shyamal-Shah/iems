@@ -3,6 +3,7 @@ const config = require('config');
 
 const db = config.get('mongoURI');
 
+// Function connects to the mongoDB cloud database using credenrials
 const connectDB = async () => {
   try {
     await mongoose.connect(db, {

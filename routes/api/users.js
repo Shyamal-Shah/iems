@@ -6,9 +6,10 @@ const bcrypt = require('bcryptjs');
 
 // @router  POST api/users/register
 // @desc    Register new users
-// @access  Public
+// @access  PUBLIC
 router.post(
   '/register',
+  // Check if name, email and password of minimum 6 characters exists
   [
     check('name', 'Name is required.').notEmpty(),
     check('email', 'Please include a valid email.').isEmail(),
@@ -18,13 +19,18 @@ router.post(
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
+    // If any argument check fails return the array of errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
+    
+    // Destructure name, email and password from req.body
     const { name, email, password } = req.body;
+   
+    // Try all the mongoDb operations
     try {
-      // Check if user already exists
+      // Add new record if user does not exists
       let user = await User.findOne({ email });
       if (user) {
         return res.status(400).json({

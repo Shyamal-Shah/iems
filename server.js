@@ -1,5 +1,5 @@
-const express = require("express");
-const connectDB = require("./config/db");
+const express = require('express');
+const connectDB = require('./config/db');
 
 const app = express();
 
@@ -8,8 +8,6 @@ connectDB();
 
 // Init middleware
 app.use(express.json({ extended: false }));
-
-app.get("/", (req, res) => res.send("Api Stated.."));
 
 // Define routes
 app.use("/api/users", require("./routes/api/users"));
@@ -21,6 +19,10 @@ app.use("/api/academic-year", require("./routes/api/academicYear"));
 app.use("/api/exam-schedule", require("./routes/api/examSchedule"));
 app.use("/api/not-eligible", require("./routes/api/notEligible"));
 
+
+// Connect to environment port or 5500
 const PORT = process.env.PORT || 5500;
 
+// Start listening on specified port number
 app.listen(PORT, () => console.log(`Server started at port ${PORT}...`));
+app.get('/', (req, res) => res.send('Api Stated..'));

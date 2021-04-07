@@ -22,7 +22,8 @@ import store from './store';
 import Alert from './components/layout/Alert';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
-import DataExport from './components/Pedagogy/DataExport';
+import pDataExport from './components/Pedagogy/DataExport';
+import esDataExport from './components/ExamSchedule/DataExport';
 import Admin from './components/Admin/Admin';
 
 if (localStorage.getItem('token')) {
@@ -47,11 +48,6 @@ const App = () => {
               <PrivateRoute exact path='/pedagogy' component={Pedagogy} />
               <PrivateRoute
                 exact
-                path='/pedagogy/export-data/:expType'
-                component={DataExport}
-              />
-              <PrivateRoute
-                exact
                 path='/examSchedule'
                 component={ExamSchedule}
               />
@@ -60,6 +56,17 @@ const App = () => {
                 exact
                 path='/seatingArrangement'
                 component={SeatingArrangement}
+              />
+              {/* Routes for data export... */}
+              <PrivateRoute
+                exact
+                path='/pedagogy/export-data/:expType'
+                component={pDataExport}
+              />
+              <PrivateRoute
+                exact
+                path='/examSchedule/export-data/:expType'
+                component={esDataExport}
               />
               <PrivateRoute exact path='/admin' component={Admin} />
             </Switch>
