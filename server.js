@@ -10,13 +10,15 @@ connectDB();
 app.use(express.json({ extended: false }));
 
 // Define routes
-app.use('/api/users', require('./routes/api/users'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/institute', require('./routes/api/instituteDegree'));
-app.use('/api/subject', require('./routes/api/subject'));
-app.use('/api/pedagogy', require('./routes/api/pedagogy'));
-app.use('/api/academic-year', require('./routes/api/academicYear'));
-app.use('/api/exam-schedule', require('./routes/api/examSchedule'));
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/institute", require("./routes/api/instituteDegree"));
+app.use("/api/subject", require("./routes/api/subject"));
+app.use("/api/pedagogy", require("./routes/api/pedagogy"));
+app.use("/api/academic-year", require("./routes/api/academicYear"));
+app.use("/api/exam-schedule", require("./routes/api/examSchedule"));
+app.use("/api/not-eligible", require("./routes/api/notEligible"));
+
 
 // Connect to environment port or 5500
 const PORT = process.env.PORT || 5500;
