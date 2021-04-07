@@ -10,30 +10,40 @@ import {
 } from '../../actions/pedagogy';
 import {
   alignment,
+  allSems,
   border,
   dataFont,
+  evenSems,
   headerFill,
   headerFont,
-  subHeaderFill,
+  headers,
+  oddSems,
+  subHeader1Fill,
+  subHeader2Fill,
+  subHeader3Fill,
 } from '../../utils/defaults';
 
 function DataExport() {
+  // Get export type from url query string using use
   const { expType } = useParams();
-  const { academicYears } = useSelector((state) => state.AcademicYear);
-  const currentState = useSelector((state) => state.CurrentState);
-  const { pedagogies } = useSelector((state) => state.Pedagogy);
-  const dispatch = useDispatch();
 
+  // Get data from current state using useSelector
+  const { academicYears } = useSelector((state) => state.AcademicYear);
   const {
     institute,
     degree,
     academicYear,
     semesterGroup,
     semesterNo,
-  } = currentState;
+  } = useSelector((state) => state.CurrentState);
+  const { pedagogies } = useSelector((state) => state.Pedagogy);
 
+  // Create an object to dispatch actions using useDispatch
+  const dispatch = useDispatch();
+
+  // Get pedagogies based on the exportType specfied in the query string
   useEffect(() => {
-    if (academicYears.length > 0) {
+    if (academicYear) {
       const AYId = academicYears.filter((ay) => ay.year === academicYear)[0]
         ._id;
       switch (expType) {
@@ -50,8 +60,16 @@ function DataExport() {
           break;
       }
     }
-  }, []);
+  }, [
+    academicYear,
+    academicYears,
+    dispatch,
+    expType,
+    semesterGroup,
+    semesterNo,
+  ]);
 
+  // Render pedagogies onto the screen for each semester of the specified academic year
   const renderPedagogies = (pedagogies) => {
     return (
       pedagogies.length > 0 && (
@@ -102,14 +120,15 @@ function DataExport() {
     );
   };
 
+  // Render pedagogies for all semesters all semesters of current semesterGroup
   const renderSemesterPedagogies = (semesterGroup) => {
     let semesters = [];
-    if (semesterGroup === 'Even') semesters = [2, 4, 6, 8];
-    else if (semesterGroup === 'Odd') semesters = [1, 3, 5, 7];
-    else semesters = [1, 2, 3, 4, 5, 6, 7, 8];
+    if (semesterGroup === 'Even') semesters = evenSems;
+    else if (semesterGroup === 'Odd') semesters = oddSems;
+    else semesters = allSems;
 
     return semesters.map((i) => (
-      <Fragment>
+      <Fragment key={i}>
         <thead key={i}>
           <tr>
             <th colSpan='4' scope='col'>
@@ -118,55 +137,53 @@ function DataExport() {
           </tr>
         </thead>
         {renderPedagogies(
-          pedagogies.filter((pedagogy) => pedagogy.semester === i)
+          pedagogies.filter((pedagogy) => pedagogy.semester === parseInt(i))
         )}
       </Fragment>
     ));
   };
 
-  const addPedagogies = (pedagogies, worksheet, row) => {
+  // Sub-function to add pedagogies for each semester
+  const addPedagogies = (pedagogies, worksheet, row, cols) => {
     for (let i = 0; i < pedagogies.length; i++) {
       const { subject, components } = pedagogies[i];
       // Row For SubjectName
       worksheet.mergeCells(`B${row}:K${row}`);
       let cell = worksheet.getCell(`B${row}`);
-      cell.fill = subHeaderFill;
+      cell.fill = subHeader3Fill;
       cell.border = border;
       cell.value =
         subject.subjectCode + ' - ' + subject.subjectName.toUpperCase();
       row++;
       // Loop Through components
-      for (let k = 0; k <= components.length; k++) {
-        cell = worksheet.getCell(`B${row}`);
-        cell.value = k !== 0 ? k : 'Sr.No';
-        cell.border = border;
-        worksheet.mergeCells(`C${row}:E${row}`);
-        cell = worksheet.getCell(`C${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].name : 'Component';
-        worksheet.mergeCells(`F${row}:H${row}`);
-        cell = worksheet.getCell(`F${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].mode : 'Mode';
-        worksheet.mergeCells(`I${row}:K${row}`);
-        cell = worksheet.getCell(`I${row}`);
-        cell.font = k !== 0 ? dataFont : headerFont;
-        cell.border = border;
-        cell.value = k !== 0 ? components[k - 1].weightAge : 'WeightAge';
+      for (let k = 0; k < components.length; k++) {
+        const dataList = [
+          k + 1,
+          components[k].name,
+          components[k].mode,
+          components[k].weightAge,
+        ];
+        for (let j = 0; j < dataList.length; j++) {
+          worksheet.mergeCells(`${cols[j][0]}${row}:${cols[j][1]}${row}`);
+          let cell = worksheet.getCell(`${cols[j][0]}${row}`);
+          cell.font = dataFont;
+          cell.border = border;
+          cell.value = dataList[j];
+        }
         row++;
       }
     }
     return { worksheet, row };
   };
 
-  const excelExport = (btn) => {
+  // Function to create a excel sheet and add headers and dowload it.
+  const excelExport = (e) => {
+    e.preventDefault();
+    // Create new Excel file ans name it
     var ExcelJSWorkbook = new ExcelJS.Workbook();
     var worksheet = ExcelJSWorkbook.addWorksheet('Pedagogy');
-    const headers = [
-      'Charotar University of Science and Technology, Changa',
-      institute + ' ' + degree,
+    let sheetHeaders = [
+      ...headers,
       expType === 'Academic Year'
         ? `Academic Year (${academicYear})`
         : expType === 'Semester Group'
@@ -175,31 +192,51 @@ function DataExport() {
       'PEDAGOGY',
     ];
 
-    for (let i = 2; i <= 11; i++) {
+    let cols = [
+      ['B', 'B'],
+      ['C', 'E'],
+      ['F', 'H'],
+      ['I', 'K'],
+    ];
+    let titles = ['Sr.No', 'Component', 'Mode', 'WeightAge'];
+
+    // Add header to the worksheet
+    for (let i = 1; i <= 11; i++) {
+      if (i <= sheetHeaders.length) {
+        worksheet.mergeCells(`B${i}:K${i}`);
+        const cell = worksheet.getCell(`B${i}`);
+        cell.fill = headerFill;
+        cell.border = border;
+        cell.value = sheetHeaders[i - 1].toUpperCase();
+      } else if (i === sheetHeaders.length + 1) {
+        for (let j = 0; j < titles.length; j++) {
+          worksheet.mergeCells(`${cols[j][0]}${i}:${cols[j][1]}${i}`);
+          let cell = worksheet.getCell(`${cols[j][0]}${i}`);
+          cell.font = headerFont;
+          cell.border = border;
+          cell.fill = subHeader1Fill;
+          cell.value = titles[j];
+        }
+      }
       worksheet.getColumn(i).font = headerFont;
       worksheet.getColumn(i).alignment = alignment;
     }
-    for (let i = 1; i <= 4; i++) {
-      worksheet.mergeCells(`B${i}:K${i}`);
-      const cell = worksheet.getCell(`B${i}`);
-      cell.fill = headerFill;
-      cell.border = border;
-      cell.value = headers[i - 1].toUpperCase();
-    }
 
+    // Add pedagogies based on the value of expType i.e. export type mentioned in query string
     switch (expType) {
       case 'Academic Year':
-        for (let i = 1, row = 5; i <= 8; i++) {
+        for (let i = 1, row = sheetHeaders.length + 2; i <= 8; i++) {
           worksheet.mergeCells(`B${row}:K${row}`);
           let cell = worksheet.getCell(`B${row}`);
-          cell.fill = subHeaderFill;
+          cell.fill = subHeader2Fill;
           cell.border = border;
           cell.value = `Semester: ${i}`;
           row++;
           const x = addPedagogies(
             pedagogies.filter((pedagogy) => pedagogy.semester === i),
             worksheet,
-            row
+            row,
+            cols
           );
           worksheet = x.worksheet;
           row = x.row;
@@ -207,32 +244,41 @@ function DataExport() {
         break;
       case 'Semester Group':
         for (
-          let i = semesterGroup === 'Even' ? 2 : 1, row = 5;
+          let i = semesterGroup === 'Even' ? 2 : 1,
+            row = sheetHeaders.length + 2;
           i <= 8;
           i += 2
         ) {
           worksheet.mergeCells(`B${row}:K${row}`);
           let cell = worksheet.getCell(`B${row}`);
-          cell.fill = subHeaderFill;
+          cell.fill = subHeader2Fill;
           cell.border = border;
           cell.value = `Semester: ${i}`;
           row++;
           const x = addPedagogies(
             pedagogies.filter((pedagogy) => pedagogy.semester === i),
             worksheet,
-            row
+            row,
+            cols
           );
           worksheet = x.worksheet;
           row = x.row;
         }
         break;
       case 'Semester Number':
-        const x = addPedagogies(pedagogies, worksheet, 5);
+        const x = addPedagogies(
+          pedagogies,
+          worksheet,
+          sheetHeaders.length + 2,
+          cols
+        );
         worksheet = x.worksheet;
         break;
       default:
         break;
     }
+
+    // Create excel file from the create worksheet and save it
     ExcelJSWorkbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
         new Blob([buffer], { type: 'application/octet-stream' }),
@@ -241,6 +287,8 @@ function DataExport() {
     });
   };
 
+  // Redirect to Pedagogy.js if exportType, institute, degree, academicyear /
+  // or semestergroup is null else render the proper headers and pedagogies
   return expType &&
     institute &&
     degree &&

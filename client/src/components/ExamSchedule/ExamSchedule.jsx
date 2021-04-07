@@ -18,7 +18,7 @@ import {
   addExamSchedule,
   getExamScheduleSN,
 } from '../../actions/exam_schedule';
-import { EXAM_SCHEDULE_ERROR } from '../../actions/types';
+import { Link } from 'react-router-dom';
 
 const ExamSchedule = () => {
   const dispatch = useDispatch();
@@ -50,6 +50,8 @@ const ExamSchedule = () => {
 
   const { testName, examWeekFrom, examWeekTo, subjects } = formData;
 
+  const [expType, setExpType] = useState('');
+
   useEffect(() => {
     if (academicYear && semesterGroup && semesterNo) {
       const AYId = academicYears.filter((ay) => ay.year === academicYear)[0]
@@ -80,13 +82,17 @@ const ExamSchedule = () => {
   }, [testName]);
 
   useEffect(() => {
-    if (examSchedule) {
+    if (examSchedule && subjects) {
       let fd = { ...formData };
       fd.examWeekFrom = examSchedule.examWeekFrom;
       fd.examWeekTo = examSchedule.examWeekTo;
-      for (let i = 0; i < examSchedule.schedule.length; i++) {
-        fd[i + '-from'] = examSchedule.schedule[i].from;
-        fd[i + '-to'] = examSchedule.schedule[i].to;
+      for (let i = 0; i < subjects.length; i++) {
+        for (let index = 0; index < examSchedule.schedule.length; index++) {
+          if (subjects[i]._id === examSchedule.schedule[index].subjectId._id) {
+            fd[i + '-from'] = examSchedule.schedule[index].from;
+            fd[i + '-to'] = examSchedule.schedule[index].to;
+          }
+        }
       }
       setFormData(fd);
     } else {
@@ -248,7 +254,8 @@ const ExamSchedule = () => {
                     });
                   });
                   setFormData({
-                    ...formData,
+                    examWeekFrom,
+                    examWeekTo,
                     testName: e.target.value,
                     subjects,
                   });
@@ -298,6 +305,23 @@ const ExamSchedule = () => {
                   />
                 </div>
               </div>
+              <DropDown
+                title='Export Data For'
+                id='ddExpData'
+                isDisabled={semesterNo ? false : true}
+                value={expType}
+                onChange={(e) => {
+                  setExpType(e.target.value);
+                }}
+                isRequired={false}
+                options={['Unit Test 1', 'Unit Test 2']}
+              />
+              <Link
+                to={'/examSchedule/export-data/' + expType}
+                className={expType ? 'btn btn-dark' : 'btn btn-dark disabled'}
+              >
+                Export Data
+              </Link>
             </div>
           </div>
         </div>

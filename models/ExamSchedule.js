@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+
+// ExamSchedule Schema containing academicYear(Foreign Key), semesterNo, 
+// testName, examWeekFrom, examWeekTo, subjectId (Foreign Key), from, to, 
+// (Foreign Key)
 const ExamScheduleSchema = new mongoose.Schema(
   {
     academicYear: {
@@ -17,7 +21,8 @@ const ExamScheduleSchema = new mongoose.Schema(
     examWeekFrom:{
       type: String,
       required: true,
-    },examWeekTo:{
+    },
+    examWeekTo:{
       type: String,
       required: true,
     },
@@ -26,12 +31,6 @@ const ExamScheduleSchema = new mongoose.Schema(
         subjectId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'subjects',
-        },
-        subjectName: {
-          type: String,
-        },
-        subjectCode: {
-          type: String,
         },
         from: {
           type: String,
@@ -56,9 +55,11 @@ const ExamScheduleSchema = new mongoose.Schema(
       default: 'A',
     },
   },
+  // Creates timestamps for record created and when it is modified
   { timestamps: true }
 );
 
+// Export the schema with table name tblExamSchedule
 module.exports = ExamSchedule = mongoose.model(
   'tblExamSchedule',
   ExamScheduleSchema

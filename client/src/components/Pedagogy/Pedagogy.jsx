@@ -17,26 +17,28 @@ import { Link } from 'react-router-dom';
 import { oddSems, evenSems } from '../../utils/defaults';
 
 const Pedagogy = () => {
+  // Create an object to dispatch actions using useDispatch
   const dispatch = useDispatch();
+
+  // Get data from current state using useSelector
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
   const { pedagogy } = useSelector((state) => state.Pedagogy);
-  const currentState = useSelector((state) => state.CurrentState);
-
-  const [total, setTotal] = useState(0);
-  const [formData, setFormData] = useState({
-    subjectName: null,
-    noOfComponents: 1,
-  });
-
-  // Destructure currentState
   const {
     institute,
     degree,
     academicYear,
     semesterGroup,
     semesterNo,
-  } = currentState;
+  } = useSelector((state) => state.CurrentState);
+
+  // Creating formData, expType and total states using useState
+  const [total, setTotal] = useState(0);
+  const [formData, setFormData] = useState({
+    subjectName: null,
+    noOfComponents: 1,
+  });
+  const [expType, setExpType] = useState('');
 
   // Destructure formData
   const { subjectName, noOfComponents } = formData;
@@ -54,6 +56,7 @@ const Pedagogy = () => {
       });
   };
 
+  // Store subjects in state using useState
   const [subjects, setSubjects] = useState(
     academicYear && semesterNo && institute && degree && semesterGroup
       ? getSubjects(semesterNo).sort()
@@ -134,7 +137,7 @@ const Pedagogy = () => {
     }
   }, [noOfComponents, subjectName]);
 
-  // Total
+  // Update total when formData changes
   useEffect(() => {
     if (subjectName) {
       let t = 0;
@@ -146,6 +149,7 @@ const Pedagogy = () => {
     }
   }, [formData, subjectName]);
 
+  // Update color based on total value
   useEffect(() => {
     if (total !== 30) {
       document.getElementById('lblTotal').style.color = 'red';
@@ -154,9 +158,9 @@ const Pedagogy = () => {
     }
   }, [total, dispatch]);
 
-  const [expType, setExpType] = useState('');
   return (
     <form
+      // Add or update pedagogy on submit if total is 30
       onSubmit={(e) => {
         e.preventDefault();
         if (total === 30) {
@@ -173,6 +177,7 @@ const Pedagogy = () => {
       }}
     >
       <div className='row py-3'>
+        {/* Card 1: Render dropdowns for institute, degree, academic year, semester Group and semester number */}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -293,6 +298,7 @@ const Pedagogy = () => {
             </div>
           </div>
         </div>
+        {/* Card 2: Render dropdowns for subject name, number of components type of export*/}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -354,6 +360,7 @@ const Pedagogy = () => {
             </div>
           </div>
         </div>
+        {/* Card 3: Placeholder for rendering pedagogies */}
         <div className='col-md-6 pb-3'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -372,6 +379,5 @@ const Pedagogy = () => {
     </form>
   );
 };
-
 
 export default Pedagogy;
