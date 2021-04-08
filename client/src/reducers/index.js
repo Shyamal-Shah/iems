@@ -8,6 +8,9 @@ import Pedagogy from "./pedagogy";
 import ExamSchedule from "./exam_schedule";
 import NotEligible from "./not_eligible";
 
+// This is the root/main file of reducer
+// This will return the combineRducers.
+// Every reducer must return from here.
 export default combineReducers({
   Alert,
   Auth,

@@ -5,8 +5,9 @@ import {
   UPDATE_INSTITUTE,
   UPDATE_SEMESTER_GROUP,
   UPDATE_SEMESTER_NUMBER,
-} from './types';
+} from "./types";
 
+// Update the current state's institute field
 export const updateInstitute = (institute) => (dispatch) => {
   dispatch({
     type: UPDATE_INSTITUTE,
@@ -14,6 +15,7 @@ export const updateInstitute = (institute) => (dispatch) => {
   });
 };
 
+// Update the current state's degree field
 export const updateDegree = (degree) => (dispatch) => {
   dispatch({
     type: UPDATE_DEGREE,
@@ -21,12 +23,15 @@ export const updateDegree = (degree) => (dispatch) => {
   });
 };
 
+// Update the current state's academic year field
 export const updateAcademicYear = (academicYear) => (dispatch) => {
   dispatch({
     type: UPDATE_ACADEMIC_YEAR,
     payload: academicYear,
   });
 };
+
+// Update the current state's semester group field
 
 export const updateSemesterGroup = (group) => (dispatch) => {
   dispatch({
@@ -35,6 +40,7 @@ export const updateSemesterGroup = (group) => (dispatch) => {
   });
 };
 
+// Update the current state's semester field
 export const updateSemesterNo = (semesterNumber) => (dispatch) => {
   dispatch({
     type: UPDATE_SEMESTER_NUMBER,
@@ -42,6 +48,7 @@ export const updateSemesterNo = (semesterNumber) => (dispatch) => {
   });
 };
 
+// Clear the whole current state
 export const deleteCurrent = () => (dispatch) => {
   dispatch({
     type: DELETE_CURRENT,

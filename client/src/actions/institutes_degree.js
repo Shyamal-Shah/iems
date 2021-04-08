@@ -3,7 +3,8 @@ import axios from "axios";
 // Importing action types
 import { INSTITUTES_LOADED, INSTITUTES_ERROR } from "./types";
 
-// Get everthing from institute and degree
+// Get instituteName and degrees from instituteDegree
+// Object with degreeName field is present in degrees array.
 export const getInstitutes = () => async (dispatch) => {
   try {
     const res = await axios.get("/api/institute");
