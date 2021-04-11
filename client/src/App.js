@@ -24,6 +24,7 @@ import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
 import pDataExport from './components/Pedagogy/DataExport';
 import esDataExport from './components/ExamSchedule/DataExport';
+import neDataExport from './components/NEList/DataExport';
 import Admin from './components/Admin/Admin';
 
 if (localStorage.getItem('token')) {
@@ -67,6 +68,11 @@ const App = () => {
                 exact
                 path='/examSchedule/export-data/:expType'
                 component={esDataExport}
+              />
+              <PrivateRoute
+                exact
+                path='/neList/export-data/:expType/:componentName'
+                component={neDataExport}
               />
               <PrivateRoute exact path='/admin' component={Admin} />
             </Switch>

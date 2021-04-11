@@ -344,7 +344,7 @@ function DataExport() {
                 )}
               </div>
             </div>
-            <div className='row mx-1 overflow-auto'>
+            <div className='row mx-1 table-responsive'>
               <table className='table table-striped'>
                 {expType === 'Semester Number' && renderPedagogies(pedagogies)}
                 {expType === 'Semester Group' &&

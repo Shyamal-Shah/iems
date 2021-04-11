@@ -65,8 +65,8 @@ const ExamSchedule = () => {
         })
       );
     }
-    setFormData({ ...formData, testName: '', subjects: [] });
-  }, [dispatch, semesterNo, academicYear, semesterGroup]);
+    setFormData((state) => ({ ...state, testName: '', subjects: [] }));
+  }, [dispatch, semesterNo, academicYear, semesterGroup, academicYears]);
 
   useEffect(() => {
     testName &&
@@ -79,7 +79,7 @@ const ExamSchedule = () => {
           testName,
         })
       );
-  }, [testName]);
+  }, [testName, dispatch, semesterNo, academicYear, academicYears]);
 
   useEffect(() => {
     if (examSchedule && subjects) {
@@ -103,7 +103,7 @@ const ExamSchedule = () => {
         subjects,
       });
     }
-  }, [examSchedule]);
+  }, [examSchedule, subjects, testName, examWeekTo, examWeekFrom]);
 
   return (
     <form

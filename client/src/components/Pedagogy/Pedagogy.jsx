@@ -103,7 +103,7 @@ const Pedagogy = () => {
     if (institute == null) {
       dispatch(getInstitutes());
     }
-  }, []);
+  }, [dispatch, institute]);
 
   // Fetch pedagogy for current subject
   useEffect(() => {
@@ -113,9 +113,12 @@ const Pedagogy = () => {
   // Update number of components based on pedagogy object
   useEffect(() => {
     if (subjectName && pedagogy !== null) {
-      setFormData({ ...formData, noOfComponents: pedagogy.components.length });
+      setFormData((state) => ({
+        ...state,
+        noOfComponents: pedagogy.components.length,
+      }));
     } else {
-      setFormData({ ...formData, noOfComponents: 1 });
+      setFormData((state) => ({ ...state, noOfComponents: 1 }));
     }
   }, [pedagogy]);
 
