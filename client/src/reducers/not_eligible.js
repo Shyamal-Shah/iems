@@ -1,19 +1,31 @@
-import { LOADED_ELIGIBLE_STUDENT, NOT_ELIGIBLE_ERROR } from "../actions/types";
+import {
+  NOT_ELIGIBLITY_LISTS_LOADED,
+  NOT_ELIGIBLITY_LIST_ERROR,
+  NOT_ELIGIBLITY_LIST_LOADED,
+} from '../actions/types';
 
 const initialState = {
-  ne: [],
+  neList: [],
+  neLists: [],
 };
 
 const NotEligible = (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
-    case LOADED_ELIGIBLE_STUDENT:
+    case NOT_ELIGIBLITY_LIST_LOADED:
       return {
-        ne: payload,
+        neList: payload,
+        neLists: [],
       };
-    case NOT_ELIGIBLE_ERROR:
+    case NOT_ELIGIBLITY_LISTS_LOADED:
       return {
-        ne: [],
+        neList: [],
+        neLists: payload,
+      };
+    case NOT_ELIGIBLITY_LIST_ERROR:
+      return {
+        neList: [],
+        neLists: [],
       };
     default:
       return state;

@@ -22,18 +22,18 @@ router.get('/', auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
+    console.log(err);
     return res.status(500).send('Server Error.');
   }
 });
 
 // @router  POST api/auth
 // @desc    Authenticate user and get token (Login)
-// @access  PRIVATE
+// @access  PUBLIC
 router.post(
   '/',
   [
     // Check id email is supplied and if password if of valid length
-    auth,
     check('email', 'Please include a valid email.').isEmail(),
     check(
       'password',

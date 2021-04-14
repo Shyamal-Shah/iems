@@ -1,9 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const NotEligibilitySchema = new mongoose.Schema(
   {
     academicYear: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'academicYear',
       required: true,
     },
     semester: {
@@ -12,13 +13,13 @@ const NotEligibilitySchema = new mongoose.Schema(
     },
     subject: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "subjects",
+      ref: 'subjects',
     },
     componentName: {
       type: String,
       required: true,
     },
-    students: [
+    neStudents: [
       {
         studentId: {
           type: String,
@@ -28,15 +29,15 @@ const NotEligibilitySchema = new mongoose.Schema(
     ],
     createdUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
     },
     modifiedUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
     },
     recStatus: {
       type: String,
-      default: "A",
+      default: 'A',
     },
   },
   {
@@ -45,6 +46,6 @@ const NotEligibilitySchema = new mongoose.Schema(
 );
 
 module.exports = NotEligibility = mongoose.model(
-  "tblNotEligibleStudents",
+  'tblNotEligibleStudents',
   NotEligibilitySchema
 );

@@ -19,6 +19,7 @@ import {
   getExamScheduleSN,
 } from '../../actions/exam_schedule';
 import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
 
 const ExamSchedule = () => {
   const dispatch = useDispatch();
@@ -65,8 +66,8 @@ const ExamSchedule = () => {
         })
       );
     }
-    setFormData({ ...formData, testName: '', subjects: [] });
-  }, [dispatch, semesterNo, academicYear, semesterGroup]);
+    setFormData((state) => ({ ...state, testName: '', subjects: [] }));
+  }, [dispatch, semesterNo, academicYear, semesterGroup, academicYears]);
 
   useEffect(() => {
     testName &&
@@ -79,7 +80,7 @@ const ExamSchedule = () => {
           testName,
         })
       );
-  }, [testName]);
+  }, [testName, dispatch, semesterNo, academicYear, academicYears]);
 
   useEffect(() => {
     if (examSchedule && subjects) {
@@ -103,19 +104,40 @@ const ExamSchedule = () => {
         subjects,
       });
     }
-  }, [examSchedule]);
+  }, [examSchedule, subjects, testName, examWeekTo, examWeekFrom]);
+
+  const validateExamTime = () => {
+    for (let i = 0; i < subjects.length; i++) {
+      for (let j = i + 1; j < subjects.length; j++) {
+        if (formData[`${j}-to`] === formData[`${i}-to`]) {
+          console.log(formData[`${j}-to`], formData[`${i}-to`], j, i);
+          console.log(formData[`${j}-from`], formData[`${i}-from`], j, i);
+          dispatch(
+            setAlert('Two exams cannot start on the same time', 'danger')
+          );
+          return false;
+        }
+        if (formData[`${j}-from`] === formData[`${i}-from`]) {
+          dispatch(setAlert('Two exams cannot have same time', 'danger'));
+          return false;
+        }
+      }
+    }
+    return true;
+  };
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        dispatch(
-          addExamSchedule(
-            formData,
-            academicYears.filter((ay) => ay.year === academicYear)[0]._id,
-            semesterNo
-          )
-        );
+        validateExamTime() &&
+          dispatch(
+            addExamSchedule(
+              formData,
+              academicYears.filter((ay) => ay.year === academicYear)[0]._id,
+              semesterNo
+            )
+          );
       }}
     >
       <div className='row py-3'>
@@ -254,8 +276,7 @@ const ExamSchedule = () => {
                     });
                   });
                   setFormData({
-                    examWeekFrom,
-                    examWeekTo,
+                    ...formData,
                     testName: e.target.value,
                     subjects,
                   });

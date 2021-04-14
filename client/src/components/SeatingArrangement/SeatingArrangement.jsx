@@ -54,7 +54,7 @@ const SeatingArrangement = () => {
     if (institute == null) {
       dispatch(getInstitutes());
     }
-  }, []);
+  }, [dispatch, institute]);
 
   //Sorting semesterNo.
   const [subjects, setSubjects] = useState(
