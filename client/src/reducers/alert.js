@@ -1,9 +1,13 @@
-import { SET_ALERT, REMOVE_ALERT } from '../actions/types';
+import { SET_ALERT, REMOVE_ALERT } from "../actions/types";
 
+// Set the initialState.
 const initialState = [];
 
+// This method is to set the alert state.
 const Alert = (state = initialState, action) => {
+  // Destructuring the type and payload from action
   const { type, payload } = action;
+  // Based on the action type returing the state
   switch (type) {
     case SET_ALERT:
       return [...state, payload];

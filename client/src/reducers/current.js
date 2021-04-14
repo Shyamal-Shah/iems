@@ -5,7 +5,10 @@ const {
   UPDATE_INSTITUTE,
   DELETE_CURRENT,
   UPDATE_SEMESTER_GROUP,
-} = require('../actions/types');
+} = require("../actions/types");
+
+// Set the initialState
+// Set the institute, degree, academicYear, semesterGroup, semesterNo as null in state
 
 const initalState = {
   institute: null,
@@ -15,8 +18,11 @@ const initalState = {
   semesterNo: null,
 };
 
+// This method is to set the current state.
 const CurrentState = (state = initalState, action) => {
+  // Destructuring the type and payload from action
   const { type, payload } = action;
+  // Based on the action type returing the state
   switch (type) {
     case UPDATE_INSTITUTE:
       return {
