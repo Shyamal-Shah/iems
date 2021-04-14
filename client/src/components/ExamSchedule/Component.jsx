@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React, { Fragment } from 'react';
 
+// Reusable component that returns examfrom and examto components  
 const Component = ({
   newSubject = true,
   index,

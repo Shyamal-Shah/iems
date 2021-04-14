@@ -22,7 +22,10 @@ import { Link } from 'react-router-dom';
 import { setAlert } from '../../actions/alert';
 
 const ExamSchedule = () => {
+  // Create an object to dispatch actions using useDispatch
   const dispatch = useDispatch();
+
+  // Get data from current state using useSelector
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
   const {
@@ -42,17 +45,19 @@ const ExamSchedule = () => {
     }
   }, [dispatch, institute]);
 
+  // Creating formData, and expType states using useState
   const [formData, setFormData] = useState({
     testName: '',
     examWeekFrom: moment().format('yyyy-MM-DD'),
     examWeekTo: moment().add(7, 'days').format('yyyy-MM-DD'),
     subjects: [],
   });
-
-  const { testName, examWeekFrom, examWeekTo, subjects } = formData;
-
   const [expType, setExpType] = useState('');
 
+  // Destructure formData
+  const { testName, examWeekFrom, examWeekTo, subjects } = formData;
+
+  // If academicYear, semesterGroup and semesterNo is available fetch pedagogies and for semesterNo
   useEffect(() => {
     if (academicYear && semesterGroup && semesterNo) {
       const AYId = academicYears.filter((ay) => ay.year === academicYear)[0]
@@ -69,6 +74,7 @@ const ExamSchedule = () => {
     setFormData((state) => ({ ...state, testName: '', subjects: [] }));
   }, [dispatch, semesterNo, academicYear, semesterGroup, academicYears]);
 
+  // When testName is changed get corresponding examScheule
   useEffect(() => {
     testName &&
       dispatch(
@@ -82,6 +88,7 @@ const ExamSchedule = () => {
       );
   }, [testName, dispatch, semesterNo, academicYear, academicYears]);
 
+  // After fetching examSchdule append schedule dates to formData
   useEffect(() => {
     if (examSchedule && subjects) {
       let fd = { ...formData };
@@ -106,6 +113,7 @@ const ExamSchedule = () => {
     }
   }, [examSchedule, subjects, testName, examWeekTo, examWeekFrom]);
 
+  // Check if tow exams' timming does not clash
   const validateExamTime = () => {
     for (let i = 0; i < subjects.length; i++) {
       for (let j = i + 1; j < subjects.length; j++) {
@@ -126,6 +134,7 @@ const ExamSchedule = () => {
     return true;
   };
 
+  // Return ExamSchdule Component
   return (
     <form
       onSubmit={(e) => {
@@ -141,6 +150,7 @@ const ExamSchedule = () => {
       }}
     >
       <div className='row py-3'>
+        {/* Card 1: Render dropdowns for institute, degree, academic year, semester Group and semester number */}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -258,6 +268,7 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
+        {/* Card 2: Render dropdowns for componentName and type of export, and textboxes for examWeekFrom and to*/}{' '}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -346,6 +357,7 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
+        {/* Card 3: Placeholder for rendering schedules */}
         <div className='col-md-6 pb-3'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
