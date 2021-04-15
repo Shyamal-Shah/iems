@@ -13,7 +13,7 @@ const Navbar = () => {
     <Fragment>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           to='/dashboard'
         >
           Dashboard
@@ -21,7 +21,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           to='/pedagogy'
         >
           Pedagogy
@@ -29,7 +29,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           to='/examSchedule'
         >
           Exam Schedule
@@ -37,7 +37,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           to='/neList'
         >
           Not-eligibilty List
@@ -45,7 +45,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <Link
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           to='/seatingArrangement'
         >
           Seating Arrangement
@@ -53,7 +53,7 @@ const Navbar = () => {
       </li>
       <li className='nav-item'>
         <a
-          className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+          className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
           href='#!'
           onClick={() => {
             dispatch(logout());
@@ -64,12 +64,12 @@ const Navbar = () => {
       </li>
     </Fragment>
   );
-  
+
   // Lists of links to be displayed when user is not logged in
   const guestLinks = (
     <li className='nav-item'>
       <Link
-        className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+        className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
         to='/login'
       >
         Login
@@ -81,7 +81,7 @@ const Navbar = () => {
   const dashboardLinks = (
     <li className='nav-item'>
       <a
-        className='nav-link btn btn-outline-info mb-3 mb-md-0 mr-3 px-3'
+        className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
         href='#!'
         onClick={() => {
           dispatch(logout());

@@ -19,9 +19,13 @@ import {
   getExamScheduleSN,
 } from '../../actions/exam_schedule';
 import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
 
 const ExamSchedule = () => {
+  // Create an object to dispatch actions using useDispatch
   const dispatch = useDispatch();
+
+  // Get data from current state using useSelector
   const { institutes } = useSelector((state) => state.InstituteDegree);
   const { academicYears } = useSelector((state) => state.AcademicYear);
   const {
@@ -41,17 +45,19 @@ const ExamSchedule = () => {
     }
   }, [dispatch, institute]);
 
+  // Creating formData, and expType states using useState
   const [formData, setFormData] = useState({
     testName: '',
     examWeekFrom: moment().format('yyyy-MM-DD'),
     examWeekTo: moment().add(7, 'days').format('yyyy-MM-DD'),
     subjects: [],
   });
-
-  const { testName, examWeekFrom, examWeekTo, subjects } = formData;
-
   const [expType, setExpType] = useState('');
 
+  // Destructure formData
+  const { testName, examWeekFrom, examWeekTo, subjects } = formData;
+
+  // If academicYear, semesterGroup and semesterNo is available fetch pedagogies and for semesterNo
   useEffect(() => {
     if (academicYear && semesterGroup && semesterNo) {
       const AYId = academicYears.filter((ay) => ay.year === academicYear)[0]
@@ -65,9 +71,10 @@ const ExamSchedule = () => {
         })
       );
     }
-    setFormData({ ...formData, testName: '', subjects: [] });
-  }, [dispatch, semesterNo, academicYear, semesterGroup]);
+    setFormData((state) => ({ ...state, testName: '', subjects: [] }));
+  }, [dispatch, semesterNo, academicYear, semesterGroup, academicYears]);
 
+  // When testName is changed get corresponding examScheule
   useEffect(() => {
     testName &&
       dispatch(
@@ -79,8 +86,9 @@ const ExamSchedule = () => {
           testName,
         })
       );
-  }, [testName]);
+  }, [testName, dispatch, semesterNo, academicYear, academicYears]);
 
+  // After fetching examSchdule append schedule dates to formData
   useEffect(() => {
     if (examSchedule && subjects) {
       let fd = { ...formData };
@@ -103,22 +111,46 @@ const ExamSchedule = () => {
         subjects,
       });
     }
-  }, [examSchedule]);
+  }, [examSchedule, subjects, testName, examWeekTo, examWeekFrom]);
 
+  // Check if tow exams' timming does not clash
+  const validateExamTime = () => {
+    for (let i = 0; i < subjects.length; i++) {
+      for (let j = i + 1; j < subjects.length; j++) {
+        if (formData[`${j}-to`] === formData[`${i}-to`]) {
+          console.log(formData[`${j}-to`], formData[`${i}-to`], j, i);
+          console.log(formData[`${j}-from`], formData[`${i}-from`], j, i);
+          dispatch(
+            setAlert('Two exams cannot start on the same time', 'danger')
+          );
+          return false;
+        }
+        if (formData[`${j}-from`] === formData[`${i}-from`]) {
+          dispatch(setAlert('Two exams cannot have same time', 'danger'));
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  // Return ExamSchdule Component
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        dispatch(
-          addExamSchedule(
-            formData,
-            academicYears.filter((ay) => ay.year === academicYear)[0]._id,
-            semesterNo
-          )
-        );
+        validateExamTime() &&
+          dispatch(
+            addExamSchedule(
+              formData,
+              academicYears.filter((ay) => ay.year === academicYear)[0]._id,
+              semesterNo
+            )
+          );
       }}
     >
       <div className='row py-3'>
+        {/* Card 1: Render dropdowns for institute, degree, academic year, semester Group and semester number */}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -236,6 +268,7 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
+        {/* Card 2: Render dropdowns for componentName and type of export, and textboxes for examWeekFrom and to*/}{' '}
         <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
@@ -254,8 +287,7 @@ const ExamSchedule = () => {
                     });
                   });
                   setFormData({
-                    examWeekFrom,
-                    examWeekTo,
+                    ...formData,
                     testName: e.target.value,
                     subjects,
                   });
@@ -325,6 +357,7 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
+        {/* Card 3: Placeholder for rendering schedules */}
         <div className='col-md-6 pb-3'>
           <div className='card h-100 shadow'>
             <div className='card-body'>

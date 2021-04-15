@@ -1,36 +1,34 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
+const { check, validationResult } = require('express-validator');
+const auth = require('../../middleware/auth');
 
-const NotEligible = require("../../models/NotEligibility");
+const NotEligible = require('../../models/NotEligibility');
 
 // @router POST api/not-eligible
 // @desc Add new not eligible students
-// @access Private
+// @access PRIVATE
 router.post(
-  "/",
+  '/',
   [
     auth,
-    check("academicYear", "Academic Year is required").notEmpty(),
-    check("semester", "Semester is required").notEmpty(),
-    check("subject", "Subject is required").notEmpty(),
-    check("componentName", "Component Name is required").notEmpty(),
-    check("students", "Students is required").isArray({ min: 1 }),
+    check('academicYear', 'Academic Year is required').notEmpty(),
+    check('semester', 'Semester is required').notEmpty(),
+    check('subject', 'Subject is required').notEmpty(),
+    check('componentName', 'Component Name is required').notEmpty(),
+    check('neStudents', 'Students is required').isArray({ min: 1 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
-        msg: "Validation error occured.",
-      });
+      return res.status(400).json({ errors: errors.array() });
     }
     const {
       academicYear,
       semester,
       subject,
       componentName,
-      students,
+      neStudents,
     } = req.body;
 
     try {
@@ -42,7 +40,7 @@ router.post(
       });
       if (ne) {
         ne.modifiedUserID = req.user.id;
-        ne.students = students;
+        ne.neStudents = neStudents;
       } else {
         ne = new NotEligible({
           modifiedUserID: req.user.id,
@@ -51,31 +49,31 @@ router.post(
           semester,
           subject,
           componentName,
-          students,
+          neStudents,
         });
       }
 
       await ne.save();
       res.json({
-        msg: "Not eligible students are added.",
+        errors: [{ msg: `Not eligible students for ${componentName} added.` }],
       });
     } catch (e) {
       console.log(e);
-      return res.status(500).send("Server Error.");
+      return res.status(500).send('Server Error.');
     }
   }
 );
 
 // @router GET api/not-eligible/?academicYear?semester?subject?componentName
 // @desc Get not eligible students
-// @access Private
-router.get("/", auth, async (req, res) => {
+// @access PRIVATE
+router.get('/', auth, async (req, res) => {
   const { academicYear, subject, semester, componentName } = req.query;
   try {
     if (subject) {
       if (subject.length != 24) {
         return res.status(400).json({
-          errors: [{ msg: "Invalid Subject Id. No record found" }],
+          errors: [{ msg: 'Invalid Subject Id. No record found' }],
         });
       }
       if (academicYear && semester && componentName) {
@@ -87,14 +85,30 @@ router.get("/", auth, async (req, res) => {
         });
         if (!ne) {
           return res.status(400).json({
-            msg: "Records with this semester number does not exist.",
+            errors: [
+              { msg: 'Records with this semester number does not exist.' },
+            ],
           });
         }
-        return res.json(ne.students);
+        return res.json(ne.neStudents);
       }
+    } else if (academicYear && semester) {
+      let ne = await NotEligible.find({
+        academicYear,
+        semester,
+      });
+      if (ne.length < 0) {
+        return res.status(400).json({
+          errors: [
+            { msg: 'Records with this semester number does not exist.' },
+          ],
+        });
+      }
+      return res.json(ne);
     }
-  } catch (e) {
-    return res.send(e.message);
+  } catch (err) {
+    console.log(err.message);
+    return res.status(500).send('Server Error.');
   }
 });
 

@@ -32,6 +32,7 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
     dispatch(setAlert(res.data.msg, "success"));
   } catch (err) {
     console.log(err);
+    dispatch(setAlert(err.response.data, 'danger'));
   }
 };
 

@@ -6,30 +6,37 @@ import { login } from '../../actions/auth';
 const Login = () => {
   const dispatch = useDispatch();
 
+  // Fetch isAuthenticated from current state Auth
   const isAuthenticated = useSelector((state) => state.Auth.isAuthenticated);
 
+  // Create state for storing email and password
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  // Destructure email and password from formData
   const { email, password } = formData;
 
+  // Update formData on onChange event of textbox
   const onChange = (e) =>
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
 
+  // Login request after submiting form
   const onSubmit = async (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));
   };
 
+  // if already logged in redirect to dashboard
   if (isAuthenticated) {
     return <Redirect to='/dashboard' />;
   }
 
+  // If not authenticated return login page
   return (
     <Fragment>
       <div className='row'>
@@ -37,9 +44,7 @@ const Login = () => {
         <div className='col-md'>
           <div className='card my-4 shadow p-2'>
             <div className='card-body'>
-              <p className='card-header h2'>
-                Login
-              </p>
+              <p className='card-header h2'>Login</p>
               <form
                 className='pt-4'
                 onSubmit={(e) => {
@@ -48,6 +53,7 @@ const Login = () => {
               >
                 <div className='row'>
                   <div className='col'>
+                    {/* Email Component */}
                     <div className='mb-3'>
                       <label htmlFor='txtemail' className='form-label'>
                         Email address
@@ -63,13 +69,14 @@ const Login = () => {
                           onChange(e);
                         }}
                         value={email}
-                        // required
+                        required
                       />
                     </div>
                   </div>
                 </div>
                 <div className='row'>
                   <div className='col'>
+                    {/* Password Component */}
                     <div className='mb-3'>
                       <label htmlFor='txtpassword' className='form-label'>
                         Password
@@ -85,7 +92,7 @@ const Login = () => {
                           onChange(e);
                         }}
                         value={password}
-                        // required
+                        required
                       />
                     </div>
                   </div>
