@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
+const adminAuth = require("../../middleware/adminAuth");
 
 // Models
 const Resources = require("../../models/Resources");
@@ -14,7 +14,7 @@ const InstituteDegree = require("../../models/InstituteDegree");
 router.post(
   "/",
   [
-    auth,
+    adminAuth,
     check("academicYear", "Academic year is required.").notEmpty(),
     check("degreeId", "Degree is required.").notEmpty(),
     check("semester", "Semester is required.").notEmpty(),
@@ -64,6 +64,8 @@ router.post(
           semester,
           classes,
           labs,
+          modifiedUserID: req.admin.id,
+          createdUserID: req.admin.id,
         });
       }
       // Save the resources to the database.

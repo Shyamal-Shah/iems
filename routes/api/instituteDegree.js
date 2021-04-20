@@ -1,19 +1,20 @@
-const express = require('express');
+const { request } = require("express");
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const auth = require('../../middleware/auth');
-const InstituteDegree = require('../../models/InstituteDegree');
-
+const { check, validationResult } = require("express-validator");
+const auth = require("../../middleware/auth");
+const InstituteDegree = require("../../models/InstituteDegree");
+const adminAuth = require("../../middleware/adminAuth");
 // @router POST api/institute
 // @desc Add new Degree
 // @access PRIVATE
 router.post(
-  '/',
+  "/",
   // Check if minimum 1 degree and name of institute is supplied
   [
-    auth,
-    check('instituteName', 'Institute name is required.').notEmpty(),
-    check('degrees', 'Degrees are required.').isArray({ min: 1 }),
+    adminAuth,
+    check("instituteName", "Institute name is required.").notEmpty(),
+    check("degrees", "Degrees are required.").isArray({ min: 1 }),
   ],
   async (req, res) => {
     // If any argument check fails return the array of errors
@@ -31,18 +32,20 @@ router.post(
       if (institute) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Institute already exists.' }] });
+          .json({ errors: [{ msg: "Institute already exists." }] });
       }
       institute = new InstituteDegree({
         instituteName,
         degrees,
+        modifiedUserID: req.admin.id,
+        createdUserID: req.admin.id,
       });
       await institute.save();
-      res.json({ msg: 'Record added.', institute });
+      res.json({ msg: "Record added.", institute });
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
       console.error(err.message);
-      return res.status(500).send('Server Error.');
+      return res.status(500).send("Server Error.");
     }
   }
 );
@@ -50,20 +53,20 @@ router.post(
 // @router GET api/institute/?id&?instituteName&?degreeName
 // @desc Get institutes and degrees based on query
 // @access PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     if (req.query.id) {
       // Find record based on the id if the length of passed id is equal to 24
       if (req.query.id.length != 24) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Id. No record found' }] });
+          .json({ errors: [{ msg: "Invalid Id. No record found" }] });
       }
       let institute = await InstituteDegree.findById(req.query.id);
       if (!institute) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Record with this id does not exist.' }] });
+          .json({ errors: [{ msg: "Record with this id does not exist." }] });
       }
       return res.json(institute);
     } else if (req.query.instituteName) {
@@ -73,7 +76,7 @@ router.get('/', auth, async (req, res) => {
       });
       if (!institute) {
         return res.status(400).json({
-          errors: [{ msg: 'Institute with this name does not exists.' }],
+          errors: [{ msg: "Institute with this name does not exists." }],
         });
       }
       // Filter records with degreeName if degreeName is also passed
@@ -84,7 +87,7 @@ router.get('/', auth, async (req, res) => {
         );
         if (inst.degrees.length == 0) {
           return res.status(400).json({
-            errors: [{ msg: 'This degree does not belong to this institute.' }],
+            errors: [{ msg: "This degree does not belong to this institute." }],
           });
         }
         return res.json(inst);
@@ -97,12 +100,12 @@ router.get('/', auth, async (req, res) => {
       });
       res.json(institutes);
     } else {
-      res.status(400).send('Bad request');
+      res.status(400).send("Bad request");
     }
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
     console.log(err.message);
-    return res.status(500).send('Server Error.');
+    return res.status(500).send("Server Error.");
   }
 });
 
@@ -110,9 +113,9 @@ router.get('/', auth, async (req, res) => {
 // @desc Add more degrees to an institute
 // @access PRIVATE
 router.put(
-  '/:instituteId',
+  "/:instituteId",
   // Check if atleast one degree is passed
-  [auth, check('degrees', 'Degrees are required.').isArray({ min: 1 })],
+  [auth, check("degrees", "Degrees are required.").isArray({ min: 1 })],
   async (req, res) => {
     // If any argument check fails return the array of errors
     const errors = validationResult(req);
@@ -128,7 +131,7 @@ router.put(
       let institute = await InstituteDegree.findById(req.params.instituteId);
       if (!institute) {
         return res.status(400).json({
-          errors: [{ msg: 'Institute with this Id does not exists.' }],
+          errors: [{ msg: "Institute with this Id does not exists." }],
         });
       }
       degrees.forEach((degree) => {
@@ -143,7 +146,7 @@ router.put(
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
       console.error(err.message);
-      return res.status(500).send('Server Error.');
+      return res.status(500).send("Server Error.");
     }
   }
 );

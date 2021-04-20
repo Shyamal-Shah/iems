@@ -20,6 +20,8 @@ app.use("/api/exam-schedule", require("./routes/api/examSchedule"));
 app.use("/api/not-eligible", require("./routes/api/notEligible"));
 app.use("/api/resources", require("./routes/api/resources"));
 app.use("/api/seating-arrangement", require("./routes/api/seatingArrangement"));
+app.use("/api/admin", require("./routes/api/admin"));
+app.use("/api/adminAuth", require("./routes/api/adminAuth"));
 
 // Connect to environment port or 5500
 const PORT = process.env.PORT || 5500;
