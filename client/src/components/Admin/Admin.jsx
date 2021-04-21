@@ -1,16 +1,51 @@
-import React from "react";
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
+import React, { Fragment, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { loadAdmin } from "../../actions/adminAuth";
+import setAdminAuthToken from "../../utils/setAdminAuth";
+import AdminLogin from "../auth/AdminLogin";
+import Alert from "../layout/Alert";
+import PrivateAdminRoute from "../routing/PrivateAdminRoute";
+import AcademicYear from "./AcademicYear";
 
-function Admin() {
-  return (
-    <div className="row py-3">
-      <div className="col-md-3"></div>
-      <div className="col-md-9">
-        <div className="card shadow">
-          <div className="card-body"></div>
-        </div>
-      </div>
-    </div>
-  );
+if (localStorage.getItem("adminToken")) {
+  setAdminAuthToken(localStorage.getItem("adminToken"));
 }
+
+const Admin = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadAdmin);
+  }, []);
+  return (
+    <Router>
+      <Fragment>
+        <Alert />
+        <section style={{ marginTop: "80px" }} className="container-fluid">
+          <Route
+            exact
+            path="/"
+            render={(_) => <Redirect to="/admin/adminLogin" />}
+          />
+          <Switch>
+            <Route exact path="/admin/adminLogin" component={AdminLogin} />
+            <PrivateAdminRoute
+              exact
+              path="/admin/academicYear"
+              component={AcademicYear}
+            />
+          </Switch>
+        </section>
+      </Fragment>
+    </Router>
+  );
+};
 
 export default Admin;

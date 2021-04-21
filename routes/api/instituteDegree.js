@@ -30,16 +30,52 @@ router.post(
       // If record does not exists add a new record
       let institute = await InstituteDegree.findOne({ instituteName });
       if (institute) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Institute already exists." }] });
+        institute.degrees = degrees;
+        institute.modifiedUserID = req.admin.id;
+      } else {
+        institute = new InstituteDegree({
+          instituteName,
+          degrees,
+          modifiedUserID: req.admin.id,
+          createdUserID: req.admin.id,
+        });
       }
-      institute = new InstituteDegree({
-        instituteName,
-        degrees,
-        modifiedUserID: req.admin.id,
-        createdUserID: req.admin.id,
-      });
+      await institute.save();
+      res.json({ msg: "Record added.", institute });
+    } catch (err) {
+      // Catch any error that occurs due to mongoDb operations
+      console.error(err.message);
+      return res.status(500).send("Server Error.");
+    }
+  }
+);
+
+// @router POST api/institute/name
+// @desc Add the institute Name
+// @access PRIVATE
+router.post(
+  "/name",
+  [adminAuth, check("instituteName", "Institute name is required.").notEmpty()],
+  async (req, res) => {
+    // If any argument check fails return the array of errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { instituteName } = req.body;
+    // Try all the mongoDb operations
+    try {
+      // If record does not exists add a new record
+      let institute = await InstituteDegree.findOne({ instituteName });
+      if (institute) {
+        return res.status(400).send("Institute already exists.");
+      } else {
+        institute = new InstituteDegree({
+          instituteName,
+          modifiedUserID: req.admin.id,
+          createdUserID: req.admin.id,
+        });
+      }
       await institute.save();
       res.json({ msg: "Record added.", institute });
     } catch (err) {
@@ -110,20 +146,15 @@ router.get("/", auth, async (req, res) => {
 });
 
 // @router PUT api/institute/:instituteId
-// @desc Add more degrees to an institute
+// @desc Change the institute Name
 // @access PRIVATE
 router.put(
   "/:instituteId",
   // Check if atleast one degree is passed
-  [auth, check("degrees", "Degrees are required.").isArray({ min: 1 })],
+  adminAuth,
   async (req, res) => {
-    // If any argument check fails return the array of errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     // Destructure degrees from req.body
-    const { degrees } = req.body;
+    const { instituteName } = req.body;
 
     // Try all the mongoDb operations
     try {
@@ -134,13 +165,7 @@ router.put(
           errors: [{ msg: "Institute with this Id does not exists." }],
         });
       }
-      degrees.forEach((degree) => {
-        let flag = true;
-        institute.degrees.forEach((deg) => {
-          if (deg.degreeName == degree.degreeName) flag = false;
-        });
-        if (flag) institute.degrees.unshift(degree);
-      });
+      institute.instituteName = instituteName;
       await institute.save();
       res.json(institute);
     } catch (err) {
@@ -150,5 +175,17 @@ router.put(
     }
   }
 );
+
+// @router DELETE api/institute/:instituteId
+// @desc Delete the institute
+// @access PRIVATE
+router.delete("/:instituteId", [adminAuth], async (req, res) => {
+  try {
+    await InstituteDegree.remove({ _id: req.params.instituteId });
+    res.json({ msg: "Institute Deleted" });
+  } catch (error) {
+    res.json({ msg: "Server error occured" });
+  }
+});
 
 module.exports = router;
