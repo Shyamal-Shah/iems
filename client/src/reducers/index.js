@@ -8,6 +8,7 @@ import Pedagogy from "./pedagogy";
 import ExamSchedule from "./exam_schedule";
 import NotEligible from "./not_eligible";
 import AdminAuth from "./adminAuth";
+import Subject from "./subject";
 // This is the root/main file of reducer
 // This will return the combineRducers.
 // Every reducer must return from here.
@@ -21,4 +22,5 @@ export default combineReducers({
   ExamSchedule,
   NotEligible,
   AdminAuth,
+  Subject,
 });

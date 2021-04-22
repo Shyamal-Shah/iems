@@ -153,7 +153,7 @@ router.put(
   // Check if atleast one degree is passed
   adminAuth,
   async (req, res) => {
-    // Destructure degrees from req.body
+    // Destructure instituteName from req.body
     const { instituteName } = req.body;
 
     // Try all the mongoDb operations

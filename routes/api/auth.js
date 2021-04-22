@@ -15,7 +15,7 @@ router.get("/", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
-      return res.json(400).json({
+      return res.status(400).json({
         errors: [{ msg: "User with this Id does not exists." }],
       });
     }
@@ -33,7 +33,7 @@ router.post(
   "/",
   [
     // Check id email is supplied and if password if of valid length
-    check('email', 'Please include a valid email.').isEmail(),
+    check("email", "Please include a valid email.").isEmail(),
     check(
       "password",
       "Please enter a password with minimum 6 characters."

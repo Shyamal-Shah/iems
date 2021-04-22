@@ -37,3 +37,7 @@ export const ADMIN_LOGIN = "ADMIN_LOGIN";
 export const ADMIN_AUTH_ERROR = "ADMIN_AUTH_ERROR";
 export const ADMIN_LOADED = "ADMIN_LOADED";
 export const ADMIN_LOGOUT = "ADMIN_LOGOUT";
+
+// Subjects
+export const SUBJECTS_LOADED = "SUBJECTS_LOADED";
+export const SUBJECTS_ERROR = "SUBJECTS_ERROR";
