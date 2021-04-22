@@ -15,6 +15,9 @@ function SideNavbar() {
           <Link className="btn btn-outline-info w-100 mb-3" to="academicYear">
             Academic Year
           </Link>
+          <Link className="btn btn-outline-info w-100 mb-3" to="user">
+            User
+          </Link>
         </div>
       </div>
     </div>

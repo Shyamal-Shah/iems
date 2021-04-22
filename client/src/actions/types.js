@@ -41,3 +41,7 @@ export const ADMIN_LOGOUT = "ADMIN_LOGOUT";
 // Subjects
 export const SUBJECTS_LOADED = "SUBJECTS_LOADED";
 export const SUBJECTS_ERROR = "SUBJECTS_ERROR";
+
+// Users
+export const USERS_LOADED = "USERS_LOADED";
+export const USERS_ERROR = "USERS_ERROR";

@@ -39,6 +39,9 @@ function AcademicYear() {
   // Get the value from Academic year input fields
   const [academicYear, setAcademicYear] = useState("");
 
+  // Get all the old data of academic Years
+  const [oldAY, setOldAY] = useState([]);
+
   // Set the edited academicYear
   const [editAY, setEditAY] = useState({
     id: "",
@@ -208,6 +211,17 @@ function AcademicYear() {
                                 ...formData,
                                 year: ay.year,
                               });
+                              setOldAY([]);
+                              academicYears.forEach((ay) => {
+                                if (
+                                  ay.year === formData.year &&
+                                  ay.degreeId === formData.degree
+                                ) {
+                                  ay.semesters.forEach((a) => {
+                                    setOldAY([a]);
+                                  });
+                                }
+                              });
                             }}
                           >
                             {ay.year}
@@ -333,10 +347,53 @@ function AcademicYear() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>6</td>
-                  <td>CE</td>
-                </tr>
+                {/* {academicYears ? (
+                  academicYears.map((ay) => {
+                    ay.semesters.map((aa) => {
+                      console.log(aa);
+                      return (
+                        <tr key={aa._id}>
+                          <td>{aa.semesterNo}</td>
+                        </tr>
+                      );
+                    });
+                  })
+                ) : (
+                  <h1>No</h1>
+                )} */}
+                {oldAY ? (
+                  oldAY.map((ay) => {
+                    return (
+                      <tr>
+                        <td>{ay.semesterNo}</td>
+                        <td>
+                          <table>
+                            {ay.subjects.map((t) => {
+                              return (
+                                <tr>
+                                  <td>
+                                    {t.subjectId.subjectName}-
+                                    {t.subjectId.subjectCode}
+                                  </td>
+                                  <td>
+                                    <span
+                                      className="fa fa-trash-alt text-danger"
+                                      onClick={(e) => {
+                                        // dispatch(deleteInstitute(inst.id));
+                                      }}
+                                    ></span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </table>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <h1>No Data</h1>
+                )}
               </tbody>
             </table>
           </div>
