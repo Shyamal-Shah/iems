@@ -140,7 +140,7 @@ function AcademicYear() {
                         ...formData,
                         degree: e.target.value,
                       });
-                      console.log(formData.degree);
+                      dispatch(getAcademicYear({ degreeId: formData.degree }));
                     }}
                     disabled={degrees ? false : true}
                   >

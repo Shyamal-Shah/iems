@@ -10,6 +10,7 @@ import NotEligible from "./not_eligible";
 import AdminAuth from "./adminAuth";
 import Subject from "./subject";
 import User from "./user";
+import Resources from "./resources";
 // This is the root/main file of reducer
 // This will return the combineRducers.
 // Every reducer must return from here.
@@ -25,4 +26,5 @@ export default combineReducers({
   AdminAuth,
   Subject,
   User,
+  Resources,
 });

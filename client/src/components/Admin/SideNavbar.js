@@ -18,6 +18,9 @@ function SideNavbar() {
           <Link className="btn btn-outline-info w-100 mb-3" to="user">
             User
           </Link>
+          <Link className="btn btn-outline-info w-100 mb-3" to="resources">
+            Resources
+          </Link>
         </div>
       </div>
     </div>

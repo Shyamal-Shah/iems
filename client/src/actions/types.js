@@ -45,3 +45,7 @@ export const SUBJECTS_ERROR = "SUBJECTS_ERROR";
 // Users
 export const USERS_LOADED = "USERS_LOADED";
 export const USERS_ERROR = "USERS_ERROR";
+
+// Resources
+export const RESOURCES_LOADED = "RESOURCES_LOADED";
+export const RESOURCES_ERROR = "RESOURCES_ERROR";

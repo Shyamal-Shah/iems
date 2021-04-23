@@ -36,6 +36,7 @@ import AcademicYear from "./components/Admin/AcademicYear";
 import Institute from "./components/Admin/Institute";
 import Subject from "./components/Admin/Subject";
 import User from "./components/Admin/User";
+import Resources from "./components/Admin/Resources";
 
 if (localStorage.getItem("token")) {
   setAuthToken(localStorage.getItem("token"));
@@ -105,6 +106,12 @@ const App = () => {
                 component={Subject}
               />
               <PrivateAdminRoute exact path="/admin/user" component={User} />
+              <PrivateAdminRoute
+                exact
+                path="/admin/resources"
+                component={Resources}
+              />
+
               {/* Admin */}
             </Switch>
           </section>

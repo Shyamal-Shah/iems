@@ -7,7 +7,11 @@ import { SUBJECTS_LOADED, SUBJECTS_ERROR } from "./types";
 export const getSubjects = (degreeId) => async (dispatch) => {
   console.log(degreeId);
   try {
-    const res = await axios.get(`/api/subject/?degreeId=${degreeId}`);
+    const res = await axios.get(`/api/subject/`, {
+      params: {
+        degreeId: degreeId,
+      },
+    });
     console.log(res.data);
     dispatch({
       type: SUBJECTS_LOADED,

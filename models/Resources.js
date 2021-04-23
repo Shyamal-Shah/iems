@@ -8,19 +8,9 @@ const mongoose = require("mongoose");
 
 const ResourcesSchema = mongoose.Schema(
   {
-    academicYear: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "academicYear",
-      required: true,
-    },
-
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "institute_degree",
-      required: true,
-    },
-    semester: {
-      type: Number,
       required: true,
     },
     // classes is an array which contains:
@@ -30,15 +20,15 @@ const ResourcesSchema = mongoose.Schema(
 
     classes: [
       {
-        classCode: {
+        code: {
           type: String,
           required: true,
         },
-        classNormalLimit: {
+        normalCapacity: {
           type: Number,
           required: true,
         },
-        classExamLimit: {
+        examCapacity: {
           type: Number,
           required: true,
         },
@@ -50,15 +40,15 @@ const ResourcesSchema = mongoose.Schema(
     //      labExamLimit
     labs: [
       {
-        labCode: {
+        code: {
           type: String,
           required: true,
         },
-        labNormalLimit: {
+        normalCapacity: {
           type: Number,
           required: true,
         },
-        labExamLimit: {
+        examCapacity: {
           type: Number,
           required: true,
         },
