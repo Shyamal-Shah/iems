@@ -45,7 +45,7 @@ router.post(
         service: "gmail",
         auth: {
           user: "info.akshitzatakia@gmail.com",
-          pass: "Ak@786911",
+          pass: "password",
         },
       });
 
