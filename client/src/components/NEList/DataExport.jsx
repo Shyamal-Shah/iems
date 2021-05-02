@@ -183,7 +183,7 @@ function DataExport() {
 
   const excelExport = (e) => {
     e.preventDefault();
-    // Create new Excel file ans name it
+    // Create new Excel file and name it
     var ExcelJSWorkbook = new ExcelJS.Workbook();
     var worksheet = ExcelJSWorkbook.addWorksheet('Not Eligible Students');
     let sheetHeaders = [

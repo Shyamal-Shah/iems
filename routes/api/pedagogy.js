@@ -5,10 +5,10 @@ const auth = require('../../middleware/auth');
 
 const Pedagogy = require('../../models/Pedagogy');
 const Subject = require('../../models/Subject');
-
+const ExamSchedule = require('../../models/ExamSchedule');
 // @router POST api/pedagogy
 // @desc Add new pedagogy
-// @access public
+// @access PRIVATE
 router.post(
   '/',
   // Check if subjectId, semester, academicYear and componemts of minimum length 1 is passed
@@ -46,6 +46,14 @@ router.post(
       // Update components if record already exists for subjectId else add new record
       let pedagogy = await Pedagogy.findOne({ subject: subject });
       if (pedagogy) {
+        let examComponents = pedagogy.components.filter(component => component.name === 'Unit Test 1' || component.name === 'Unit Test 2');
+        examComponents.forEach(async (component) => {
+          if (components.find(comp => comp.name === component.name) === undefined) {
+            let examSchedule = await ExamSchedule.findOne({ semester, academicYear, recStatus: 'A' });
+            examSchedule.schedule = examSchedule.schedule.filter(schedule => schedule.subjectId !== subject)
+            await examSchedule.save()
+          }
+        })
         pedagogy.components = components;
       } else {
         pedagogy = new Pedagogy({
@@ -67,8 +75,8 @@ router.post(
 
 // @router GET api/pedagogy/?subjectId&?semesterNo&?semesterGroup&?academicYear
 // @desc Get pedagogy
-// @access public
-router.get('/', async (req, res) => {
+// @access PRIVATE
+router.get('/', auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
     // Find and return a record if id exists and it is of length 24

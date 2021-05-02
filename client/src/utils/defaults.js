@@ -1,4 +1,9 @@
-export const alignment = { vertical: 'middle', horizontal: 'center' };
+export const alignment = {
+  vertical: 'middle',
+  horizontal: 'center',
+  wrapText: true,
+  shrinkToFit: true,
+};
 
 export const headerFill = {
   type: 'pattern',
@@ -56,3 +61,14 @@ export const headers = [
   'CHANDUBHAI S.PATEL INSTITUTE OF TECHNOLOGY(CSPIT)',
   'U and P U.Patel Department of Computer Engineering',
 ];
+
+export const colnumString = (num) => {
+  let s = '',
+    t;
+  while (num > 0) {
+    t = (num - 1) % 26;
+    s = String.fromCharCode(65 + t) + s;
+    num = ((num - t) / 26) | 0;
+  }
+  return s || undefined;
+};

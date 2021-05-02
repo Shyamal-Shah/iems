@@ -31,11 +31,10 @@ export const addNotEligiblityList = ({ formData, academicYearId, semester }) => 
     })),
   };
 
-  console.log(obj);
   // Add the not eligible students via api
   try {
     const res = await axios.post(`/api/not-eligible`, obj, config);
-    dispatch(setAlert(res.data.msg, 'success'));
+    dispatch(setAlert('Not Eligiblity list saved.', 'success'));
   } catch (err) {
     console.log(err);
     dispatch(setAlert(err.response.data, 'danger'));

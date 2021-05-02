@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Resources contains foreign keys like :
 //      academicYear,
@@ -8,19 +8,9 @@ const mongoose = require("mongoose");
 
 const ResourcesSchema = mongoose.Schema(
   {
-    academicYear: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "academicYear",
-      required: true,
-    },
-
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "institute_degree",
-      required: true,
-    },
-    semester: {
-      type: Number,
+      ref: 'institute_degree',
       required: true,
     },
     // classes is an array which contains:
@@ -30,15 +20,15 @@ const ResourcesSchema = mongoose.Schema(
 
     classes: [
       {
-        classCode: {
+        code: {
           type: String,
           required: true,
         },
-        classNormalLimit: {
+        normalCapacity: {
           type: Number,
           required: true,
         },
-        classExamLimit: {
+        examCapacity: {
           type: Number,
           required: true,
         },
@@ -50,15 +40,15 @@ const ResourcesSchema = mongoose.Schema(
     //      labExamLimit
     labs: [
       {
-        labCode: {
+        code: {
           type: String,
           required: true,
         },
-        labNormalLimit: {
+        normalCapacity: {
           type: Number,
           required: true,
         },
-        labExamLimit: {
+        examCapacity: {
           type: Number,
           required: true,
         },
@@ -67,17 +57,17 @@ const ResourcesSchema = mongoose.Schema(
     // The user's id who added this data will be stored
     createdUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
     },
     // The user's id who modifies this data will be stored
     modifiedUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: 'users',
     },
     // If the record is deleted then recStatus will be D otherwise A
     recStatus: {
       type: String,
-      default: "A",
+      default: 'A',
     },
   },
   // The time of this data creation will be stored.
@@ -87,4 +77,4 @@ const ResourcesSchema = mongoose.Schema(
 );
 
 // Export the schema with table name tblResources
-module.exports = Resources = mongoose.model("tblResources", ResourcesSchema);
+module.exports = Resources = mongoose.model('tblResources', ResourcesSchema);
