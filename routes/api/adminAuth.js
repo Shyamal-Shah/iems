@@ -1,33 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
-const User = require("../../models/User");
+const Admin = require("../../models/Admin");
 const bcrypt = require("bcryptjs");
 const config = require("config");
 const jwt = require("jsonwebtoken");
-const auth = require("../../middleware/auth");
+const adminAuth = require("../../middleware/adminAuth");
 
-// @router  GET api/auth
+// @router  GET api/adminAuth
 // @desc    Retrive single user
 // @access  PRIVATE
-router.get("/", auth, async (req, res) => {
+router.get("/", adminAuth, async (req, res) => {
   // Try all the mongoDb operations
   try {
-    const user = await User.findById(req.user.id).select("-password");
-    if (!user) {
-      return res.status(400).json({
-        errors: [{ msg: "User with this Id does not exists." }],
+    const admin = await Admin.findById(req.admin.id).select("-password");
+    if (!admin) {
+      return res.json(400).json({
+        errors: [{ msg: "Admin with this Id does not exists." }],
       });
     }
-    res.json(user);
+    res.json(admin);
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
     console.log(err);
   }
 });
 
-// @router  POST api/auth
-// @desc    Authenticate user and get token (Login)
+// @router  POST api/adminAuth
+// @desc    Authenticate admin and get token (Login)
 // @access  PUBLIC
 router.post(
   "/",
@@ -49,15 +49,15 @@ router.post(
     const { email, password } = req.body;
     // Try all the mongoDb operations
     try {
-      // Check if user exists
-      let user = await User.findOne({ email });
-      if (!user) {
+      // Check if admin exists
+      let admin = await Admin.findOne({ email });
+      if (!admin) {
         return res.status(400).json({
           errors: [{ msg: "Incorrect Credentials." }],
         });
       }
       // Validate Credentails
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, admin.password);
       if (!isMatch) {
         return res.status(400).json({
           errors: [{ msg: "Incorrect Credentials." }],
@@ -66,8 +66,8 @@ router.post(
 
       // Create and return jsonwebtoken
       const payload = {
-        user: {
-          id: user.id,
+        admin: {
+          id: admin.id,
         },
       };
 

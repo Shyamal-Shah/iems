@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 // Subject Schema containing subjectName, subjectCode, degreeId(Foreign Key),
-// createdUserID(Foreign Key), recStatus, modifiedUserID(Foreign Key) and 
+// createdUserID(Foreign Key), recStatus, modifiedUserID(Foreign Key) and
 // timeStamps for created and modified time
 const SubjectSchema = new mongoose.Schema(
   {
@@ -24,4 +24,4 @@ const SubjectSchema = new mongoose.Schema(
 );
 
 // Export the schema with table name tblSubjects
-module.exports = Subject = mongoose.model("subjects", SubjectSchema);
+module.exports = Subject = mongoose.model("tblsubjects", SubjectSchema);

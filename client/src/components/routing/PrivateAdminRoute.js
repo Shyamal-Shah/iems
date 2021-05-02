@@ -3,14 +3,14 @@ import { useSelector } from "react-redux";
 import { Route, Redirect } from "react-router-dom";
 
 // Redirect to login page if user is not authenticated
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  const { isAuthenticated, loading } = useSelector((state) => state.Auth);
+const PrivateAdminRoute = ({ component: Component, ...rest }) => {
+  const { isAuthenticated, loading } = useSelector((state) => state.AdminAuth);
   return (
     <Route
       {...rest}
       render={(props) =>
         !isAuthenticated && !loading ? (
-          <Redirect to="/login" />
+          <Redirect to="/admin/login" />
         ) : (
           <Component {...props} />
         )
@@ -19,4 +19,4 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default PrivateRoute;
+export default PrivateAdminRoute;

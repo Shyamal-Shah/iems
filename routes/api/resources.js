@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const auth = require('../../middleware/auth');
-
+const { check, validationResult } = require("express-validator");
+const auth = require("../../middleware/auth");
+const adminAuth = require("../../middleware/adminAuth");
 // Models
 const Resources = require('../../models/Resources');
 const AcademicYear = require('../../models/AcademicYear');
@@ -14,12 +14,12 @@ const InstituteDegree = require('../../models/InstituteDegree');
 router.post(
   '/',
   [
-    auth,
+    adminAuth,
     // check('academicYear', 'Academic year is required.').notEmpty(),
-    check('degreeId', 'Degree is required.').notEmpty(),
+    check("degreeId", "Degree is required.").notEmpty(),
     // check('semester', 'Semester is required.').notEmpty(),
-    check('classes', 'Classes are required').isArray({ min: 1 }),
-    check('labs', 'Labs are required').isArray({ min: 1 }),
+    // check("classes", "Classes are required").isArray({ min: 1 }),
+    // check("labs", "Labs are required").isArray({ min: 1 }),
   ],
   async (req, res) => {
     // If any argument check fails return the array of errors
@@ -42,7 +42,7 @@ router.post(
       if (resources) {
         resources.classes = classes;
         resources.labs = labs;
-        resources.modifiedUserID = req.user.id;
+        resources.modifiedUserID = req.admin.id;
       }
       // If it doesn't exist then just add the resources with all other fields.
       else {
@@ -60,6 +60,8 @@ router.post(
           degreeId,
           classes,
           labs,
+          createdUserID: req.admin.id,
+          modifiedUserID: req.admin.id,
         });
       }
       // Save the resources to the database.
@@ -77,21 +79,15 @@ router.post(
 // @router GET api/resources/?academicYear&?semesterNo&?instituteId&?degreeId
 // @desc Get resources
 // @access PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
     // Find and return a record if id exists and it is of length 24
-    if (
-      req.query.degreeId
-    ) {
+    if (req.query.degreeId) {
       // Return error if academicYearId, instituteId and degreeId does not 24 characters
-      if (
-        req.query.degreeId.length != 24
-      ) {
+      if (req.query.degreeId.length != 24) {
         return res.status(400).json({
-          errors: [
-            { msg: 'Invalid Degree Id. No record found' },
-          ],
+          errors: [{ msg: "Invalid Degree Id. No record found" }],
         });
       }
 
