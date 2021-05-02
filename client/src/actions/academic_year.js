@@ -5,30 +5,35 @@ import { AY_ERROR, AY_LOADED } from "./types";
 
 // Get Id	Year	DegreeId	SemesterNo	SubjectId	CreatedAt	UpdatedAt	CreatedUserId	ModifiedUserId	RecStatus from academic year
 export const getAcademicYear = ({ degreeId }) => async (dispatch) => {
-  console.log(degreeId);
-  try {
-    const res = await axios.get("/api/academic-year/", {
-      params: {
-        degreeId,
-      },
-    });
-    console.log("aay", res.data);
-    dispatch({
-      type: AY_LOADED,
-      payload: res.data,
-    });
-  } catch (err) {
-    const errors = err.response.data.errors;
-    if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+  if (degreeId) {
+    try {
+      const res = await axios.get(`/api/academic-year/degree/${degreeId}`);
+      console.log("aay", res.data);
+      dispatch({
+        type: AY_LOADED,
+        payload: res.data,
+      });
+    } catch (err) {
+      const errors = err.response.data.errors;
+      if (errors) {
+        errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+      }
+      dispatch({
+        type: AY_ERROR,
+      });
     }
-    dispatch({
-      type: AY_ERROR,
-    });
   }
 };
 
-export const addAcademicYear = (year, degreeId) => async (dispatch) => {
+export const addAcademicYear = (degreeId, ay) => async (dispatch) => {
+  const { year, sem } = ay;
+  let semesters = [];
+  for (var i = 1; i <= sem; i++) {
+    semesters.push({
+      semesterNo: i,
+    });
+  }
+  console.log(year, semesters);
   // Set the header of the api
   const config = {
     headers: {
@@ -39,7 +44,39 @@ export const addAcademicYear = (year, degreeId) => async (dispatch) => {
   try {
     const res = await axios.post(
       "/api/academic-year/ay",
-      { year: year, degreeId: degreeId },
+      { year: year, degreeId: degreeId, semesters: semesters },
+      config
+    );
+    dispatch(getAcademicYear({ degreeId: degreeId }));
+    dispatch(setAlert(res.data.msg, "success"));
+  } catch (error) {
+    console.log(error);
+    dispatch(setAlert(setAlert(error.response.data, "danger")));
+  }
+};
+
+// add subjects to db
+// get degreeId, year and array of subjects
+export const addAYSubjects = (degreeId, ay, subjects, sem) => async (
+  dispatch
+) => {
+  let obj = [];
+  for (var i = 0; i < subjects.length; i++) {
+    obj.push({
+      subjectId: subjects[i].id,
+    });
+  }
+  // Set the header of the api
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  // console.log("aa", year, degreeId);
+  try {
+    const res = await axios.post(
+      `/api/academic-year/ay/subject/${sem}`,
+      { year: ay, degreeId: degreeId, subjects: obj },
       config
     );
     dispatch(getAcademicYear({ degreeId: degreeId }));
@@ -81,7 +118,7 @@ export const addSemesters = (formData) => async (dispatch) => {
   }
 };
 
-export const updateAcademicYear = (year, id) => async (dispatch) => {
+export const updateAcademicYear = (year, id, degree) => async (dispatch) => {
   // Set the header of the api
   const config = {
     headers: {
@@ -96,6 +133,7 @@ export const updateAcademicYear = (year, id) => async (dispatch) => {
       config
     );
     dispatch(setAlert("Academic Year edited", "success"));
+    dispatch(getAcademicYear({ degreeId: degree }));
   } catch (error) {
     console.log(error);
     dispatch(setAlert(setAlert(error.response.data, "danger")));

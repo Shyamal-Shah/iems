@@ -93,6 +93,7 @@ function Subject() {
                     ...formData,
                     degreeId: e.target.value,
                   });
+                  setSubjects([]);
                   dispatch(getSubjects(e.target.value));
                 }}
               >

@@ -87,7 +87,7 @@ router.post(
     }
 
     // Destructure year, degreeId and semesters from req.body
-    const { year, degreeId } = req.body;
+    const { year, degreeId, semesters } = req.body;
     // Return error if length of degreeId is not 24
     if (degreeId.length != 24) {
       return res.status(400).json({ msg: "Invalid degreeId. No degree found" });
@@ -107,11 +107,13 @@ router.post(
       // Replace the semesters array if the record already exists else add new record for specified year and degree
       let academicYear = await AcademicYear.findOne({ year, degreeId });
       if (academicYear) {
-        return res.status(400).json({ msg: "Academic Year already exists." });
+        academicYear.semesters = semesters;
+        academicYear.modifiedUserID = req.admin.id;
       } else {
         academicYear = new AcademicYear({
           year,
           degreeId,
+          semesters,
           modifiedUserID: req.admin.id,
           createdUserID: req.admin.id,
         });
@@ -119,6 +121,60 @@ router.post(
       await academicYear.save();
       console.log(academicYear);
       res.json({ msg: "Record added.", academicYear });
+    } catch (err) {
+      // Catch any error that occurs due to mongoDb operations
+      console.error(err.message);
+      return res.status(500).send("Server Error.");
+    }
+  }
+);
+
+// @router POST api/academic-year/subject
+// @desc Add subjects
+// @access PRIVATE
+
+router.post(
+  "/ay/subject/:sem",
+  [
+    adminAuth,
+    check("year", "Academic Year is required.").notEmpty(),
+    check("degreeId", "DegreeId is required.").notEmpty(),
+  ],
+  async (req, res) => {
+    // If any argument check fails return the array of errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Destructure year, degreeId and semesters from req.body
+    const { year, degreeId, subjects } = req.body;
+    // Return error if length of degreeId is not 24
+    if (degreeId.length != 24) {
+      return res.status(400).json({ msg: "Invalid degreeId. No degree found" });
+    }
+
+    // Try all the mongoDb operations
+    try {
+      // Return error if record is not found
+      const instDeg = await InstituteDegree.findOne({
+        degrees: { $elemMatch: { _id: degreeId } },
+      });
+      if (!instDeg) {
+        return res
+          .status(400)
+          .json({ msg: "Invalid degreeId. No degree found" });
+      }
+      // Replace the semesters array if the record already exists else add new record for specified year and degree
+      await AcademicYear.update(
+        { year, degreeId, "semesters.semesterNo": req.params.sem },
+        {
+          $set: {
+            "semesters.$.subjects": subjects,
+          },
+        }
+      );
+      res.json({ msg: "Subjects Updated" });
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
       console.error(err.message);
@@ -243,30 +299,42 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
-// // @router GET api/academic-year/degree
-// // @desc Get academic year according to degree
-// // @access PRIVATE
-// router.get("/degree", adminAuth, async (req, res) => {
-//   const { degreeId } = req.body;
-//   console.log("dd", degreeId);
-//   try {
-//     if (degreeId) {
-//       // Find all the records belonging to specified degreeId and populate subjects data from tblSubjects
-//       const academicYears = await AcademicYear.find({
-//         degreeId: degreeId,
-//       });
-//       if (academicYears.length === 0) {
-//         return res
-//           .status(400)
-//           .json({ errors: [{ msg: "Invalid degreeId. No record found" }] });
-//       }
-//       return res.json(academicYears);
-//     }
-//   } catch (error) {
-//     // Catch any error that occurs due to mongoDb operations
-//     console.log(err.message);
-//     return res.status(500).send("Server Error.");
-//   }
-// });
+// @router GET api/academic-year/degree
+// @desc Get academic year according to degree
+// @access PRIVATE
+router.get("/degree/:id", adminAuth, async (req, res) => {
+  const degreeId = req.params.id;
+  console.log("dd", degreeId);
+  try {
+    if (degreeId) {
+      // Find all the records belonging to specified degreeId and populate subjects data from tblSubjects
+      const academicYears = await AcademicYear.find({
+        degreeId: degreeId,
+      })
+        .populate({
+          path: "semesters",
+          populate: {
+            path: "subjects",
+            populate: {
+              path: "subjectId",
+              select: ["subjectCode", "subjectName"],
+            },
+          },
+        })
+        .sort({ year: -1 });
+
+      if (academicYears.length === 0) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid degreeId. No record found" }] });
+      }
+      return res.json(academicYears);
+    }
+  } catch (error) {
+    // Catch any error that occurs due to mongoDb operations
+    console.log(err.message);
+    return res.status(500).send("Server Error.");
+  }
+});
 
 module.exports = router;

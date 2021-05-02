@@ -368,8 +368,9 @@ function Resources() {
                           <span
                             className="fa fa-trash-alt text-danger"
                             onClick={(e) => {
-                              // dispatch(deleteSubject(sub._id));
-                              // dispatch(getSubjects(formData.degreeId));
+                              setClasses(
+                                classes.filter((c) => c.code !== clas.code)
+                              );
                             }}
                           ></span>
                         </td>
@@ -396,6 +397,7 @@ function Resources() {
                   <th className="w-50">Lab Code</th>
                   <th>Normal Capacity</th>
                   <th>Exam Capacity</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -406,6 +408,14 @@ function Resources() {
                         <td>{la.code}</td>
                         <td>{la.normalCapacity}</td>
                         <td>{la.examCapacity}</td>
+                        <td>
+                          <span
+                            className="fa fa-trash-alt text-danger"
+                            onClick={(e) => {
+                              setLabs(labs.filter((c) => c.code !== la.code));
+                            }}
+                          ></span>
+                        </td>
                       </tr>
                     );
                   })}
