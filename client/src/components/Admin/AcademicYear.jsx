@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   addAcademicYear,
-  addSemesters,
+  addAYSubjects,
   deleteAY,
   getAcademicYear,
   updateAcademicYear,
@@ -14,392 +13,392 @@ import { getSubjects } from "../../actions/subject";
 import SideNavbar from "./SideNavbar";
 
 function AcademicYear() {
-  // To call the actions
   const dispatch = useDispatch();
 
-  // Get the institutes and degrees from the state
-  const preInstitutes = useSelector(
-    (state) => state.InstituteDegree.institutes
-  );
-
-  // Get the academic year according to degree id
-  const preAcademicYear = useSelector(
+  // get the academic year data from DB
+  const dbAcademicYears = useSelector(
     (state) => state.AcademicYear.academicYears
   );
 
-  // Get the subjects according to degree selected by user
-  const { subjects } = useSelector((state) => state.Subject);
+  // get the insitute degree from db
+  const dbInstituteDegree = useSelector(
+    (state) => state.InstituteDegree.institutes
+  );
 
-  // Set the degrees according to selected institute
-  const [degrees, setDegrees] = useState("");
+  // get the subjects from db
+  const dbSubjects = useSelector((state) => state.Subject.subjects);
 
-  // Set the academic year from state
-  const [academicYears, setAcademicYears] = useState([]);
+  // state for list of institutes
+  const [institutes, setinstitutes] = useState([]);
+  // state for selected institute
+  const [institute, setinstitute] = useState("");
 
-  // Get the value from Academic year input fields
-  const [academicYear, setAcademicYear] = useState("");
+  // state for list of degrees
+  const [degrees, setdegrees] = useState([]);
+  // state for selected degree
+  const [degree, setdegree] = useState("");
 
-  // Get all the old data of academic Years
-  const [oldAY, setOldAY] = useState([]);
-
-  // Set the edited academicYear
-  const [editAY, setEditAY] = useState({
-    id: "",
+  // state for get the value of academicyear input field
+  const [ay, setay] = useState({
     year: "",
+    sem: 0,
   });
 
-  // Set the degree which is selected by user
-  const [formData, setFormData] = useState({
-    degree: "",
-    year: "",
-    semesterNo: 0,
-    subjects: [],
-  });
+  // state for list of academic years
+  const [years, setyears] = useState([]);
+  // state for selected year
+  const [year, setyear] = useState("");
 
-  // Set the institutes which is fetched from state
-  const [institutes, setInstitutes] = useState([]);
+  // state for input of sem
+  const [sem, setsem] = useState("");
 
-  // Set the semesters array for passing it in api
-  const [semsub, setSemSub] = useState({
-    sem: "",
-    sub: "",
-  });
+  // state for editing the year
+  const [editYear, setEditYear] = useState({});
 
-  // An array to store the semesters and degrees
-  const [subject, setSubject] = useState([]);
+  // state for subject input
+  const [subject, setsubject] = useState({});
 
-  // Fetch the institutes and degrees from the API and store it in state
+  // state for subject list
+  const [subjects, setsubjects] = useState([]);
+
+  // state for academic years subjects list
+  const [aySubjects, setAySubjects] = useState([]);
+
+  // get the institutes from db before page loads
   useEffect(() => {
     dispatch(getInstitutes());
   }, [dispatch]);
 
+  // if data is available in redux state then set it to insitutes
   useEffect(() => {
-    setAcademicYears([]);
-    if (formData.degree) {
-      dispatch(getAcademicYear({ degreeId: formData.degree }));
-      dispatch(getSubjects(formData.degree));
+    if (dbInstituteDegree) {
+      let ins = [];
+      dbInstituteDegree.forEach((i) => {
+        ins.push(i.instituteName);
+      });
+      setinstitutes(ins);
     }
-  }, [formData.degree]);
+  }, [dbInstituteDegree]);
 
-  // If the state gets changed then again load the institutes from state
-
+  // get degrees according to selected institute
   useEffect(() => {
-    setInstitutes(preInstitutes);
-  }, [preInstitutes]);
+    if (dbInstituteDegree) {
+      let degs = [];
+      dbInstituteDegree.forEach((i) => {
+        if (i.instituteName === institute) {
+          i.degrees.forEach((d) => {
+            degs.push({ id: d._id, name: d.degreeName });
+          });
+        }
+      });
+      setdegrees(degs);
+    }
+  }, [institute]);
 
+  // get academic year and subjects from db when selected degree get changed
   useEffect(() => {
-    setAcademicYears(preAcademicYear);
-  }, [preAcademicYear]);
+    dispatch(getAcademicYear({ degreeId: degree }));
+    dispatch(getSubjects(degree));
+  }, [dispatch, degree]);
+
+  // if academic year is present in redux then load that data in years
+  useEffect(() => {
+    if (dbAcademicYears) {
+      setyears(dbAcademicYears);
+    }
+  }, [dbAcademicYears]);
+
+  // if subjects is preset in redux then load that data in subjects
+  useEffect(() => {
+    if (dbSubjects) {
+      setsubjects(dbSubjects);
+    }
+  }, [dbSubjects]);
 
   return (
-    <div className="row py-3">
-      <SideNavbar />
-      <div className="col-md-3">
-        <div className="card shadow">
-          <div className="card-body">
-            <div class="form-group">
-              <div class="col-sm-10 row">
-                <div class="col-sm">
-                  <label for="instituteName" class="control-label">
-                    Select Institute
-                  </label>
-                  <select
-                    className="form-control form-select"
-                    onChange={(e) => {
-                      let temp = institutes.find((inst) => {
-                        if (inst._id === e.target.value) {
-                          return inst.degrees;
-                        }
-                      });
-                      setDegrees(temp.degrees);
-                    }}
-                  >
-                    <option disabled={degrees ? true : false}>
-                      Select the degrees
-                    </option>
-                    {institutes &&
-                      institutes.map((inst, id) => {
-                        return (
-                          <option key={id} value={inst._id}>
-                            {inst.instituteName}
-                          </option>
-                        );
-                      })}
-                  </select>
-                </div>
+    <div>
+      <div className="row py-3">
+        <SideNavbar />
+        <div className="col-md-3">
+          <div className="card shadow">
+            <div className="card-body">
+              <div className="p-3">
+                <label className="control-label">Select Institute</label>
+                <select
+                  className="form-control form-select"
+                  onChange={(e) => {
+                    setinstitute(e.target.value);
+                  }}
+                >
+                  <option disabled={institute ? true : false}>
+                    Select an institute
+                  </option>
+                  {institutes &&
+                    institutes.map((inst) => {
+                      return <option>{inst}</option>;
+                    })}
+                </select>
               </div>
-              <div class="col-sm-10 row">
-                <div class="col-sm">
-                  <label for="instituteName" class="control-label">
-                    Select Degree
-                  </label>
-                  <select
-                    className="form-control form-select"
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        degree: e.target.value,
-                      });
-                      dispatch(getAcademicYear({ degreeId: formData.degree }));
-                    }}
-                    disabled={degrees ? false : true}
-                  >
-                    <option disabled={formData.degree ? true : false}>
-                      Select an degree
-                    </option>
-                    {degrees &&
-                      degrees.map((deg, id) => {
-                        return (
-                          <option key={id} value={deg._id}>
-                            {deg.degreeName}
-                          </option>
-                        );
-                      })}
-                  </select>
-                </div>
+              <div className="p-3">
+                <label className="control-label">Select Degree</label>
+                <select
+                  className="form-control form-select"
+                  disabled={institute ? false : true}
+                  onChange={(e) => {
+                    setdegree(e.target.value);
+                  }}
+                >
+                  <option disabled={degree ? true : false}>
+                    Select an degree
+                  </option>
+                  {degrees &&
+                    degrees.map((deg) => {
+                      return <option value={deg.id}>{deg.name}</option>;
+                    })}
+                </select>
               </div>
-              <div class="col-sm">
-                <label for="degreeName" class="control-label">
-                  Academic Year
-                </label>
+              <div className="p-3">
+                <label className="control-label">Academic Year</label>
                 <input
                   type="text"
-                  name="degreeName"
-                  class="form-control"
-                  value={academicYear}
-                  disabled={degrees && formData.degree ? false : true}
+                  name="ayName"
+                  className="form-control"
+                  value={ay.year}
+                  disabled={institute && degree ? false : true}
                   onChange={(e) => {
-                    setAcademicYear(e.target.value);
+                    setay({
+                      year: e.target.value,
+                    });
                   }}
                 ></input>
-              </div>
-
-              <div className="p-3">
+                <select
+                  className="form-control form-select mt-2"
+                  disabled={ay.year ? false : true}
+                  onChange={(e) => {
+                    setay({
+                      ...ay,
+                      sem: parseInt(e.target.value),
+                    });
+                  }}
+                >
+                  <option value="" disabled={ay.sem === 0 ? true : false}>
+                    Select the semesters
+                  </option>
+                  <option value="4">4</option>
+                  <option value="6">6</option>
+                  <option value="8">8</option>
+                </select>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-primary mt-2"
                   onClick={(e) => {
-                    if (academicYears.find((e) => e.year === formData.year)) {
+                    if (!ay.year) {
                       dispatch(
-                        setAlert("Academic Year already exists", "danger")
+                        setAlert("Please insert academic Year", "danger")
                       );
+                    } else {
+                      if (ay.sem === 0) {
+                        dispatch(
+                          setAlert("Please select no. of semesters", "danger")
+                        );
+                      } else {
+                        dispatch(addAcademicYear(degree, ay));
+                      }
                     }
-                    dispatch(addAcademicYear(academicYear, formData.degree));
                   }}
                 >
                   Add
                 </button>
               </div>
             </div>
-            <table className="table table-striped m-2">
-              <thead>
-                <tr>
-                  <th className="w-50">Academic Year</th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {academicYears ? (
-                  academicYears.map((ay) => {
+          </div>
+        </div>
+        <div className="col-md">
+          <div className="card shadow">
+            <div className="card-body">
+              <div className="p-3">
+                <table className="table table-striped m-2">
+                  <thead>
+                    <tr>
+                      <th>Academic Year</th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {years.map((year) => {
+                      return (
+                        <tr>
+                          <td>
+                            {" "}
+                            <button
+                              className="btn btn-info"
+                              value={year.year}
+                              onClick={(e) => {
+                                setyear(e.target.value);
+                              }}
+                            >
+                              {year.year}
+                            </button>{" "}
+                          </td>
+                          <td>
+                            <span
+                              className="fa fa-edit text-info"
+                              data-toggle="modal"
+                              data-target="#editInstitute"
+                              onClick={(e) => {
+                                setEditYear({
+                                  id: year._id,
+                                  year: year.year,
+                                });
+                              }}
+                            ></span>
+                          </td>
+                          <td>
+                            <span
+                              className="fa fa-trash-alt text-danger"
+                              onClick={(e) => {
+                                dispatch(deleteAY(year._id));
+                                dispatch(getAcademicYear({ degreeId: degree }));
+                              }}
+                            ></span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <h5 className="font-weight-bold p-3">{year && year}</h5>
+                {year && (
+                  <select
+                    className="form-control form-select m-3"
+                    disabled={year ? false : true}
+                    onChange={(e) => {
+                      setsem(e.target.value);
+                      let subs = [];
+                      years.forEach((y) => {
+                        if (y.year === year) {
+                          y.semesters.forEach((s) => {
+                            if (s.semesterNo == e.target.value) {
+                              s.subjects.forEach((u) => {
+                                subs.push({
+                                  id: u.subjectId._id,
+                                  sub: u.subjectId.subjectName,
+                                });
+                              });
+                            }
+                          });
+                        }
+                      });
+                      setAySubjects(subs);
+                    }}
+                  >
+                    <option value="">Select the semester</option>
+                    {years &&
+                      years.map((y) => {
+                        if (y.year === year) {
+                          return y.semesters.map((s) => {
+                            return (
+                              <option value={s.semesterNo}>
+                                {s.semesterNo}
+                              </option>
+                            );
+                          });
+                        }
+                      })}
+                  </select>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className="card shadow">
+          <div className="card-body">
+            <h3 className="font-weight-bold pb-3">Semester {sem}</h3>
+            <div className="row g-2">
+              <div class="col-auto">
+                <select
+                  className="form-control form-select"
+                  disabled={sem ? false : true}
+                  id="list"
+                  onChange={(e) => {
+                    setsubject({
+                      sub: e.nativeEvent.target[e.target.selectedIndex].text,
+                      id: e.target.value,
+                    });
+                    console.log(subject);
+                  }}
+                >
+                  <option>Select the subjects</option>
+                  {subjects &&
+                    subjects.map((sub) => {
+                      return (
+                        <option key={sub._id} value={sub._id} id="sub">
+                          {sub.subjectName}
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
+              <div class="col-auto">
+                <button
+                  class="btn btn-primary mb-3"
+                  onClick={(e) => {
+                    let s = aySubjects.find((f) => f.id === subject.id);
+                    if (s !== undefined) {
+                      dispatch(setAlert("Subject already exists", "danger"));
+                    } else {
+                      setAySubjects([...aySubjects, subject]);
+                    }
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+            <div className="p-3">
+              <table className="table table-striped m-2">
+                <thead>
+                  <tr>
+                    <th>Subjects</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {aySubjects.map((sub) => {
                     return (
                       <tr>
-                        <td>
-                          <button
-                            className="btn btn-primary"
-                            onClick={(e) => {
-                              setFormData({
-                                ...formData,
-                                year: ay.year,
-                              });
-                              setOldAY([]);
-                              academicYears.forEach((ay) => {
-                                if (
-                                  ay.year === formData.year &&
-                                  ay.degreeId === formData.degree
-                                ) {
-                                  ay.semesters.forEach((a) => {
-                                    setOldAY([a]);
-                                  });
-                                }
-                              });
-                            }}
-                          >
-                            {ay.year}
-                          </button>
-                        </td>
-                        <td>
-                          <span
-                            className="fa fa-edit text-info"
-                            data-toggle="modal"
-                            data-target="#editInstitute"
-                            onClick={(e) =>
-                              setEditAY({
-                                id: ay._id,
-                                year: ay.year,
-                              })
-                            }
-                          ></span>
-                        </td>
+                        <td> {sub.sub}</td>
+
                         <td>
                           <span
                             className="fa fa-trash-alt text-danger"
                             onClick={(e) => {
-                              dispatch(deleteAY(ay._id));
-                              dispatch(getAcademicYear(formData.degree));
+                              setAySubjects(
+                                aySubjects.filter((e) => e.id != sub.id)
+                              );
                             }}
                           ></span>
                         </td>
                       </tr>
                     );
-                  })
-                ) : (
-                  <h1>no data</h1>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div className="col-md-6">
-        <div className="card shadow">
-          <div className="card-body">
-            <div class="form-group">
-              <div class="col-sm-10 row">
-                <div class="col-sm-6">
-                  <label for="instituteName" class="control-label">
-                    Year
-                  </label>
-                  <h4>
-                    <span class="badge badge-secondary">{formData.year}</span>
-                  </h4>
-                </div>
-              </div>
-              <div class="col-sm-10 row">
-                <div class="col-sm-6">
-                  <label for="instituteName" class="control-label">
-                    Semester Number
-                  </label>
-                  <input
-                    type="text"
-                    name="instituteName"
-                    class="form-control"
-                    disabled={formData.year ? false : true}
-                    value={semsub.sem}
-                    onChange={(e) => {
-                      setSemSub({
-                        ...semsub,
-                        sem: e.target.value,
-                      });
-                    }}
-                  ></input>
-                </div>
-                <div class="col-sm-6">
-                  <label for="degreeName" class="control-label">
-                    Subject
-                  </label>
-                  <select
-                    className="form-control form-select"
-                    onChange={(e) => {
-                      setSemSub({
-                        ...semsub,
-                        sub: e.target.value,
-                      });
-                      // dispatch(getAcademicYear(formData.degree));
-                    }}
-                    disabled={semsub.sem === 0 ? true : false}
-                  >
-                    <option disabled={semsub.sub ? true : false}>
-                      Select an subject
-                    </option>
-                    {subjects &&
-                      subjects.map((sub, id) => {
-                        return (
-                          <option key={id} value={sub._id}>
-                            {sub.subjectName}
-                          </option>
-                        );
-                      })}
-                  </select>
-                </div>
-              </div>
-              <div className="p-3">
-                <button
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    setSubject([...subject, semsub.sub]);
-                    setFormData({
-                      ...formData,
-                      semesterNo: Number(semsub.sem),
-                      subjects: subject,
-                    });
-                    dispatch(addSemesters(formData));
-                  }}
-                >
-                  Add
-                </button>
-              </div>
+                  })}
+                </tbody>
+              </table>
+              <button
+                className="btn btn-success"
+                onClick={(e) => {
+                  dispatch(addAYSubjects(degree, year, aySubjects, sem));
+                }}
+              >
+                Save
+              </button>
             </div>
-            <table className="table table-striped m-2">
-              <thead>
-                <tr>
-                  <th className="w-50">Semester</th>
-                  <th>Subjects</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* {academicYears ? (
-                  academicYears.map((ay) => {
-                    ay.semesters.map((aa) => {
-                      console.log(aa);
-                      return (
-                        <tr key={aa._id}>
-                          <td>{aa.semesterNo}</td>
-                        </tr>
-                      );
-                    });
-                  })
-                ) : (
-                  <h1>No</h1>
-                )} */}
-                {oldAY ? (
-                  oldAY.map((ay) => {
-                    return (
-                      <tr>
-                        <td>{ay.semesterNo}</td>
-                        <td>
-                          <table>
-                            {ay.subjects.map((t) => {
-                              return (
-                                <tr>
-                                  <td>
-                                    {t.subjectId.subjectName}-
-                                    {t.subjectId.subjectCode}
-                                  </td>
-                                  <td>
-                                    <span
-                                      className="fa fa-trash-alt text-danger"
-                                      onClick={(e) => {
-                                        // dispatch(deleteInstitute(inst.id));
-                                      }}
-                                    ></span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </table>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <h1>No Data</h1>
-                )}
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
-      {/* Edit academic year Dialog */}
+      {/* Modal for adding subjects */}
       <div
         class="modal fade"
         id="editInstitute"
@@ -412,7 +411,7 @@ function AcademicYear() {
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="editInstituteLabel">
-                Edit Academic Year
+                Edit Year
               </h5>
               <button
                 type="button"
@@ -424,14 +423,14 @@ function AcademicYear() {
               </button>
             </div>
             <div class="modal-body">
-              <label class="col-form-label">Academic Year</label>
+              <label class="col-form-label">Year</label>
               <input
                 type="text"
                 class="form-control"
-                value={editAY.year}
+                value={editYear.year}
                 onChange={(e) =>
-                  setEditAY({
-                    ...editAY,
+                  setEditYear({
+                    ...editYear,
                     year: e.target.value,
                   })
                 }
@@ -450,17 +449,18 @@ function AcademicYear() {
                 class="btn btn-primary"
                 data-dismiss="modal"
                 onClick={(e) => {
-                  dispatch(updateAcademicYear(editAY.year, editAY.id));
-                  dispatch(getAcademicYear(formData.degree));
+                  dispatch(
+                    updateAcademicYear(editYear.year, editYear.id, degree)
+                  );
                 }}
               >
-                Save changes
+                Update
               </button>
             </div>
           </div>
         </div>
       </div>
-      {/* End of edit academic year */}
+      {/* End of adding subject modal */}
     </div>
   );
 }
