@@ -127,7 +127,7 @@ export const updateAcademicYear = (year, id, degree) => async (dispatch) => {
   };
   // Edit the academicyear
   try {
-    const res = await axios.put(
+    await axios.put(
       `/api/academic-year/${id}`,
       { year: year },
       config

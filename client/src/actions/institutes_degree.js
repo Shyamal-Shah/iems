@@ -103,7 +103,7 @@ export const editInstituteName = (newName, id) => async (dispatch) => {
 
   // Edit the institute
   try {
-    const res = await axios.put(
+    await axios.put(
       `/api/institute/${id}`,
       { instituteName: newName },
       config

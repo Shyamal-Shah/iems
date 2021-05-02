@@ -5,6 +5,7 @@ const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
 const InstituteDegree = require("../../models/InstituteDegree");
 const adminAuth = require("../../middleware/adminAuth");
+
 // @router POST api/institute
 // @desc Add new Degree
 // @access PRIVATE

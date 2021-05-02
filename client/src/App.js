@@ -28,8 +28,6 @@ import { loadUser } from "./actions/auth";
 import pDataExport from "./components/Pedagogy/DataExport";
 import esDataExport from "./components/ExamSchedule/DataExport";
 import neDataExport from "./components/NEList/DataExport";
-import Admin from "./components/Admin/Admin";
-
 import { loadAdmin } from "./actions/adminAuth";
 import AdminLogin from "./components/auth/AdminLogin";
 import AcademicYear from "./components/Admin/AcademicYear";

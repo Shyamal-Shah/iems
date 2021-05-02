@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function SideNavbar() {
   return (
     <div className="col-md-3">
-      <div className="card shadow">
+      <div className="card h-100 shadow">
         <div className="card-body">
           <Link className="btn btn-outline-info w-100 mb-3" to="institute">
             Institute Name

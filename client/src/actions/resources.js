@@ -30,12 +30,6 @@ export const addResources = (degreeId, classes, labs) => async (dispatch) => {
 };
 
 // Get all the resouces
-export const getResources = (degreeId) => async (dispatch) => {
-  try {
-    const res = await axios.get("/api/resources", {
-      params: {
-        degreeId: degreeId,
-
 export const getResources = ({ degreeId }) => async (dispatch) => {
   try {
     const res = await axios.get('/api/resources/', {
@@ -52,11 +46,7 @@ export const getResources = ({ degreeId }) => async (dispatch) => {
       type: RESOURCES_ERROR,
       payload: error.errors,
 
-  } catch (err) {
-    dispatch({
-      type: RESOURCES_ERROR,
-      payload: err.errors,
-
+  
     });
   }
 };

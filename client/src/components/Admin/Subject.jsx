@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { setAlert } from "../../actions/alert";
-import { getInstitutes } from "../../actions/institutes_degree";
-import { addSuject, deleteSubject, getSubjects } from "../../actions/subject";
-import SideNavbar from "./SideNavbar";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
+import { getInstitutes } from '../../actions/institutes_degree';
+import { addSuject, deleteSubject, getSubjects } from '../../actions/subject';
+import SideNavbar from './SideNavbar';
 function Subject() {
   // To call actions
   const dispatch = useDispatch();
@@ -28,9 +28,9 @@ function Subject() {
 
   // This will store degreeId, subjectName, subjectCode
   const [formData, setFormData] = useState({
-    subjectName: "",
-    subjectCode: "",
-    degreeId: "",
+    subjectName: '',
+    subjectCode: '',
+    degreeId: '',
   });
 
   // Get the institutes from API and store it in state.
@@ -51,15 +51,15 @@ function Subject() {
   }, [preLoadedSubjects]);
 
   return (
-    <div className="row py-3">
+    <div className='row py-3'>
       <SideNavbar />
-      <div className="col-md-3">
-        <div className="card shadow">
-          <div className="card-body">
-            <div className="pb-3">
-              <label className="control-label">Select Institute</label>
+      <div className='col-md-3'>
+        <div className='card h-100 shadow'>
+          <div className='card-body'>
+            <div className='pb-3'>
+              <label className='control-label'>Select Institute</label>
               <select
-                className="form-control form-select"
+                className='form-control form-select'
                 onChange={(e) => {
                   let temp = institutes.find((inst) => {
                     if (inst._id === e.target.value) {
@@ -83,10 +83,10 @@ function Subject() {
                   })}
               </select>
             </div>
-            <div className="pb-2">
-              <label className="control-label">Select Degree</label>
+            <div className='pb-2'>
+              <label className='control-label'>Select Degree</label>
               <select
-                className="form-control form-select"
+                className='form-control form-select'
                 disabled={degrees.length === 0 ? true : false}
                 onChange={(e) => {
                   setFormData({
@@ -98,7 +98,7 @@ function Subject() {
                 }}
               >
                 <option disabled={formData.degreeId ? true : false}>
-                  {" "}
+                  {' '}
                   Select an degree
                 </option>
                 {degrees &&
@@ -114,95 +114,103 @@ function Subject() {
           </div>
         </div>
       </div>
-      <div className="col-md-6">
-        <div className="card shadow">
-          <div className="card-body">
-            <div className="form-group">
-              <div className="col-sm-10 row">
-                <div className="col-sm-6">
-                  <label for="instituteName" className="control-label">
-                    Subject Name
-                  </label>
-                  <input
-                    type="text"
-                    name="instituteName"
-                    className="form-control"
-                    value={formData.subjectName}
-                    disabled={formData.degreeId ? false : true}
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        subjectName: e.target.value,
-                      });
-                    }}
-                  ></input>
+      <div className='col-md-6'>
+        <div className='card h-100 shadow'>
+          {formData.degreeId && (
+            <div className='card-body'>
+              <div className='form-group'>
+                <div className='col-sm-10 row'>
+                  <div className='col-sm-6'>
+                    <label for='instituteName' className='control-label'>
+                      Add a new Subject
+                    </label>
+                    <input
+                      type='text'
+                      name='instituteName'
+                      placeholder='Subject Name'
+                      className='form-control'
+                      value={formData.subjectName}
+                      disabled={formData.degreeId ? false : true}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          subjectName: e.target.value,
+                        });
+                      }}
+                    ></input>
+                  </div>
+                  <div className='col-sm-6'>
+                    <label
+                      for='degreeName'
+                      className='control-label'
+                      style={{ color: 'transparent' }}
+                    >
+                      Subject Code
+                    </label>
+                    <input
+                      type='text'
+                      name='degreeName'
+                      placeholder='Subject Code'
+                      className='form-control'
+                      value={formData.subjectCode}
+                      disabled={formData.subjectName ? false : true}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          subjectCode: e.target.value,
+                        });
+                      }}
+                    ></input>
+                  </div>
                 </div>
-                <div className="col-sm-6">
-                  <label for="degreeName" className="control-label">
-                    Subject Code
-                  </label>
-                  <input
-                    type="text"
-                    name="degreeName"
-                    className="form-control"
-                    value={formData.subjectCode}
-                    disabled={formData.subjectName ? false : true}
-                    onChange={(e) => {
-                      setFormData({
-                        ...formData,
-                        subjectCode: e.target.value,
-                      });
+                <div className='p-3'>
+                  <button
+                    className='btn btn-primary'
+                    onClick={(e) => {
+                      if (
+                        formData.degreeId &&
+                        formData.subjectName &&
+                        formData.subjectCode
+                      ) {
+                        dispatch(addSuject(formData));
+                      } else {
+                        dispatch(setAlert('Please fill all fields', 'danger'));
+                      }
                     }}
-                  ></input>
+                  >
+                    Add
+                  </button>
                 </div>
               </div>
-              <div className="p-3">
-                <button
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    if (
-                      formData.degreeId &&
-                      formData.subjectName &&
-                      formData.subjectCode
-                    ) {
-                      dispatch(addSuject(formData));
-                    } else {
-                      dispatch(setAlert("Please fill all fields", "danger"));
-                    }
-                  }}
-                >
-                  Add
-                </button>
-              </div>
+              <table className='table table-striped m-2'>
+                <thead>
+                  <tr>
+                    <th className='w-50'>Subjects</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {subjects &&
+                    subjects.map((sub, id) => {
+                      return (
+                        <tr key={id}>
+                          <td>{sub.subjectName}</td>
+                          <td>
+                            <span
+                              className='fa fa-trash-alt text-danger'
+                              onClick={(e) => {
+                                dispatch(deleteSubject(sub._id));
+                                dispatch(getSubjects(formData.degreeId));
+                              }}
+                            ></span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
             </div>
-            <table className="table table-striped m-2">
-              <thead>
-                <tr>
-                  <th className="w-50">Subjects</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {subjects &&
-                  subjects.map((sub, id) => {
-                    return (
-                      <tr key={id}>
-                        <td>{sub.subjectName}</td>
-                        <td>
-                          <span
-                            className="fa fa-trash-alt text-danger"
-                            onClick={(e) => {
-                              dispatch(deleteSubject(sub._id));
-                              dispatch(getSubjects(formData.degreeId));
-                            }}
-                          ></span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
+          )}
         </div>
       </div>
     </div>

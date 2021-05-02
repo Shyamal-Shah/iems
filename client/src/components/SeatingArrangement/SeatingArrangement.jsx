@@ -22,7 +22,6 @@ import {
   alignment,
   subHeader1Fill,
   subHeader2Fill,
-  colnumString,
   dataFont,
 } from '../../utils/defaults';
 import { getResources } from '../../actions/resources';
