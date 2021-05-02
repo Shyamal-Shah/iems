@@ -333,7 +333,7 @@ const NEList = () => {
                 </select>
               </div>
               <DropDown
-                title='Name of Components'
+                title='Name of Component'
                 id='ddNameOfComponents'
                 isDisabled={semesterNo && subjectName ? false : true}
                 value={componentName}

@@ -45,13 +45,15 @@ const ExamSchedule = () => {
     }
   }, [dispatch, institute]);
 
-  // Creating formData, and expType states using useState
-  const [formData, setFormData] = useState({
+  let initialState = {
     testName: '',
     examWeekFrom: moment().format('yyyy-MM-DD'),
     examWeekTo: moment().add(7, 'days').format('yyyy-MM-DD'),
     subjects: [],
-  });
+  };
+
+  // Creating formData, and expType states using useState
+  const [formData, setFormData] = useState(initialState);
   const [expType, setExpType] = useState('');
 
   // Destructure formData
@@ -71,11 +73,17 @@ const ExamSchedule = () => {
         })
       );
     }
-    setFormData((state) => ({ ...state, testName: '', subjects: [] }));
+    setFormData(initialState);
   }, [dispatch, semesterNo, academicYear, semesterGroup, academicYears]);
 
   // When testName is changed get corresponding examScheule
   useEffect(() => {
+    setFormData((_) => ({
+      testName,
+      examWeekFrom,
+      examWeekTo,
+      subjects,
+    }));
     testName &&
       dispatch(
         getExamScheduleSN({
@@ -94,6 +102,7 @@ const ExamSchedule = () => {
       let fd = { ...formData };
       fd.examWeekFrom = examSchedule.examWeekFrom;
       fd.examWeekTo = examSchedule.examWeekTo;
+      console.log('Hello');
       for (let i = 0; i < subjects.length; i++) {
         for (let index = 0; index < examSchedule.schedule.length; index++) {
           if (subjects[i]._id === examSchedule.schedule[index].subjectId._id) {
@@ -111,15 +120,13 @@ const ExamSchedule = () => {
         subjects,
       });
     }
-  }, [examSchedule, subjects, testName, examWeekTo, examWeekFrom]);
+  }, [examSchedule, subjects, testName]);
 
   // Check if tow exams' timming does not clash
   const validateExamTime = () => {
     for (let i = 0; i < subjects.length; i++) {
       for (let j = i + 1; j < subjects.length; j++) {
         if (formData[`${j}-to`] === formData[`${i}-to`]) {
-          console.log(formData[`${j}-to`], formData[`${i}-to`], j, i);
-          console.log(formData[`${j}-from`], formData[`${i}-from`], j, i);
           dispatch(
             setAlert('Two exams cannot start on the same time', 'danger')
           );
@@ -306,6 +313,7 @@ const ExamSchedule = () => {
                     min={moment().format('yyyy-MM-DD')}
                     name='examWeekFrom'
                     onChange={(e) => {
+                      console.log(e.target.value);
                       setFormData({
                         ...formData,
                         examWeekFrom: e.target.value,
@@ -313,6 +321,7 @@ const ExamSchedule = () => {
                           .add(7, 'days')
                           .format('yyyy-MM-DD'),
                       });
+                      console.log(e.target.value);
                     }}
                     disabled={semesterNo ? false : true}
                   />

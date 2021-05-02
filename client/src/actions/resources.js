@@ -35,6 +35,12 @@ export const getResources = (degreeId) => async (dispatch) => {
     const res = await axios.get("/api/resources", {
       params: {
         degreeId: degreeId,
+
+export const getResources = ({ degreeId }) => async (dispatch) => {
+  try {
+    const res = await axios.get('/api/resources/', {
+      params: {
+        degreeId,
       },
     });
     dispatch({
@@ -45,6 +51,12 @@ export const getResources = (degreeId) => async (dispatch) => {
     dispatch({
       type: RESOURCES_ERROR,
       payload: error.errors,
+
+  } catch (err) {
+    dispatch({
+      type: RESOURCES_ERROR,
+      payload: err.errors,
+
     });
   }
 };

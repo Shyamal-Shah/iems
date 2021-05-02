@@ -1,18 +1,18 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const auth = require("../../middleware/auth");
 const adminAuth = require("../../middleware/adminAuth");
 // Models
-const Resources = require("../../models/Resources");
-const AcademicYear = require("../../models/AcademicYear");
-const InstituteDegree = require("../../models/InstituteDegree");
+const Resources = require('../../models/Resources');
+const AcademicYear = require('../../models/AcademicYear');
+const InstituteDegree = require('../../models/InstituteDegree');
 
 // @router POST api/resources
 // @desc Add new resources
 // @access PRIVATE
 router.post(
-  "/",
+  '/',
   [
     adminAuth,
     // check('academicYear', 'Academic year is required.').notEmpty(),
@@ -53,7 +53,7 @@ router.post(
         if (!degreeExist) {
           return res
             .status(400)
-            .json({ errors: [{ msg: "Degree Id is not valid." }] });
+            .json({ errors: [{ msg: 'Degree Id is not valid.' }] });
         }
 
         resources = new Resources({
@@ -67,11 +67,11 @@ router.post(
       // Save the resources to the database.
       await resources.save();
       // Return the the response.
-      res.json({ msg: "Resources added.", resources });
+      res.json({ msg: 'Resources added.', resources });
     } catch (error) {
       // If the error exists then return response.
       console.log(error.message);
-      return res.status(500).send("Server error.");
+      return res.status(500).send('Server error.');
     }
   }
 );
@@ -97,7 +97,7 @@ router.get("/", auth, async (req, res) => {
       if (!resources) {
         return res.status(400).json({
           errors: [
-            { msg: "Records with this semester number does not exist." },
+            { msg: 'Records with this semester number does not exist.' },
           ],
         });
       }
@@ -107,12 +107,12 @@ router.get("/", auth, async (req, res) => {
       let resources = await Resources.find({});
       return res.json(resources);
     } else {
-      res.status(400).send("Bad request");
+      res.status(400).send('Bad request');
     }
   } catch (e) {
     // Catch any error that occurs due to mongoDb operations
     console.log(e.message);
-    return res.status(500).send("Server Error.");
+    return res.status(500).send('Server Error.');
   }
 });
 

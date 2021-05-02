@@ -28,7 +28,6 @@ import {
 import { getResources } from '../../actions/resources';
 import { setAlert } from '../../actions/alert';
 import { getExamScheduleSN } from '../../actions/exam_schedule';
-import { getNotEligiblityList } from '../../actions/not_eligible';
 
 const SeatingArrangement = () => {
   const dispatch = useDispatch();
@@ -36,7 +35,6 @@ const SeatingArrangement = () => {
   const { academicYears } = useSelector((state) => state.AcademicYear);
   const { examSchedule } = useSelector((state) => state.ExamSchedule);
   const { resources } = useSelector((state) => state.Resources);
-  const { neList } = useSelector((state) => state.NotEligible);
   const {
     institute,
     degree,
@@ -52,7 +50,6 @@ const SeatingArrangement = () => {
     testName: '',
     studentList: null,
     loading: false,
-    subjectName: '',
   };
   const [formData, setFormData] = useState({ ...initialState });
 
@@ -63,7 +60,6 @@ const SeatingArrangement = () => {
     selectedFile,
     studentList,
     loading,
-    subjectName,
   } = formData;
 
   // Fetch institutes from database if institues are not available
@@ -105,29 +101,6 @@ const SeatingArrangement = () => {
       );
   }, [testName, dispatch, academicYear, academicYears, semesterNo]);
 
-  // Fetch not eligiblity lists
-  useEffect(() => {
-    if (testName && subjectName) {
-      dispatch(
-        getNotEligiblityList({
-          academicYear: academicYears.filter(
-            (ay) => ay.year === academicYear
-          )[0]._id,
-          componentName: testName,
-          semester: semesterNo,
-          subject: subjectName,
-        })
-      );
-    }
-  }, [
-    testName,
-    subjectName,
-    dispatch,
-    academicYear,
-    academicYears,
-    semesterNo,
-  ]);
-
   // Map students to rooms based on rooms capacity
   const mapStudents = (arrangement, id, noOfStudents, rooms) => {
     arrangement = [
@@ -143,14 +116,12 @@ const SeatingArrangement = () => {
         let tableRow = (
           <tr key={i}>
             <th>{room.code}</th>
-            {examSchedule.schedule.map((schedule, i) => {
-              if (schedule.subjectId._id === subjectName)
-                return (
-                  <td key={i}>
-                    {row1.getCell(2).value + ' to ' + row2.getCell(2).value}
-                  </td>
-                );
-              return null;
+            {examSchedule.schedule.map((_, i) => {
+              return (
+                <td key={i}>
+                  {row1.getCell(2).value + ' to ' + row2.getCell(2).value}
+                </td>
+              );
             })}
           </tr>
         );
@@ -180,6 +151,7 @@ const SeatingArrangement = () => {
       arrangement = x.arrangement;
       id = x.id;
     }
+    // if (classroom && lab) console.log('classroom and lab');
     if (id < noOfStudents)
       return (
         <tr style={{ backgroundColor: 'white' }}>
@@ -222,35 +194,31 @@ const SeatingArrangement = () => {
           <tr>
             <th rowSpan='2'>Room no.</th>
             {examSchedule.schedule.map((schedule, i) => {
-              if (schedule.subjectId._id === subjectName)
-                return (
-                  <th key={i}>
-                    {schedule.subjectId.subjectCode +
-                      ' - ' +
-                      schedule.subjectId.subjectName}
-                  </th>
-                );
-              return null;
+              return (
+                <th key={i}>
+                  {schedule.subjectId.subjectCode +
+                    ' - ' +
+                    schedule.subjectId.subjectName}
+                </th>
+              );
             })}
           </tr>
           <tr>
             {examSchedule.schedule.map((schedule, i) => {
-              if (schedule.subjectId._id === subjectName)
-                return (
-                  <th
-                    key={i}
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        'On: ' +
-                        schedule.from.split(',')[0] +
-                        '</br> From: ' +
-                        schedule.from.split(',')[1] +
-                        ' To: ' +
-                        schedule.to.split(',')[1],
-                    }}
-                  ></th>
-                );
-              return null;
+              return (
+                <th
+                  key={i}
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      'On: ' +
+                      schedule.from.split(',')[0] +
+                      '</br> From: ' +
+                      schedule.from.split(',')[1] +
+                      ' To: ' +
+                      schedule.to.split(',')[1],
+                  }}
+                ></th>
+              );
             })}
           </tr>
         </Fragment>
@@ -260,158 +228,101 @@ const SeatingArrangement = () => {
 
   const excelExport = (e) => {
     e.preventDefault();
+
+    // Create new Excel file ans name it
+    var ExcelJSWorkbook = new ExcelJS.Workbook();
+    var worksheet = ExcelJSWorkbook.addWorksheet('Seating Arrangement');
     let sheetHeaders = [
       ...headers,
       `Academic Year (${academicYear}) ${semesterGroup} SEMESTER (SEMESTER: ${semesterNo})`,
       'Seating Arrangement',
     ];
-    let cols1 = [
-      ['B', 'D'],
-      ['E', 'J'],
-    ];
-    let cols2 = [
-      ['B', 'C'],
-      ['D', 'E'],
-      ['F', 'J'],
-      ['K', 'L'],
-    ];
-    let titles1 = [
+    const totalCols = 3 + examSchedule.schedule.length * 4;
+    let cols = [['B', 'C']];
+    for (let i = 4; i < totalCols; i += 4) {
+      cols.push([colnumString(i), colnumString(3 + i)]);
+    }
+
+    let titles = [
       'Room No.',
-      ...examSchedule.schedule
-        .filter((schedule) => schedule.subjectId._id === subjectName)
-        .map(
-          (schedule) =>
-            schedule.subjectId.subjectCode +
-            ' - ' +
-            schedule.subjectId.subjectName
-        ),
+      ...examSchedule.schedule.map(
+        (schedule) =>
+          schedule.subjectId.subjectCode +
+          ' - ' +
+          schedule.subjectId.subjectName
+      ),
     ];
-    let titles2 = ['Sr No.', 'Student Id', 'Student Name', 'Signature'];
     let timing = [
       '',
-      ...examSchedule.schedule
-        .filter((schedule) => schedule.subjectId._id === subjectName)
-        .map(
-          (schedule) =>
-            'On: ' +
-            schedule.from.split(',')[0] +
-            ' From: ' +
-            schedule.from.split(',')[1] +
-            ' To: ' +
-            schedule.to.split(',')[1]
-        ),
+      ...examSchedule.schedule.map(
+        (schedule) =>
+          'On: ' +
+          schedule.from.split(',')[0] +
+          ' From: ' +
+          schedule.from.split(',')[1] +
+          ' To: ' +
+          schedule.to.split(',')[1]
+      ),
     ];
-    let studentId = 2;
-    // Create new Excel file ans name it
-    var ExcelJSWorkbook = new ExcelJS.Workbook();
-    let table = document.getElementById('tblSeatingArrangements');
-    for (let index = 1, tableRow; (tableRow = table.rows[index]); index++) {
-      let sheetRow = 1;
-      let first = index === 1;
-      let headers = first
-        ? [...sheetHeaders]
-        : [...sheetHeaders, `Room No: ${tableRow.cells[0].innerHTML}`];
-      var worksheet = ExcelJSWorkbook.addWorksheet(
-        first ? 'Seating Arrangement' : tableRow.cells[0].innerHTML
-      );
-      let cols = first ? cols1 : cols2;
-      let titles = first ? titles1 : titles2;
-      let totalCols = first ? 10 : 12;
 
-      // Add header to the worksheet
-      for (let i = 1; i <= totalCols; i++) {
-        if (i <= headers.length) {
-          worksheet.mergeCells(i, 2, i, totalCols);
-          const cell = worksheet.getCell(`B${i}`);
-          cell.fill = headerFill;
+    // Add header to the worksheet
+    for (let i = 1; i <= totalCols; i++) {
+      if (i <= sheetHeaders.length) {
+        worksheet.mergeCells(i, 2, i, totalCols);
+        const cell = worksheet.getCell(`B${i}`);
+        cell.fill = headerFill;
+        cell.border = border;
+        cell.value = sheetHeaders[i - 1].toUpperCase();
+      } else if (i === sheetHeaders.length + 1) {
+        for (let j = 0; j < titles.length; j++) {
+          worksheet.mergeCells(
+            `${cols[j][0]}${i}:${cols[j][1]}${j === 0 ? i + 3 : i + 1}`
+          );
+          let cell = worksheet.getCell(`${cols[j][0]}${i}`);
           cell.border = border;
-          cell.value = headers[i - 1].toUpperCase();
-        } else if (i === headers.length + 1) {
-          for (let j = 0; j < titles.length; j++) {
-            worksheet.mergeCells(
-              `${cols[j][0]}${i}:${cols[j][1]}${
-                j === 0 && first ? i + 3 : i + 1
-              }`
-            );
-            let cell = worksheet.getCell(`${cols[j][0]}${i}`);
+          cell.fill = subHeader1Fill;
+          cell.value = titles[j];
+          if (j > 0) {
+            worksheet.mergeCells(`${cols[j][0]}${i + 2}:${cols[j][1]}${i + 3}`);
+            let cell = worksheet.getCell(`${cols[j][0]}${i + 2}`);
             cell.border = border;
-            cell.fill = subHeader1Fill;
-            cell.value = titles[j];
-            if (first && j > 0) {
-              worksheet.mergeCells(
-                `${cols[j][0]}${i + 2}:${cols[j][1]}${i + 3}`
-              );
-              let cell = worksheet.getCell(`${cols[j][0]}${i + 2}`);
-              cell.border = border;
-              cell.fill = subHeader2Fill;
-              cell.value = timing[j];
-            }
+            cell.fill = subHeader2Fill;
+            cell.value = timing[j];
           }
         }
-        worksheet.getColumn(i).font = headerFont;
-        worksheet.getColumn(i).alignment = alignment;
+      }
+      worksheet.getColumn(i).font = headerFont;
+      worksheet.getColumn(i).alignment = alignment;
+    }
+
+    let sheetRow = sheetHeaders.length + 5;
+    let table = document.getElementById('tblSeatingArrangements');
+
+    // Read cells from HTML table and add it to worksheet
+    for (var i = 2, row; (row = table.rows[i]); i++, sheetRow++) {
+      for (var j = 0, col; (col = row.cells[j]); j++) {
+        worksheet.mergeCells(
+          `${cols[j][0]}${sheetRow}:${cols[j][1]}${sheetRow}`
+        );
+        let cell = worksheet.getCell(`${cols[j][0]}${sheetRow}`);
+        cell.font = dataFont;
+        cell.border = border;
+        cell.value = col.innerHTML;
       }
 
-      sheetRow = sheetRow + (first ? 10 : 9);
-
-      // Add content to the sheets
-      if (first)
-        for (var i = 2, row; (row = table.rows[i]); i++, sheetRow++) {
-          for (var j = 0, col; (col = row.cells[j]); j++) {
-            if (first) {
-              worksheet.mergeCells(
-                `${cols[j][0]}${sheetRow}:${cols[j][1]}${sheetRow}`
-              );
-              let cell = worksheet.getCell(`${cols[j][0]}${sheetRow}`);
-              cell.font = dataFont;
-              cell.border = border;
-              cell.value = col.innerHTML;
-            }
-          }
+      var wkst = ExcelJSWorkbook.addWorksheet(row.cells[0].innerHTML);
+      // Add header to the worksheet
+      for (let i = 1; i <= totalCols; i++) {
+        if (i <= sheetHeaders.length) {
+          wkst.mergeCells(i, 2, i, totalCols);
+          const cell = wkst.getCell(`B${i}`);
+          cell.fill = headerFill;
+          cell.border = border;
+          cell.value = sheetHeaders[i - 1].toUpperCase();
+        } else if (i === sheetHeaders.length + 1) {
         }
-      else {
-        let room;
-        if (
-          (room = resources.classes.find(
-            (cls) => cls.code === tableRow.cells[0].innerHTML
-          )) === undefined
-        ) {
-          room = resources.labs.find(
-            (labs) => labs.code === tableRow.cells[0].innerHTML
-          );
-        }
-        for (
-          let i = 1, noOfStudents = studentId + room.examCapacity - 1;
-          studentId <= noOfStudents;
-          studentId++, i++
-        ) {
-          let student = studentList.getRow(studentId);
-          if (student.getCell(1).value === null) break;
-          let values = [
-            i,
-            student.getCell(2).value,
-            student.getCell(3).value,
-            neList.find((std) => std.studentId === student.getCell(2).value)
-              ? 'NE'
-              : '',
-          ];
-          for (var k = 0; k < cols.length; k++) {
-            worksheet.mergeCells(
-              `${cols[k][0]}${sheetRow}:${cols[k][1]}${sheetRow}`
-            );
-            let cell = worksheet.getCell(`${cols[k][0]}${sheetRow}`);
-            cell.font = dataFont;
-            cell.border = border;
-            if (values[cols.length - 1] === 'NE')
-              cell.fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: { argb: 'FFFF533F' },
-              };
-            cell.value = values[k];
-          }
-          sheetRow++;
-        }
+        wkst.getColumn(i).font = headerFont;
+        wkst.getColumn(i).alignment = alignment;
       }
     }
 
@@ -432,9 +343,9 @@ const SeatingArrangement = () => {
       }}
     >
       <div className='row py-3'>
-        {/* Content of Card-1/firstCard */}
-        <div className='col-md-4 pb-3 pr-1'>
+        <div className='col-md-4'>
           <div className='card h-100 shadow'>
+            {/* Content of Card-1/firstCard */}
             <div className='card-body'>
               <h3 className='text-center'>SEATING ARRANGEMENT</h3>{' '}
               <Fragment>
@@ -608,49 +519,14 @@ const SeatingArrangement = () => {
                     </div>
                   </div>
                 </div>
-                <div className='row'>
-                  <div className='col'>
-                    <div className='form-group'>
-                      <label htmlFor='ddSubjects' className='form-label'>
-                        Subject Name
-                      </label>
-                      <select
-                        id='ddSubjects'
-                        className='form-select form-control'
-                        value={subjectName ? subjectName : ''}
-                        onChange={(e) => {
-                          setFormData({
-                            ...formData,
-                            subjectName: e.target.value,
-                          });
-                        }}
-                        disabled={semesterNo && testName ? false : true}
-                        required
-                      >
-                        <option value='' disabled>
-                          Select Option
-                        </option>
-                        {examSchedule
-                          ? examSchedule.schedule.map((schedule, i) => {
-                              return (
-                                <option key={i} value={schedule.subjectId._id}>
-                                  {schedule.subjectId.subjectName}
-                                </option>
-                              );
-                            })
-                          : []}
-                      </select>
-                    </div>
-                  </div>
-                </div>
               </Fragment>
             </div>
           </div>
         </div>
-        {/* Content of Card-2/secondCard */}
-        <div className='col-md-8 pb-3 pr-1'>
+        <div className='col-md-8'>
           <div className='card h-100 shadow'>
-            {semesterNo && testName && examSchedule && subjectName && (
+            {/* Content of Card-3/thirdCard */}
+            {semesterNo && testName && examSchedule && (
               <div className='card-body'>
                 <div className='row'>
                   <div className='col-md-9'>
@@ -660,7 +536,7 @@ const SeatingArrangement = () => {
                           Please select a student list in
                           <span
                             className='btn btn-link text-monospace'
-                            onClick={() => {}}
+                            onClick=''
                           >
                             FORMAT
                           </span>

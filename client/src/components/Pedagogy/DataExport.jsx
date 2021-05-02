@@ -179,7 +179,7 @@ function DataExport() {
   // Function to create a excel sheet and add headers and dowload it.
   const excelExport = (e) => {
     e.preventDefault();
-    // Create new Excel file ans name it
+    // Create new Excel file and name it
     var ExcelJSWorkbook = new ExcelJS.Workbook();
     var worksheet = ExcelJSWorkbook.addWorksheet('Pedagogy');
     let sheetHeaders = [

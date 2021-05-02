@@ -17,7 +17,6 @@ router.post(
   [
     auth,
     check("academicYear", "Academic year is required.").notEmpty(),
-
     check("degreeId", "Degree is required.").notEmpty(),
     check("subjectId", "Subject is required.").notEmpty(),
     check("semester", "Semester is required.").notEmpty(),
@@ -32,7 +31,6 @@ router.post(
     // Destructuring the academic academicYear,degreeId,semester,classes,labs from req.body
     const {
       academicYear,
-
       degreeId,
       subjectId,
       semester,
@@ -44,7 +42,6 @@ router.post(
       // Find the resources with academicYear, degreeId, semester
       let seatingArrangement = await SeatingArrangement.findOne({
         academicYear,
-
         degreeId,
         semester,
         subjectId,
