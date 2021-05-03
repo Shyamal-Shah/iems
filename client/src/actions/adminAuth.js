@@ -1,23 +1,23 @@
-import axios from "axios";
-import { setAlert } from "./alert";
+import axios from 'axios';
+import { setAlert } from './alert';
 import {
   ADMIN_LOGIN,
   ADMIN_LOADED,
   ADMIN_LOGOUT,
   ADMIN_AUTH_ERROR,
-} from "./types";
-import setAdminAuthToken from "../utils/setAdminAuth";
+} from './types';
+import setAdminAuthToken from '../utils/setAdminAuth';
 
 // Get the admin data like name and email by passing the token to header
 // Set the admin state
 export const loadAdmin = () => async (dispatch) => {
-  if (localStorage.getItem("adminToken")) {
+  if (localStorage.getItem('adminToken')) {
     // It will set the auth token to header
-    setAdminAuthToken(localStorage.getItem("adminToken"));
+    setAdminAuthToken(localStorage.getItem('adminToken'));
   }
 
   try {
-    const res = await axios.get("/api/adminAuth");
+    const res = await axios.get('/api/adminAuth');
     dispatch({ type: ADMIN_LOADED, payload: res.data });
   } catch (err) {
     console.log(err.response);
@@ -30,12 +30,12 @@ export const loadAdmin = () => async (dispatch) => {
 export const adminLogin = ({ email, password }) => async (dispatch) => {
   const config = {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   };
   const body = JSON.stringify({ email, password });
   try {
-    const res = await axios.post("/api/adminAuth", body, config);
+    const res = await axios.post('/api/adminAuth', body, config);
     dispatch({
       type: ADMIN_LOGIN,
       payload: res.data,
@@ -44,7 +44,7 @@ export const adminLogin = ({ email, password }) => async (dispatch) => {
   } catch (err) {
     const errors = err.response.data.errors;
     if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
     }
     dispatch({
       type: ADMIN_AUTH_ERROR,
@@ -57,7 +57,4 @@ export const adminLogout = () => (dispatch) => {
   dispatch({
     type: ADMIN_LOGOUT,
   });
-  // dispatch({
-  //   type: DELETE_CURRENT,
-  // });
 };

@@ -61,7 +61,7 @@ function Institute() {
     <div className='row py-3'>
       <SideNavbar />
       {/* Institute */}
-      <div className='col-md-3'>
+      <div className='col-md-3 pb-3 pr-1'>
         <div className='card h-100 shadow'>
           <div className='card-body'>
             <div className='form-group'>
@@ -180,7 +180,7 @@ function Institute() {
         </div>
       </div>
       {/* Degree */}
-      <div className='col-md-6'>
+      <div className='col-md-6 pb-3 pr-1'>
         <div className='card h-100 shadow'>
           {formData.instituteName && (
             <div className='card-body'>

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
+import { adminLogout } from '../../actions/adminAuth';
 import { logout } from '../../actions/auth';
 
 const Navbar = () => {
@@ -84,7 +85,9 @@ const Navbar = () => {
         className='nav-link btn btn-outline-info mb-3 mb-lg-0 mr-3 px-3'
         href='#!'
         onClick={() => {
-          dispatch(logout());
+          location.pathname.search('admin') !== -1
+            ? dispatch(adminLogout())
+            : dispatch(logout());
         }}
       >
         Logout
@@ -122,7 +125,8 @@ const Navbar = () => {
         id='collapsibleNavbar'
       >
         <ul className='navbar-nav'>
-          {location.pathname === '/dashboard'
+          {location.pathname === '/dashboard' ||
+          location.pathname.search('admin') !== -1
             ? dashboardLinks
             : !loading && (
                 <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>

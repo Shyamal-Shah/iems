@@ -1,19 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const User = require("../../models/User");
-const bcrypt = require("bcryptjs");
-const nodemailer = require("nodemailer");
-const adminAuth = require("./adminAuth");
+const { check, validationResult } = require('express-validator');
+const User = require('../../models/User');
+const bcrypt = require('bcryptjs');
+const nodemailer = require('nodemailer');
+
 // @router  POST api/users/register
 // @desc    Register new users
 // @access  PUBLIC
 router.post(
-  "/register",
+  '/register',
   // Check if name, email and password of minimum 6 characters exists
   [
-    check("name", "Name is required.").notEmpty(),
-    check("email", "Please include a valid email.").isEmail(),
+    check('name', 'Name is required.').notEmpty(),
+    check('email', 'Please include a valid email.').isEmail(),
     // check(
     //   'password',
     //   'Please enter a password with minimum 6 characters.'
@@ -38,21 +38,21 @@ router.post(
       let user = await User.findOne({ email });
       if (user) {
         return res.status(400).json({
-          errors: "User already exists.",
+          errors: 'User already exists.',
         });
       }
       var transporter = nodemailer.createTransport({
-        service: "gmail",
+        service: 'gmail',
         auth: {
-          user: "info.akshitzatakia@gmail.com",
-          pass: "password",
+          user: 'info.akshitzatakia@gmail.com',
+          pass: 'password',
         },
       });
 
       var mailOptions = {
-        from: "info.akshitzatakia@gmail.com",
+        from: 'info.akshitzatakia@gmail.com',
         to: email,
-        subject: "Welcome to IEMS",
+        subject: 'Welcome to IEMS',
         html: `<h1>Welcome to IEMS</h1><h3>Your password : ${randomPassword}</h3>`,
       };
 
@@ -78,10 +78,10 @@ router.post(
       // Save user to database
       await user.save();
 
-      res.json({ msg: "User added", user });
+      res.json({ msg: 'User added', user });
     } catch (err) {
       console.log(err.message);
-      return res.status(500).send("Server Error.");
+      return res.status(500).send('Server Error.');
     }
   }
 );
@@ -89,10 +89,10 @@ router.post(
 // @router  GET api/users
 // @desc    Get all users
 // @access  PUBLIC
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   // Get all users from db
   try {
-    const user = await User.find({}).select("-password");
+    const user = await User.find({}).select('-password');
     res.json(user);
   } catch (error) {
     console.log(error);
@@ -102,12 +102,12 @@ router.get("/", async (req, res) => {
 // @router  DELETE api/users/:uid
 // @desc    Delete user
 // @access  PUBLIC
-router.delete("/:uid", async (req, res) => {
+router.delete('/:uid', async (req, res) => {
   try {
     await User.remove({ _id: req.params.uid });
-    res.json({ msg: "User Deleted" });
+    res.json({ msg: 'User Deleted' });
   } catch (error) {
-    res.json({ msg: "Server error occured" });
+    res.json({ msg: 'Server error occured' });
   }
 });
 

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
-const auth = require("../../middleware/auth");
-const adminAuth = require("../../middleware/adminAuth");
+const { check, validationResult } = require('express-validator');
+const auth = require('../../middleware/auth');
 // Models
 const Resources = require('../../models/Resources');
 const AcademicYear = require('../../models/AcademicYear');
@@ -14,9 +13,9 @@ const InstituteDegree = require('../../models/InstituteDegree');
 router.post(
   '/',
   [
-    adminAuth,
+    auth,
     // check('academicYear', 'Academic year is required.').notEmpty(),
-    check("degreeId", "Degree is required.").notEmpty(),
+    check('degreeId', 'Degree is required.').notEmpty(),
     // check('semester', 'Semester is required.').notEmpty(),
     // check("classes", "Classes are required").isArray({ min: 1 }),
     // check("labs", "Labs are required").isArray({ min: 1 }),
@@ -79,7 +78,7 @@ router.post(
 // @router GET api/resources/?academicYear&?semesterNo&?instituteId&?degreeId
 // @desc Get resources
 // @access PRIVATE
-router.get("/", auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
     // Find and return a record if id exists and it is of length 24
@@ -87,7 +86,7 @@ router.get("/", auth, async (req, res) => {
       // Return error if academicYearId, instituteId and degreeId does not 24 characters
       if (req.query.degreeId.length != 24) {
         return res.status(400).json({
-          errors: [{ msg: "Invalid Degree Id. No record found" }],
+          errors: [{ msg: 'Invalid Degree Id. No record found' }],
         });
       }
 

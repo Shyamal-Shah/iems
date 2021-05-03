@@ -119,7 +119,7 @@ function AcademicYear() {
     <div>
       <div className='row py-3'>
         <SideNavbar />
-        <div className='col-md-3'>
+        <div className='col-md-3 pb-3 pr-1'>
           <div className='card h-100 shadow'>
             <div className='card-body'>
               <div className='p-3'>
@@ -213,7 +213,7 @@ function AcademicYear() {
             </div>
           </div>
         </div>
-        <div className='col-md'>
+        <div className='col-md pb-3 pr-1'>
           <div className='card h-100 shadow'>
             {degree && (
               <div className='card-body'>
