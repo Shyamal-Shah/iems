@@ -18,11 +18,11 @@ export const addUser = (formData) => async (dispatch) => {
       { name: name, email: email },
       config
     );
-    console.log(res.data);
+    //
     dispatch(getUsers());
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(error.response.data.errors, "danger"));
   }
 };
@@ -54,7 +54,7 @@ export const deleteUser = (uid) => async (dispatch) => {
     dispatch(getUsers());
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };

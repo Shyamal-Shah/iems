@@ -11,7 +11,7 @@ const AcademicYearSchema = new mongoose.Schema(
     },
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "institute_degree",
+      ref: "tblinstitutedegrees",
       required: true,
     },
     semesters: [

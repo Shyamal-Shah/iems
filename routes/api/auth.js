@@ -1,28 +1,28 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const User = require('../../models/User');
-const bcrypt = require('bcryptjs');
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const auth = require('../../middleware/auth');
+const { check, validationResult } = require("express-validator");
+const User = require("../../models/User");
+const bcrypt = require("bcryptjs");
+const config = require("config");
+const jwt = require("jsonwebtoken");
+const auth = require("../../middleware/auth");
 
 // @router  GET api/auth
 // @desc    Retrive single user
 // @access  PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(400).json({
-        errors: [{ msg: 'User with this Id does not exists.' }],
+        errors: [{ msg: "User with this Id does not exists." }],
       });
     }
     res.json(user);
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
-    console.log();
+    //
   }
 });
 
@@ -30,13 +30,13 @@ router.get('/', auth, async (req, res) => {
 // @desc    Authenticate user and get token (Login)
 // @access  PUBLIC
 router.post(
-  '/',
+  "/",
   [
     // Check id email is supplied and if password if of valid length
-    check('email', 'Please include a valid email.').isEmail(),
+    check("email", "Please include a valid email.").isEmail(),
     check(
-      'password',
-      'Please enter a password with minimum 6 characters.'
+      "password",
+      "Please enter a password with minimum 6 characters."
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
@@ -53,14 +53,14 @@ router.post(
       let user = await User.findOne({ email });
       if (!user) {
         return res.status(400).json({
-          errors: [{ msg: 'Incorrect Credentials.' }],
+          errors: [{ msg: "Incorrect Credentials." }],
         });
       }
       // Validate Credentails
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(400).json({
-          errors: [{ msg: 'Incorrect Credentials.' }],
+          errors: [{ msg: "Incorrect Credentials." }],
         });
       }
 
@@ -73,7 +73,7 @@ router.post(
 
       jwt.sign(
         payload,
-        config.get('loginToken'),
+        config.get("loginToken"),
         { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
@@ -82,8 +82,8 @@ router.post(
       );
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
-      console.log(err.message);
-      return res.status(500).send('Server Error.');
+      //
+      return res.status(500).send("Server Error.");
     }
   }
 );

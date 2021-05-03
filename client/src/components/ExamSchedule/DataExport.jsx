@@ -1,11 +1,11 @@
-import moment from 'moment';
-import React, { Fragment, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import ExcelJS from 'exceljs';
-import saveAs from 'file-saver';
-import { Redirect, useParams } from 'react-router';
-import { getExamScheduleSG } from '../../actions/exam_schedule';
-import { getPedagogySG } from '../../actions/pedagogy';
+import moment from "moment";
+import React, { Fragment, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import ExcelJS from "exceljs";
+import saveAs from "file-saver";
+import { Redirect, useParams } from "react-router";
+import { getExamScheduleSG } from "../../actions/exam_schedule";
+import { getPedagogySG } from "../../actions/pedagogy";
 import {
   alignment,
   border,
@@ -17,7 +17,7 @@ import {
   evenSems,
   oddSems,
   headers,
-} from '../../utils/defaults';
+} from "../../utils/defaults";
 
 function DataExport() {
   // Get export type from url query string using useParams
@@ -55,7 +55,7 @@ function DataExport() {
     let subject;
     return pedagogies.map((pedagogy) =>
       pedagogy.components.map((component) => {
-        if (expType === component['name']) {
+        if (expType === component["name"]) {
           subject = pedagogy.subject;
           return examSchedule.schedule.map((schedule, i) => {
             if (subject._id === schedule.subjectId._id) {
@@ -63,22 +63,22 @@ function DataExport() {
                 // Schedule for each subject
                 <Fragment key={i}>
                   <tr>
-                    <td style={{ padding: '0.5rem' }}>
+                    <td style={{ padding: "0.5rem" }}>
                       {schedule.subjectId.subjectCode}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
+                    <td style={{ padding: "0.5rem" }}>
                       {schedule.subjectId.subjectName}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
-                      {schedule.from.split(',')[0]}
+                    <td style={{ padding: "0.5rem" }}>
+                      {schedule.from.split(",")[0]}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
-                      {moment(schedule.from.split(',')[0]).format('dddd')}
+                    <td style={{ padding: "0.5rem" }}>
+                      {moment(schedule.from.split(",")[0]).format("dddd")}
                     </td>
-                    <td style={{ padding: '0.5rem' }}>
-                      {moment(schedule.from).format('hh:mm a') +
-                        ' to ' +
-                        moment(schedule.to).format('hh:mm a')}
+                    <td style={{ padding: "0.5rem" }}>
+                      {moment(schedule.from).format("hh:mm a") +
+                        " to " +
+                        moment(schedule.to).format("hh:mm a")}
                     </td>
                   </tr>
                 </Fragment>
@@ -93,7 +93,7 @@ function DataExport() {
   // Render all the schedules for each semester onto the screen
   const renderSchedulesSemester = () => {
     let semesters = [];
-    if (semesterGroup === 'Even') semesters = evenSems;
+    if (semesterGroup === "Even") semesters = evenSems;
     else semesters = oddSems;
 
     return (
@@ -107,16 +107,16 @@ function DataExport() {
               <Fragment>
                 <thead key={iSem}>
                   <tr>
-                    <th colSpan='5' className='text-center' scope='col'>
+                    <th colSpan="5" className="text-center" scope="col">
                       Semester: {semester}
                     </th>
                   </tr>
                   <tr>
-                    <th scope='col'>Subject Code</th>
-                    <th scope='col'>Subject Name</th>
-                    <th scope='col'>Date</th>
-                    <th scope='col'>Day</th>
-                    <th scope='col'>Time</th>
+                    <th scope="col">Subject Code</th>
+                    <th scope="col">Subject Name</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Day</th>
+                    <th scope="col">Time</th>
                   </tr>
                 </thead>
                 <tbody key={iSem + 1}>
@@ -140,7 +140,7 @@ function DataExport() {
     let subject;
     pedagogies.forEach((pedagogy) =>
       pedagogy.components.forEach((component) => {
-        if (expType === component['name']) {
+        if (expType === component["name"]) {
           subject = pedagogy.subject;
           examSchedules.forEach((examSchedule) => {
             for (let k = 0; k < examSchedule.schedule.length; k++) {
@@ -150,11 +150,11 @@ function DataExport() {
                 let dataList = [
                   schedule.subjectId.subjectCode,
                   schedule.subjectId.subjectName,
-                  schedule.from.split(',')[0],
-                  moment(schedule.from.split(',')[0]).format('dddd'),
-                  moment(schedule.from).format('hh:mm a') +
-                    ' to ' +
-                    moment(schedule.to).format('hh:mm a'),
+                  schedule.from.split(",")[0],
+                  moment(schedule.from.split(",")[0]).format("dddd"),
+                  moment(schedule.from).format("hh:mm a") +
+                    " to " +
+                    moment(schedule.to).format("hh:mm a"),
                 ];
                 for (let j = 0; j < dataList.length; j++) {
                   worksheet.mergeCells(
@@ -180,20 +180,20 @@ function DataExport() {
     e.preventDefault();
     // Create new Excel file ans name it
     var ExcelJSWorkbook = new ExcelJS.Workbook();
-    var worksheet = ExcelJSWorkbook.addWorksheet('Exam Schedule');
+    var worksheet = ExcelJSWorkbook.addWorksheet("Exam Schedule");
     let sheetHeaders = [
       ...headers,
       `Academic Year (${academicYear}) ${semesterGroup} SEMESTERS`,
       `${expType}`,
     ];
     let cols = [
-      ['B', 'C'],
-      ['D', 'H'],
-      ['I', 'J'],
-      ['K', 'L'],
-      ['M', 'O'],
+      ["B", "C"],
+      ["D", "H"],
+      ["I", "J"],
+      ["K", "L"],
+      ["M", "O"],
     ];
-    let titles = ['Subject Code', 'Subject Name', 'Date', 'Day', 'Time'];
+    let titles = ["Subject Code", "Subject Name", "Date", "Day", "Time"];
 
     // Add header to the worksheet
     for (let i = 1; i <= 15; i++) {
@@ -216,10 +216,10 @@ function DataExport() {
       worksheet.getColumn(i).font = headerFont;
       worksheet.getColumn(i).alignment = alignment;
     }
-    
+
     // Add semester wise exam schedule to worksheet
     for (
-      let i = semesterGroup === 'Even' ? 2 : 1, row = sheetHeaders.length + 2;
+      let i = semesterGroup === "Even" ? 2 : 1, row = sheetHeaders.length + 2;
       i <= 8;
       i += 2
     ) {
@@ -227,7 +227,7 @@ function DataExport() {
         (examSchedule) => examSchedule.semester === i
       );
       if (examSchedule.length === 1) {
-        console.log(examSchedule);
+        //
         worksheet.mergeCells(`B${row}:O${row}`);
         let cell = worksheet.getCell(`B${row}`);
         cell.fill = subHeader2Fill;
@@ -249,7 +249,7 @@ function DataExport() {
     // Create excel file from the create worksheet and save it
     ExcelJSWorkbook.xlsx.writeBuffer().then(function (buffer) {
       saveAs(
-        new Blob([buffer], { type: 'application/octet-stream' }),
+        new Blob([buffer], { type: "application/octet-stream" }),
         `${expType} Scheule(${academicYear}).xlsx`
       );
     });
@@ -258,46 +258,46 @@ function DataExport() {
   // Redirect to ExamSchedule.js if exportType, institute, degree, academicyear /
   // or semestergroup is null else render the proper headers and exam schedules
   return expType && institute && degree && academicYear && semesterGroup ? (
-    <div className='row py-3' style={{ lineHeight: 1.15 }}>
-      <div className='col-md'>
-        <div className='card shadow-sm'>
-          <div className='card-header bg-primary text-white'>
-            <p className='h2 text-center'>
-              <u style={{ letterSpacing: '0.0325em' }}>EXAM SCHEDULE</u>
+    <div className="row py-3" style={{ lineHeight: 1.15 }}>
+      <div className="col-md">
+        <div className="card shadow-sm">
+          <div className="card-header bg-primary text-white">
+            <p className="h2 text-center">
+              <u style={{ letterSpacing: "0.0325em" }}>EXAM SCHEDULE</u>
             </p>
             <button
-              type='button'
-              className='btn btn-light float-right'
+              type="button"
+              className="btn btn-light float-right"
               onClick={(e) => excelExport(e)}
             >
-              Export Data <i className='fa fa-download'></i>
+              Export Data <i className="fa fa-download"></i>
             </button>
           </div>
-          <div className='card-body '>
-            <div className='row pb-3'>
-              <div className='col-md text-center'>
-                <p className='h3'>
+          <div className="card-body ">
+            <div className="row pb-3">
+              <div className="col-md text-center">
+                <p className="h3">
                   <u>Charotar University of Science and Technology, Changa</u>
                 </p>
               </div>
             </div>
-            <div className='row'>
-              <div className='col text-center'>
-                <p className='h5'>Institute: {institute} </p>
+            <div className="row">
+              <div className="col text-center">
+                <p className="h5">Institute: {institute} </p>
               </div>
             </div>
-            <div className='row p-3'>
-              <div className='col-md-6 text-center'>
-                <p className='h5'>Degree: {degree} </p>
-                <p className='h5'>Academic Year: {academicYear}</p>
+            <div className="row p-3">
+              <div className="col-md-6 text-center">
+                <p className="h5">Degree: {degree} </p>
+                <p className="h5">Academic Year: {academicYear}</p>
               </div>
-              <div className='col-md-6 text-center'>
-                <p className='h5'>Semester Group: {semesterGroup}</p>
-                <p className='h5'>Test: {expType}</p>
+              <div className="col-md-6 text-center">
+                <p className="h5">Semester Group: {semesterGroup}</p>
+                <p className="h5">Test: {expType}</p>
               </div>
             </div>
-            <div className='row mx-1 overflow-auto'>
-              <table className='table table-striped'>
+            <div className="row mx-1 overflow-auto">
+              <table className="table table-striped">
                 {expType &&
                   pedagogies &&
                   examSchedules &&
@@ -309,7 +309,7 @@ function DataExport() {
       </div>
     </div>
   ) : (
-    <Redirect to='/examSchedule' />
+    <Redirect to="/examSchedule" />
   );
 }
 

@@ -24,7 +24,7 @@ export const addResources = (degreeId, classes, labs) => async (dispatch) => {
 
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(error.response.data.errors, "danger"));
   }
 };
@@ -32,7 +32,7 @@ export const addResources = (degreeId, classes, labs) => async (dispatch) => {
 // Get all the resouces
 export const getResources = ({ degreeId }) => async (dispatch) => {
   try {
-    const res = await axios.get('/api/resources/', {
+    const res = await axios.get("/api/resources/", {
       params: {
         degreeId,
       },
@@ -45,8 +45,6 @@ export const getResources = ({ degreeId }) => async (dispatch) => {
     dispatch({
       type: RESOURCES_ERROR,
       payload: error.errors,
-
-  
     });
   }
 };

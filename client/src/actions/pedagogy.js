@@ -31,8 +31,8 @@ export const addPedagogy = (formData, semesterNo, academicYear) => async (
     const res = await axios.post(`/api/pedagogy`, obj, config);
     dispatch(setAlert(res.data.msg, "success"));
   } catch (err) {
-    console.log(err);
-    dispatch(setAlert(err.response.data, 'danger'));
+    //
+    dispatch(setAlert(err.response.data, "danger"));
   }
 };
 
@@ -71,7 +71,7 @@ export const getPedagogyAY = ({ academicYear }) => async (dispatch) => {
     });
     return res.data;
   } catch (err) {
-    console.log(err);
+    //
     dispatch({
       type: PEDAGOGY_ERROR,
     });
@@ -97,7 +97,7 @@ export const getPedagogySG = ({ semesterGroup, academicYear }) => async (
     });
     return;
   } catch (err) {
-    console.log(err);
+    //
     dispatch({
       type: PEDAGOGY_ERROR,
     });
@@ -110,7 +110,7 @@ export const getPedagogySN = ({ semesterNo, academicYear }) => async (
   dispatch
 ) => {
   semesterNo = semesterNo ? semesterNo : 0;
-
+  //
   try {
     const res = await axios.get("/api/pedagogy/", {
       params: {
@@ -124,7 +124,7 @@ export const getPedagogySN = ({ semesterNo, academicYear }) => async (
     });
     return res.data;
   } catch (err) {
-    console.log(err);
+    //
     dispatch({
       type: PEDAGOGY_ERROR,
     });

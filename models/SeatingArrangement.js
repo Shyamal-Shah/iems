@@ -13,18 +13,18 @@ const SeatingArrangementSchema = mongoose.Schema(
   {
     academicYear: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "academicYear",
+      ref: "tblacademicyears",
       required: true,
     },
 
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "institute_degree",
+      ref: "tblinstitutedegrees",
       required: true,
     },
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "subjects",
+      ref: "tblsubjects",
     },
     testName: {
       type: String,
@@ -59,12 +59,12 @@ const SeatingArrangementSchema = mongoose.Schema(
     // The user's id who added this data will be stored
     createdUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "tblusers",
     },
     // The user's id who modifies this data will be stored
     modifiedUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "tblusers",
     },
     // If the record is deleted then recStatus will be D otherwise A
     recStatus: {

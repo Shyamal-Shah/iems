@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addAcademicYear,
   addAYSubjects,
   deleteAY,
   getAcademicYear,
   updateAcademicYear,
-} from '../../actions/academic_year';
-import { setAlert } from '../../actions/alert';
-import { getInstitutes } from '../../actions/institutes_degree';
-import { getSubjects } from '../../actions/subject';
-import SideNavbar from './SideNavbar';
+} from "../../actions/academic_year";
+import { setAlert } from "../../actions/alert";
+import { getInstitutes } from "../../actions/institutes_degree";
+import { getSubjects } from "../../actions/subject";
+import SideNavbar from "./SideNavbar";
 
 function AcademicYear() {
   const dispatch = useDispatch();
@@ -31,26 +31,26 @@ function AcademicYear() {
   // state for list of institutes
   const [institutes, setinstitutes] = useState([]);
   // state for selected institute
-  const [institute, setinstitute] = useState('');
+  const [institute, setinstitute] = useState("");
 
   // state for list of degrees
   const [degrees, setdegrees] = useState([]);
   // state for selected degree
-  const [degree, setdegree] = useState('');
+  const [degree, setdegree] = useState("");
 
   // state for get the value of academicyear input field
   const [ay, setay] = useState({
-    year: '',
+    year: "",
     sem: 0,
   });
 
   // state for list of academic years
   const [years, setyears] = useState([]);
   // state for selected year
-  const [year, setyear] = useState('');
+  const [year, setyear] = useState("");
 
   // state for input of sem
-  const [sem, setsem] = useState('');
+  const [sem, setsem] = useState("");
 
   // state for editing the year
   const [editYear, setEditYear] = useState({});
@@ -117,15 +117,15 @@ function AcademicYear() {
 
   return (
     <div>
-      <div className='row py-3'>
+      <div className="row py-3">
         <SideNavbar />
-        <div className='col-md-3 pb-3 pr-1'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
-              <div className='p-3'>
-                <label className='control-label'>Select Institute</label>
+        <div className="col-md-3 pb-3 pr-1">
+          <div className="card h-100 shadow">
+            <div className="card-body">
+              <div className="p-3">
+                <label className="control-label">Select Institute</label>
                 <select
-                  className='form-control form-select'
+                  className="form-control form-select"
                   onChange={(e) => {
                     setinstitute(e.target.value);
                   }}
@@ -139,10 +139,10 @@ function AcademicYear() {
                     })}
                 </select>
               </div>
-              <div className='p-3'>
-                <label className='control-label'>Select Degree</label>
+              <div className="p-3">
+                <label className="control-label">Select Degree</label>
                 <select
-                  className='form-control form-select'
+                  className="form-control form-select"
                   disabled={institute ? false : true}
                   onChange={(e) => {
                     setdegree(e.target.value);
@@ -157,13 +157,13 @@ function AcademicYear() {
                     })}
                 </select>
               </div>
-              <div className='p-3'>
-                <label className='control-label'>Add a new Academic Year</label>
+              <div className="p-3">
+                <label className="control-label">Add a new Academic Year</label>
                 <input
-                  type='text'
-                  name='ayName'
-                  placeholder='Academic Year'
-                  className='form-control'
+                  type="text"
+                  name="ayName"
+                  placeholder="Academic Year"
+                  className="form-control"
                   value={ay.year}
                   disabled={institute && degree ? false : true}
                   onChange={(e) => {
@@ -173,7 +173,7 @@ function AcademicYear() {
                   }}
                 ></input>
                 <select
-                  className='form-control form-select mt-2'
+                  className="form-control form-select mt-2"
                   disabled={ay.year ? false : true}
                   onChange={(e) => {
                     setay({
@@ -182,24 +182,24 @@ function AcademicYear() {
                     });
                   }}
                 >
-                  <option value='' disabled selected>
+                  <option value="" disabled selected>
                     Select the number of semesters
                   </option>
-                  <option value='4'>4</option>
-                  <option value='6'>6</option>
-                  <option value='8'>8</option>
+                  <option value="4">4</option>
+                  <option value="6">6</option>
+                  <option value="8">8</option>
                 </select>
                 <button
-                  className='btn btn-primary mt-2'
+                  className="btn btn-primary mt-2"
                   onClick={(e) => {
                     if (!ay.year) {
                       dispatch(
-                        setAlert('Please insert academic Year', 'danger')
+                        setAlert("Please insert academic Year", "danger")
                       );
                     } else {
                       if (ay.sem === 0) {
                         dispatch(
-                          setAlert('Please select no. of semesters', 'danger')
+                          setAlert("Please select no. of semesters", "danger")
                         );
                       } else {
                         dispatch(addAcademicYear(degree, ay));
@@ -213,12 +213,12 @@ function AcademicYear() {
             </div>
           </div>
         </div>
-        <div className='col-md pb-3 pr-1'>
-          <div className='card h-100 shadow'>
+        <div className="col-md pb-3 pr-1">
+          <div className="card h-100 shadow">
             {degree && (
-              <div className='card-body'>
-                <div className='p-3'>
-                  <table className='table table-striped m-2'>
+              <div className="card-body">
+                <div className="p-3">
+                  <table className="table table-striped m-2">
                     <thead>
                       <tr>
                         <th>Academic Year</th>
@@ -229,22 +229,22 @@ function AcademicYear() {
                         return (
                           <tr>
                             <td>
-                              {' '}
+                              {" "}
                               <button
-                                className='btn'
+                                className="btn btn-outline-info"
                                 value={year.year}
                                 onClick={(e) => {
                                   setyear(e.target.value);
                                 }}
                               >
                                 {year.year}
-                              </button>{' '}
+                              </button>{" "}
                             </td>
                             <td>
                               <span
-                                className='fa fa-edit text-info'
-                                data-toggle='modal'
-                                data-target='#editInstitute'
+                                className="fa fa-edit text-info"
+                                data-toggle="modal"
+                                data-target="#editInstitute"
                                 onClick={(e) => {
                                   setEditYear({
                                     id: year._id,
@@ -255,7 +255,7 @@ function AcademicYear() {
                             </td>
                             <td>
                               <span
-                                className='fa fa-trash-alt text-danger'
+                                className="fa fa-trash-alt text-danger"
                                 onClick={(e) => {
                                   dispatch(deleteAY(year._id));
                                   dispatch(
@@ -269,10 +269,10 @@ function AcademicYear() {
                       })}
                     </tbody>
                   </table>
-                  <h5 className='font-weight-bold p-3'>{year && year}</h5>
+                  <h5 className="font-weight-bold p-3">{year && year}</h5>
                   {year && (
                     <select
-                      className='form-control form-select m-3'
+                      className="form-control form-select m-3"
                       disabled={year ? false : true}
                       onChange={(e) => {
                         setsem(e.target.value);
@@ -280,8 +280,9 @@ function AcademicYear() {
                         years.forEach((y) => {
                           if (y.year === year) {
                             y.semesters.forEach((s) => {
-                              if (s.semesterNo === e.target.value) {
+                              if (s.semesterNo == e.target.value) {
                                 s.subjects.forEach((u) => {
+                                  //
                                   subs.push({
                                     id: u.subjectId._id,
                                     sub: u.subjectId.subjectName,
@@ -292,9 +293,10 @@ function AcademicYear() {
                           }
                         });
                         setAySubjects(subs);
+                        //
                       }}
                     >
-                      <option value=''>Select the semester</option>
+                      <option value="">Select the semester</option>
                       {years &&
                         years.map((y) => {
                           if (y.year === year) {
@@ -318,41 +320,41 @@ function AcademicYear() {
       </div>
       <div>
         {degree && year && (
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
-              <h3 className='font-weight-bold pb-3'>Semester {sem}</h3>
-              <div className='row g-2'>
-                <div class='col-auto'>
+          <div className="card h-100 shadow">
+            <div className="card-body">
+              <h3 className="font-weight-bold pb-3">Semester {sem}</h3>
+              <div className="row g-2">
+                <div class="col-auto">
                   <select
-                    className='form-control form-select'
+                    className="form-control form-select"
                     disabled={sem ? false : true}
-                    id='list'
+                    id="list"
                     onChange={(e) => {
                       setsubject({
                         sub: e.nativeEvent.target[e.target.selectedIndex].text,
                         id: e.target.value,
                       });
-                      console.log(subject);
+                      //
                     }}
                   >
                     <option>Select the subjects</option>
                     {subjects &&
                       subjects.map((sub) => {
                         return (
-                          <option key={sub._id} value={sub._id} id='sub'>
+                          <option key={sub._id} value={sub._id} id="sub">
                             {sub.subjectName}
                           </option>
                         );
                       })}
                   </select>
                 </div>
-                <div class='col-auto'>
+                <div class="col-auto">
                   <button
-                    class='btn btn-primary mb-3'
+                    class="btn btn-primary mb-3"
                     onClick={(e) => {
                       let s = aySubjects.find((f) => f.id === subject.id);
                       if (s !== undefined) {
-                        dispatch(setAlert('Subject already exists', 'danger'));
+                        dispatch(setAlert("Subject already exists", "danger"));
                       } else {
                         setAySubjects([...aySubjects, subject]);
                       }
@@ -362,8 +364,8 @@ function AcademicYear() {
                   </button>
                 </div>
               </div>
-              <div className='p-3'>
-                <table className='table table-striped m-2'>
+              <div className="p-3">
+                <table className="table table-striped m-2">
                   <thead>
                     <tr>
                       <th>Subjects</th>
@@ -378,7 +380,7 @@ function AcademicYear() {
 
                           <td>
                             <span
-                              className='fa fa-trash-alt text-danger'
+                              className="fa fa-trash-alt text-danger"
                               onClick={(e) => {
                                 setAySubjects(
                                   aySubjects.filter((e) => e.id !== sub.id)
@@ -392,7 +394,7 @@ function AcademicYear() {
                   </tbody>
                 </table>
                 <button
-                  className='btn btn-success'
+                  className="btn btn-success"
                   onClick={(e) => {
                     dispatch(addAYSubjects(degree, year, aySubjects, sem));
                   }}
@@ -406,33 +408,33 @@ function AcademicYear() {
       </div>
       {/* Modal for adding subjects */}
       <div
-        class='modal fade'
-        id='editInstitute'
-        tabindex='-1'
-        role='dialog'
-        aria-labelledby='editInstituteLabel'
-        aria-hidden='true'
+        class="modal fade"
+        id="editInstitute"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="editInstituteLabel"
+        aria-hidden="true"
       >
-        <div class='modal-dialog' role='document'>
-          <div class='modal-content'>
-            <div class='modal-header'>
-              <h5 class='modal-title' id='editInstituteLabel'>
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editInstituteLabel">
                 Edit Year
               </h5>
               <button
-                type='button'
-                class='close'
-                data-dismiss='modal'
-                aria-label='Close'
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
               >
-                <span aria-hidden='true'>&times;</span>
+                <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <div class='modal-body'>
-              <label class='col-form-label'>Year</label>
+            <div class="modal-body">
+              <label class="col-form-label">Year</label>
               <input
-                type='text'
-                class='form-control'
+                type="text"
+                class="form-control"
                 value={editYear.year}
                 onChange={(e) =>
                   setEditYear({
@@ -442,18 +444,18 @@ function AcademicYear() {
                 }
               />
             </div>
-            <div class='modal-footer'>
+            <div class="modal-footer">
               <button
-                type='button'
-                class='btn btn-secondary'
-                data-dismiss='modal'
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
               >
                 Close
               </button>
               <button
-                type='button'
-                class='btn btn-primary'
-                data-dismiss='modal'
+                type="button"
+                class="btn btn-primary"
+                data-dismiss="modal"
                 onClick={(e) => {
                   dispatch(
                     updateAcademicYear(editYear.year, editYear.id, degree)

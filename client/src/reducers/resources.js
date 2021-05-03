@@ -1,7 +1,7 @@
 import { RESOURCES_ERROR, RESOURCES_LOADED } from "../actions/types";
 
 const initialState = {
-  resources: [],
+  resources: {},
   loading: true,
 };
 

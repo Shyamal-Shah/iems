@@ -1,21 +1,21 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const Subject = require('../../models/Subject');
-const InstituteDegree = require('../../models/InstituteDegree');
-const auth = require('../../middleware/auth');
+const { check, validationResult } = require("express-validator");
+const Subject = require("../../models/Subject");
+const InstituteDegree = require("../../models/InstituteDegree");
+const auth = require("../../middleware/auth");
 
 // @router POST api/subject
 // @desc Add new Subjects
 // @access PRIVATE
 router.post(
-  '/',
+  "/",
   // Check if subjectName, subjectCode and degreeId is supplied
   [
     auth,
-    check('subjectName', 'Name of subject is required.').notEmpty(),
-    check('subjectCode', 'Code of subject is required.').notEmpty(),
-    check('degreeId', 'DegreeID  is required.').notEmpty(),
+    check("subjectName", "Name of subject is required.").notEmpty(),
+    check("subjectCode", "Code of subject is required.").notEmpty(),
+    check("degreeId", "DegreeID  is required.").notEmpty(),
   ],
   async (req, res) => {
     // If any argument check fails return the array of errors
@@ -31,7 +31,7 @@ router.post(
     if (degreeId.length != 24) {
       return res
         .status(400)
-        .json({ errors: 'Invalid degreeId No degree found' });
+        .json({ errors: "Invalid degreeId No degree found" });
     }
 
     // Try all the mongoDb operations
@@ -43,7 +43,7 @@ router.post(
       if (!instDeg) {
         return res
           .status(400)
-          .json({ errors: 'Invalid degreeId. No degree found' });
+          .json({ errors: "Invalid degreeId. No degree found" });
       }
 
       // Return error if subject already exists else add new record
@@ -51,7 +51,7 @@ router.post(
       if (subject) {
         return res
           .status(400)
-          .json({ errors: 'Subject record already exists.' });
+          .json({ errors: "Subject record already exists." });
       }
       subject = new Subject({
         subjectName,
@@ -59,11 +59,11 @@ router.post(
         degreeId,
       });
       await subject.save();
-      res.json({ msg: 'Subject added.', subject });
+      res.json({ msg: "Subject added.", subject });
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
-      console.log(err.message);
-      return res.status(500).send('Server Error.');
+      //
+      return res.status(500).send("Server Error.");
     }
   }
 );
@@ -71,7 +71,7 @@ router.post(
 // @router GET api/subject/?id&?subjectName&?subjectCode&?degreeId
 // @desc Get Subjects based on ids or subjectName or subjectCode
 // @access PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
     //  Find and return a record if subjectId exists and is 24 characters long else return error
@@ -79,13 +79,13 @@ router.get('/', auth, async (req, res) => {
       if (req.query.id.length != 24) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid SubjectID. No subject found.' }] });
+          .json({ errors: [{ msg: "Invalid SubjectID. No subject found." }] });
       }
       let subject = await Subject.findById(req.query.id);
       if (!subject) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Record with this id does not exist.' }] });
+          .json({ errors: [{ msg: "Record with this id does not exist." }] });
       }
       res.json(subject);
     } else if (req.query.subjectName) {
@@ -96,7 +96,7 @@ router.get('/', auth, async (req, res) => {
       if (!subject)
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Subject does not exists.' }] });
+          .json({ errors: [{ msg: "Subject does not exists." }] });
       res.json(subject);
     } else if (req.query.subjectCode) {
       //  Find and return a record if subjectCode exists else return error
@@ -105,7 +105,7 @@ router.get('/', auth, async (req, res) => {
       });
       if (!subject)
         return res.status(400).json({
-          errors: [{ msg: 'Subject with this code does not exists.' }],
+          errors: [{ msg: "Subject with this code does not exists." }],
         });
       res.json(subject);
     } else if (req.query.degreeId) {
@@ -113,7 +113,7 @@ router.get('/', auth, async (req, res) => {
       if (req.query.degreeId.length != 24) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid degreeId. No subjects found.' }] });
+          .json({ errors: [{ msg: "Invalid degreeId. No subjects found." }] });
       }
       let subjects = await Subject.find({
         degreeId: req.query.degreeId,
@@ -121,7 +121,7 @@ router.get('/', auth, async (req, res) => {
       if (subjects.length == 0)
         return res.status(400).json({
           errors: [
-            { msg: 'Subjects that belong to this degreeId does not exists.' },
+            { msg: "Subjects that belong to this degreeId does not exists." },
           ],
         });
       res.json(subjects);
@@ -130,24 +130,24 @@ router.get('/', auth, async (req, res) => {
       let subjects = await Subject.find({});
       return res.json(subjects);
     } else {
-      res.status(400).send('Bad Request');
+      res.status(400).send("Bad Request");
     }
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
     console.error(err.message);
-    return res.status(500).send('Server Error.');
+    return res.status(500).send("Server Error.");
   }
 });
 
 // @router POST api/subject
 // @desc Add new Subjects
 // @access PRIVATE
-router.delete('/:subjectId', [auth], async (req, res) => {
+router.delete("/:subjectId", [auth], async (req, res) => {
   try {
     await Subject.remove({ _id: req.params.subjectId });
-    res.json({ msg: 'Subject Deleted' });
+    res.json({ msg: "Subject Deleted" });
   } catch (error) {
-    res.json({ msg: 'Server error occured' });
+    res.json({ msg: "Server error occured" });
   }
 });
 
