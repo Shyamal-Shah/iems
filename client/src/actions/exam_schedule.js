@@ -38,7 +38,7 @@ export const addExamSchedule = (formData, academicYear, semesterNo) => async (
     const res = await axios.post(`/api/exam-schedule`, obj, config);
     dispatch(setAlert(res.data.msg, "success"));
   } catch (err) {
-    console.log(err);
+    //
     dispatch(setAlert(err.response.data, "danger"));
   }
 };
@@ -65,7 +65,7 @@ export const getExamScheduleSN = ({
     });
     return res.data;
   } catch (err) {
-    console.log(err);
+    //
     dispatch({
       type: EXAM_SCHEDULE_ERROR,
     });
@@ -94,7 +94,7 @@ export const getExamScheduleSG = ({
     });
     return;
   } catch (err) {
-    console.log(err);
+    //
     dispatch({
       type: EXAM_SCHEDULE_ERROR,
     });

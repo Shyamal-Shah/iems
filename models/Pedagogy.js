@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Pedagogy Schema containing subject(Foregin Key), academicYear(Foregin Key),
 // semester, name, mode, component, createdUserID(Foreign Key), recStatus,
@@ -7,12 +7,12 @@ const PedagogySchema = new mongoose.Schema(
   {
     subject: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'subjects',
+      ref: "tblsubjects",
       required: true,
     },
     academicYear: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'academicYear',
+      ref: "tblacademicyears",
       required: true,
     },
     semester: {
@@ -41,4 +41,4 @@ const PedagogySchema = new mongoose.Schema(
 );
 
 // Export the schema with table name tblPedagogies
-module.exports = Pedagody = mongoose.model('pedagogies', PedagogySchema);
+module.exports = Pedagody = mongoose.model("tblpedagogies", PedagogySchema);

@@ -52,7 +52,7 @@ router.post(
 
       res.json({ msg: "Admin added", admin });
     } catch (err) {
-      console.log(err.message);
+      //
       return res.status(500).send("Server Error.");
     }
   }

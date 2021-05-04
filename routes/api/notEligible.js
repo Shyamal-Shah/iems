@@ -1,22 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const auth = require('../../middleware/auth');
+const { check, validationResult } = require("express-validator");
+const auth = require("../../middleware/auth");
 
-const NotEligible = require('../../models/NotEligibility');
+const NotEligible = require("../../models/NotEligibility");
 
 // @router POST api/not-eligible
 // @desc Add new not eligible students
 // @access PRIVATE
 router.post(
-  '/',
+  "/",
   [
     auth,
-    check('academicYear', 'Academic Year is required').notEmpty(),
-    check('semester', 'Semester is required').notEmpty(),
-    check('subject', 'Subject is required').notEmpty(),
-    check('componentName', 'Component Name is required').notEmpty(),
-    check('neStudents', 'Students is required').isArray({ min: 1 }),
+    check("academicYear", "Academic Year is required").notEmpty(),
+    check("semester", "Semester is required").notEmpty(),
+    check("subject", "Subject is required").notEmpty(),
+    check("componentName", "Component Name is required").notEmpty(),
+    check("neStudents", "Students is required").isArray({ min: 1 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -58,8 +58,8 @@ router.post(
         errors: [{ msg: `Not eligible students for ${componentName} added.` }],
       });
     } catch (e) {
-      console.log(e);
-      return res.status(500).send('Server Error.');
+      //
+      return res.status(500).send("Server Error.");
     }
   }
 );
@@ -67,13 +67,13 @@ router.post(
 // @router GET api/not-eligible/?academicYear?semester?subject?componentName
 // @desc Get not eligible students
 // @access PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   const { academicYear, subject, semester, componentName } = req.query;
   try {
     if (subject) {
       if (subject.length != 24) {
         return res.status(400).json({
-          errors: [{ msg: 'Invalid Subject Id. No record found' }],
+          errors: [{ msg: "Invalid Subject Id. No record found" }],
         });
       }
       if (academicYear && semester && componentName) {
@@ -86,7 +86,7 @@ router.get('/', auth, async (req, res) => {
         if (!ne) {
           return res.status(400).json({
             errors: [
-              { msg: 'Records with this semester number does not exist.' },
+              { msg: "Records with this semester number does not exist." },
             ],
           });
         }
@@ -100,15 +100,15 @@ router.get('/', auth, async (req, res) => {
       if (ne.length < 0) {
         return res.status(400).json({
           errors: [
-            { msg: 'Records with this semester number does not exist.' },
+            { msg: "Records with this semester number does not exist." },
           ],
         });
       }
       return res.json(ne);
     }
   } catch (err) {
-    console.log(err.message);
-    return res.status(500).send('Server Error.');
+    //
+    return res.status(500).send("Server Error.");
   }
 });
 

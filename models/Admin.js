@@ -17,11 +17,11 @@ const AdminSchema = new mongoose.Schema(
     },
     createdUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "admin",
+      ref: "tbladmins",
     },
     modifiedUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "admin",
+      ref: "tbladmins",
     },
     recStatus: {
       type: String,

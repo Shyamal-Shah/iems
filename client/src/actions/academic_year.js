@@ -8,7 +8,7 @@ export const getAcademicYear = ({ degreeId }) => async (dispatch) => {
   if (degreeId) {
     try {
       const res = await axios.get(`/api/academic-year/degree/${degreeId}`);
-      console.log("aay", res.data);
+      //
       dispatch({
         type: AY_LOADED,
         payload: res.data,
@@ -33,14 +33,14 @@ export const addAcademicYear = (degreeId, ay) => async (dispatch) => {
       semesterNo: i,
     });
   }
-  console.log(year, semesters);
+  //
   // Set the header of the api
   const config = {
     headers: {
       "Content-Type": "application/json",
     },
   };
-  // console.log("aa", year, degreeId);
+  // //
   try {
     const res = await axios.post(
       "/api/academic-year/ay",
@@ -50,7 +50,7 @@ export const addAcademicYear = (degreeId, ay) => async (dispatch) => {
     dispatch(getAcademicYear({ degreeId: degreeId }));
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -72,7 +72,7 @@ export const addAYSubjects = (degreeId, ay, subjects, sem) => async (
       "Content-Type": "application/json",
     },
   };
-  // console.log("aa", year, degreeId);
+  // //
   try {
     const res = await axios.post(
       `/api/academic-year/ay/subject/${sem}`,
@@ -82,7 +82,7 @@ export const addAYSubjects = (degreeId, ay, subjects, sem) => async (
     dispatch(getAcademicYear({ degreeId: degreeId }));
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -107,13 +107,13 @@ export const addSemesters = (formData) => async (dispatch) => {
       },
     ],
   };
-  console.log("final", obj);
+  //
   try {
     const res = await axios.post("/api/academic-year/", obj, config);
     dispatch(getAcademicYear({ degreeId: degree }));
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -127,15 +127,11 @@ export const updateAcademicYear = (year, id, degree) => async (dispatch) => {
   };
   // Edit the academicyear
   try {
-    await axios.put(
-      `/api/academic-year/${id}`,
-      { year: year },
-      config
-    );
+    await axios.put(`/api/academic-year/${id}`, { year: year }, config);
     dispatch(setAlert("Academic Year edited", "success"));
     dispatch(getAcademicYear({ degreeId: degree }));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -152,7 +148,7 @@ export const deleteAY = (ayid) => async (dispatch) => {
     const res = await axios.delete(`/api/academic-year/${ayid}`, config);
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };

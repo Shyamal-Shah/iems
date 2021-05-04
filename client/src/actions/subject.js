@@ -5,20 +5,20 @@ import { SUBJECTS_LOADED, SUBJECTS_ERROR } from "./types";
 // Get the subject according to degreeId which is passes as
 // parameter.
 export const getSubjects = (degreeId) => async (dispatch) => {
-  console.log(degreeId);
+  //
   try {
     const res = await axios.get(`/api/subject/`, {
       params: {
         degreeId: degreeId,
       },
     });
-    console.log(res.data);
+    //
     dispatch({
       type: SUBJECTS_LOADED,
       payload: res.data,
     });
   } catch (error) {
-    console.log(error);
+    //
     dispatch({
       type: SUBJECTS_ERROR,
       payload: error.errors,
@@ -41,10 +41,10 @@ export const deleteSubject = (subjectId) => async (dispatch) => {
 
       config
     );
-    console.log(res.data);
+    //
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -72,7 +72,7 @@ export const addSuject = (formData) => async (dispatch) => {
     dispatch(getSubjects(degreeId));
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(error.response.data.errors, "danger"));
   }
 };

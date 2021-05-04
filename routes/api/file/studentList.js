@@ -17,7 +17,7 @@ router.get("/", auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
-    console.log(err);
+    //
   }
 });
 

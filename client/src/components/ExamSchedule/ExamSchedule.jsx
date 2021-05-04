@@ -1,25 +1,25 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import DropDown from '../layout/DropDown';
-import { useDispatch, useSelector } from 'react-redux';
-import { getPedagogySN } from '../../actions/pedagogy';
+import React, { Fragment, useEffect, useState } from "react";
+import DropDown from "../layout/DropDown";
+import { useDispatch, useSelector } from "react-redux";
+import { getPedagogySN } from "../../actions/pedagogy";
 import {
   updateInstitute,
   updateAcademicYear,
   updateDegree,
   updateSemesterGroup,
   updateSemesterNo,
-} from '../../actions/current';
-import { getInstitutes } from '../../actions/institutes_degree';
-import { getAcademicYear } from '../../actions/academic_year';
-import { oddSems, evenSems } from '../../utils/defaults';
-import moment from 'moment';
-import Component from './Component';
+} from "../../actions/current";
+import { getInstitutes } from "../../actions/institutes_degree";
+import { getAcademicYear } from "../../actions/academic_year";
+import { oddSems, evenSems } from "../../utils/defaults";
+import moment from "moment";
+import Component from "./Component";
 import {
   addExamSchedule,
   getExamScheduleSN,
-} from '../../actions/exam_schedule';
-import { Link } from 'react-router-dom';
-import { setAlert } from '../../actions/alert';
+} from "../../actions/exam_schedule";
+import { Link } from "react-router-dom";
+import { setAlert } from "../../actions/alert";
 
 const ExamSchedule = () => {
   // Create an object to dispatch actions using useDispatch
@@ -46,15 +46,15 @@ const ExamSchedule = () => {
   }, [dispatch, institute]);
 
   let initialState = {
-    testName: '',
-    examWeekFrom: moment().format('yyyy-MM-DD'),
-    examWeekTo: moment().add(7, 'days').format('yyyy-MM-DD'),
+    testName: "",
+    examWeekFrom: moment().format("yyyy-MM-DD"),
+    examWeekTo: moment().add(7, "days").format("yyyy-MM-DD"),
     subjects: [],
   };
 
   // Creating formData, and expType states using useState
   const [formData, setFormData] = useState(initialState);
-  const [expType, setExpType] = useState('');
+  const [expType, setExpType] = useState("");
 
   // Destructure formData
   const { testName, examWeekFrom, examWeekTo, subjects } = formData;
@@ -102,12 +102,12 @@ const ExamSchedule = () => {
       let fd = { ...formData };
       fd.examWeekFrom = examSchedule.examWeekFrom;
       fd.examWeekTo = examSchedule.examWeekTo;
-      console.log('Hello');
+      //
       for (let i = 0; i < subjects.length; i++) {
         for (let index = 0; index < examSchedule.schedule.length; index++) {
           if (subjects[i]._id === examSchedule.schedule[index].subjectId._id) {
-            fd[i + '-from'] = examSchedule.schedule[index].from;
-            fd[i + '-to'] = examSchedule.schedule[index].to;
+            fd[i + "-from"] = examSchedule.schedule[index].from;
+            fd[i + "-to"] = examSchedule.schedule[index].to;
           }
         }
       }
@@ -128,12 +128,12 @@ const ExamSchedule = () => {
       for (let j = i + 1; j < subjects.length; j++) {
         if (formData[`${j}-to`] === formData[`${i}-to`]) {
           dispatch(
-            setAlert('Two exams cannot start on the same time', 'danger')
+            setAlert("Two exams cannot start on the same time", "danger")
           );
           return false;
         }
         if (formData[`${j}-from`] === formData[`${i}-from`]) {
-          dispatch(setAlert('Two exams cannot have same time', 'danger'));
+          dispatch(setAlert("Two exams cannot have same time", "danger"));
           return false;
         }
       }
@@ -156,15 +156,15 @@ const ExamSchedule = () => {
           );
       }}
     >
-      <div className='row py-3'>
+      <div className="row py-3">
         {/* Card 1: Render dropdowns for institute, degree, academic year, semester Group and semester number */}
-        <div className='col-md-3 pb-3 pr-1'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
+        <div className="col-md-3 pb-3 pr-1">
+          <div className="card h-100 shadow">
+            <div className="card-body">
               <Fragment>
                 <DropDown
-                  id='ddInstitute'
-                  title='Institute'
+                  id="ddInstitute"
+                  title="Institute"
                   options={institutes.map((inst) => {
                     return inst.instituteName;
                   })}
@@ -176,13 +176,13 @@ const ExamSchedule = () => {
                     dispatch(updateAcademicYear(null));
                     dispatch(updateSemesterGroup(null));
                     dispatch(updateSemesterNo(null));
-                    let drp = document.getElementById('ddDegree');
+                    let drp = document.getElementById("ddDegree");
                     drp.disabled = false;
                   }}
                 />
                 <DropDown
-                  id='ddDegree'
-                  title='Degree'
+                  id="ddDegree"
+                  title="Degree"
                   options={
                     institute
                       ? institutes
@@ -207,13 +207,13 @@ const ExamSchedule = () => {
                           )[0]._id,
                       })
                     );
-                    let drp = document.getElementById('ddAcademicYear');
+                    let drp = document.getElementById("ddAcademicYear");
                     drp.disabled = false;
                   }}
                 />
                 <DropDown
-                  id='ddAcademicYear'
-                  title='Academic Year'
+                  id="ddAcademicYear"
+                  title="Academic Year"
                   options={academicYears.map((ay) => {
                     return ay.year;
                   })}
@@ -225,16 +225,16 @@ const ExamSchedule = () => {
                     dispatch(updateAcademicYear(e.target.value));
                     dispatch(updateSemesterGroup(null));
                     dispatch(updateSemesterNo(null));
-                    let drp = document.getElementById('ddSemesterGroup');
+                    let drp = document.getElementById("ddSemesterGroup");
                     drp.disabled = false;
                   }}
                 />
-                <div className='row'>
-                  <div className='col-md'>
+                <div className="row">
+                  <div className="col-md">
                     <DropDown
-                      id='ddSemesterGroup'
-                      title='Semester Group'
-                      options={['Even', 'Odd']}
+                      id="ddSemesterGroup"
+                      title="Semester Group"
+                      options={["Even", "Odd"]}
                       value={semesterGroup}
                       isDisabled={
                         degree !== null &&
@@ -246,15 +246,15 @@ const ExamSchedule = () => {
                       onChange={(e) => {
                         dispatch(updateSemesterGroup(e.target.value));
                         dispatch(updateSemesterNo(null));
-                        let drp = document.getElementById('ddSemesterNo');
+                        let drp = document.getElementById("ddSemesterNo");
                         drp.disabled = false;
                       }}
                     />
                   </div>
-                  <div className='col-md'>
+                  <div className="col-md">
                     <DropDown
-                      id='ddSemesterNo'
-                      title='Semester No.'
+                      id="ddSemesterNo"
+                      title="Semester No."
                       value={semesterNo}
                       isDisabled={
                         degree !== null &&
@@ -264,7 +264,7 @@ const ExamSchedule = () => {
                           ? false
                           : true
                       }
-                      options={'Even' === semesterGroup ? evenSems : oddSems}
+                      options={"Even" === semesterGroup ? evenSems : oddSems}
                       onChange={(e) => {
                         dispatch(updateSemesterNo(e.target.value));
                       }}
@@ -275,20 +275,20 @@ const ExamSchedule = () => {
             </div>
           </div>
         </div>
-        {/* Card 2: Render dropdowns for componentName and type of export, and textboxes for examWeekFrom and to*/}{' '}
-        <div className='col-md-3 pb-3 pr-1'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
-              <h3 className='text-center'>EXAM SCHEDULE</h3>
+        {/* Card 2: Render dropdowns for componentName and type of export, and textboxes for examWeekFrom and to*/}{" "}
+        <div className="col-md-3 pb-3 pr-1">
+          <div className="card h-100 shadow">
+            <div className="card-body">
+              <h3 className="text-center">EXAM SCHEDULE</h3>
               <DropDown
-                title='Internal-Examination'
-                options={['Unit Test 1', 'Unit Test 2']}
-                id='ddIE'
+                title="Internal-Examination"
+                options={["Unit Test 1", "Unit Test 2"]}
+                id="ddIE"
                 onChange={(e) => {
                   let subjects = [];
                   pedagogies.forEach((pedagogy) => {
                     pedagogy.components.forEach((component) => {
-                      if (e.target.value === component['name']) {
+                      if (e.target.value === component["name"]) {
                         subjects.push(pedagogy.subject);
                       }
                     });
@@ -302,40 +302,40 @@ const ExamSchedule = () => {
                 isDisabled={semesterNo ? false : true}
                 value={testName}
               />
-              <p className='h5'>Exam-week</p>
-              <div className='form-group'>
-                <label htmlFor='example-date-input'>From</label>
+              <p className="h5">Exam-week</p>
+              <div className="form-group">
+                <label htmlFor="example-date-input">From</label>
                 <div>
                   <input
-                    className='form-control'
-                    type='date'
+                    className="form-control"
+                    type="date"
                     value={examWeekFrom}
-                    min={moment().format('yyyy-MM-DD')}
-                    name='examWeekFrom'
+                    min={moment().format("yyyy-MM-DD")}
+                    name="examWeekFrom"
                     onChange={(e) => {
-                      console.log(e.target.value);
+                      //
                       setFormData({
                         ...formData,
                         examWeekFrom: e.target.value,
                         examWeekTo: moment(e.target.value)
-                          .add(7, 'days')
-                          .format('yyyy-MM-DD'),
+                          .add(7, "days")
+                          .format("yyyy-MM-DD"),
                       });
-                      console.log(e.target.value);
+                      //
                     }}
                     disabled={semesterNo ? false : true}
                   />
                 </div>
               </div>
-              <div className='form-group'>
-                <label htmlFor='example-date-input'>To</label>
+              <div className="form-group">
+                <label htmlFor="example-date-input">To</label>
                 <div>
                   <input
-                    className='form-control'
-                    type='date'
+                    className="form-control"
+                    type="date"
                     value={examWeekTo}
                     min={examWeekFrom}
-                    name='examWeekTo'
+                    name="examWeekTo"
                     onChange={(e) => {
                       setFormData({
                         ...formData,
@@ -347,19 +347,19 @@ const ExamSchedule = () => {
                 </div>
               </div>
               <DropDown
-                title='Export Data For'
-                id='ddExpData'
+                title="Export Data For"
+                id="ddExpData"
                 isDisabled={semesterNo ? false : true}
                 value={expType}
                 onChange={(e) => {
                   setExpType(e.target.value);
                 }}
                 isRequired={false}
-                options={['Unit Test 1', 'Unit Test 2']}
+                options={["Unit Test 1", "Unit Test 2"]}
               />
               <Link
-                to={'/examSchedule/export-data/' + expType}
-                className={expType ? 'btn btn-dark' : 'btn btn-dark disabled'}
+                to={"/examSchedule/export-data/" + expType}
+                className={expType ? "btn btn-dark" : "btn btn-dark disabled"}
               >
                 Export Data
               </Link>
@@ -367,38 +367,38 @@ const ExamSchedule = () => {
           </div>
         </div>
         {/* Card 3: Placeholder for rendering schedules */}
-        <div className='col-md-6 pb-3'>
-          <div className='card h-100 shadow'>
-            <div className='card-body'>
+        <div className="col-md-6 pb-3">
+          <div className="card h-100 shadow">
+            <div className="card-body">
               {subjects.map((subject, index) => (
                 <Component
                   index={index}
                   key={index}
                   newSubject={false}
-                  subjectName={subject.subjectCode + ' ' + subject.subjectName}
+                  subjectName={subject.subjectCode + " " + subject.subjectName}
                   examWeekFrom={examWeekFrom}
                   examWeekTo={examWeekTo}
-                  examFrom={formData[index + '-from']}
-                  examTo={formData[index + '-to']}
+                  examFrom={formData[index + "-from"]}
+                  examTo={formData[index + "-to"]}
                   onFromDateChange={(e) => {
                     setFormData({
                       ...formData,
-                      [index + '-from']: moment(e.target.value).format(
-                        'MM-DD-YYYY,HH:mm'
+                      [index + "-from"]: moment(e.target.value).format(
+                        "MM-DD-YYYY,HH:mm"
                       ),
                     });
                   }}
                   onToDateChange={(e) => {
                     setFormData({
                       ...formData,
-                      [index + '-to']: moment(e.target.value).format(
-                        'MM-DD-YYYY,HH:mm'
+                      [index + "-to"]: moment(e.target.value).format(
+                        "MM-DD-YYYY,HH:mm"
                       ),
                     });
                   }}
                 />
               ))}
-              <input type='submit' className='btn btn-primary' />
+              <input type="submit" className="btn btn-primary" />
             </div>
           </div>
         </div>

@@ -1,13 +1,13 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// ExamSchedule Schema containing academicYear(Foreign Key), semesterNo, 
-// testName, examWeekFrom, examWeekTo, subjectId (Foreign Key), from, to, 
+// ExamSchedule Schema containing academicYear(Foreign Key), semesterNo,
+// testName, examWeekFrom, examWeekTo, subjectId (Foreign Key), from, to,
 // (Foreign Key)
 const ExamScheduleSchema = new mongoose.Schema(
   {
     academicYear: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'academicYear',
+      ref: "tblacademicyears",
       required: true,
     },
     semester: {
@@ -18,11 +18,11 @@ const ExamScheduleSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    examWeekFrom:{
+    examWeekFrom: {
       type: String,
       required: true,
     },
-    examWeekTo:{
+    examWeekTo: {
       type: String,
       required: true,
     },
@@ -30,7 +30,7 @@ const ExamScheduleSchema = new mongoose.Schema(
       {
         subjectId: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'subjects',
+          ref: "tblsubjects",
         },
         from: {
           type: String,
@@ -44,15 +44,15 @@ const ExamScheduleSchema = new mongoose.Schema(
     ],
     createdUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: "tblusers",
     },
     modifiedUserID: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: "tblusers",
     },
     recStatus: {
       type: String,
-      default: 'A',
+      default: "A",
     },
   },
   // Creates timestamps for record created and when it is modified
@@ -61,6 +61,6 @@ const ExamScheduleSchema = new mongoose.Schema(
 
 // Export the schema with table name tblExamSchedule
 module.exports = ExamSchedule = mongoose.model(
-  'tblExamSchedule',
+  "tblExamSchedule",
   ExamScheduleSchema
 );

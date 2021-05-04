@@ -15,7 +15,7 @@ const SubjectSchema = new mongoose.Schema(
     },
     degreeId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "institute_degrees",
+      ref: "tblinstitutedegrees",
       required: true,
     },
   },

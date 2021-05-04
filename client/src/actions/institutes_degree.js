@@ -34,7 +34,7 @@ export const addInstitutes = (formData) => async (dispatch) => {
       degreeName: degree,
     })),
   };
-  console.log(obj);
+  //
   // Set the header of the api
   const config = {
     headers: {
@@ -44,10 +44,10 @@ export const addInstitutes = (formData) => async (dispatch) => {
   // Add the institute and degrees via api
   try {
     const res = await axios.post(`/api/institute`, obj, config);
-    console.log(res.data);
+    //
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -69,7 +69,7 @@ export const addInstituteName = (instituteName) => async (dispatch) => {
     dispatch(getInstitutes());
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -81,14 +81,14 @@ export const deleteInstitute = (instituteId) => async (dispatch) => {
       "Content-Type": "application/json",
     },
   };
-  console.log(instituteId);
+  //
   // Delete the institute via api
   try {
     const res = await axios.delete(`/api/institute/${instituteId}`, config);
     dispatch(getInstitutes());
     dispatch(setAlert(res.data.msg, "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };
@@ -103,15 +103,11 @@ export const editInstituteName = (newName, id) => async (dispatch) => {
 
   // Edit the institute
   try {
-    await axios.put(
-      `/api/institute/${id}`,
-      { instituteName: newName },
-      config
-    );
+    await axios.put(`/api/institute/${id}`, { instituteName: newName }, config);
     dispatch(getInstitutes());
     dispatch(setAlert("Institute Name edited", "success"));
   } catch (error) {
-    console.log(error);
+    //
     dispatch(setAlert(setAlert(error.response.data, "danger")));
   }
 };

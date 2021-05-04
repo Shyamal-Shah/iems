@@ -1,19 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   NOT_ELIGIBLITY_LISTS_LOADED,
   NOT_ELIGIBLITY_LIST_ERROR,
   NOT_ELIGIBLITY_LIST_LOADED,
-} from './types';
-import { setAlert } from './alert';
+} from "./types";
+import { setAlert } from "./alert";
 
 // Add the not eligible students
-export const addNotEligiblityList = ({ formData, academicYearId, semester }) => async (
-  dispatch
-) => {
+export const addNotEligiblityList = ({
+  formData,
+  academicYearId,
+  semester,
+}) => async (dispatch) => {
   // Set the header of the api
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   };
 
@@ -34,10 +36,10 @@ export const addNotEligiblityList = ({ formData, academicYearId, semester }) => 
   // Add the not eligible students via api
   try {
     await axios.post(`/api/not-eligible`, obj, config);
-    dispatch(setAlert('Not Eligiblity list saved.', 'success'));
+    dispatch(setAlert("Not Eligiblity list saved.", "success"));
   } catch (err) {
-    console.log(err);
-    dispatch(setAlert(err.response.data, 'danger'));
+    //
+    dispatch(setAlert(err.response.data, "danger"));
   }
 };
 
@@ -62,17 +64,16 @@ export const getNotEligiblityList = ({
       payload: res.data,
     });
   } catch (e) {
-    console.log(e);
+    //
     dispatch({
       type: NOT_ELIGIBLITY_LIST_ERROR,
     });
   }
 };
 
-export const getNotEligiblityLists = ({
-  academicYear,
-  semester,
-}) => async (dispatch) => {
+export const getNotEligiblityLists = ({ academicYear, semester }) => async (
+  dispatch
+) => {
   try {
     const res = await axios.get(`/api/not-eligible/`, {
       params: {
@@ -85,7 +86,7 @@ export const getNotEligiblityLists = ({
       payload: res.data,
     });
   } catch (e) {
-    console.log(e);
+    //
     dispatch({
       type: NOT_ELIGIBLITY_LIST_ERROR,
     });

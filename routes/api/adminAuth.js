@@ -1,28 +1,28 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require('express-validator');
-const Admin = require('../../models/Admin');
-const bcrypt = require('bcryptjs');
-const config = require('config');
-const jwt = require('jsonwebtoken');
-const auth = require('../../middleware/auth');
+const { check, validationResult } = require("express-validator");
+const Admin = require("../../models/Admin");
+const bcrypt = require("bcryptjs");
+const config = require("config");
+const jwt = require("jsonwebtoken");
+const auth = require("../../middleware/auth");
 
 // @router  GET api/adminAuth
 // @desc    Retrive single user
 // @access  PRIVATE
-router.get('/', auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   // Try all the mongoDb operations
   try {
-    const admin = await Admin.findById(req.admin.id).select('-password');
+    const admin = await Admin.findById(req.admin.id).select("-password");
     if (!admin) {
       return res.json(400).json({
-        errors: [{ msg: 'Admin with this Id does not exists.' }],
+        errors: [{ msg: "Admin with this Id does not exists." }],
       });
     }
     res.json(admin);
   } catch (err) {
     // Catch any error that occurs due to mongoDb operations
-    console.log();
+    //
   }
 });
 
@@ -30,13 +30,13 @@ router.get('/', auth, async (req, res) => {
 // @desc    Authenticate admin and get token (Login)
 // @access  PUBLIC
 router.post(
-  '/',
+  "/",
   [
     // Check id email is supplied and if password if of valid length
-    check('email', 'Please include a valid email.').isEmail(),
+    check("email", "Please include a valid email.").isEmail(),
     check(
-      'password',
-      'Please enter a password with minimum 6 characters.'
+      "password",
+      "Please enter a password with minimum 6 characters."
     ).isLength({ min: 6 }),
   ],
   async (req, res) => {
@@ -53,14 +53,14 @@ router.post(
       let admin = await Admin.findOne({ email });
       if (!admin) {
         return res.status(400).json({
-          errors: [{ msg: 'Incorrect Credentials.' }],
+          errors: [{ msg: "Incorrect Credentials." }],
         });
       }
       // Validate Credentails
       const isMatch = await bcrypt.compare(password, admin.password);
       if (!isMatch) {
         return res.status(400).json({
-          errors: [{ msg: 'Incorrect Credentials.' }],
+          errors: [{ msg: "Incorrect Credentials." }],
         });
       }
 
@@ -73,7 +73,7 @@ router.post(
 
       jwt.sign(
         payload,
-        config.get('loginToken'),
+        config.get("loginToken"),
         { expiresIn: 360000 },
         (err, token) => {
           if (err) throw err;
@@ -82,8 +82,8 @@ router.post(
       );
     } catch (err) {
       // Catch any error that occurs due to mongoDb operations
-      console.log(err.message);
-      return res.status(500).send('Server Error.');
+      //
+      return res.status(500).send("Server Error.");
     }
   }
 );

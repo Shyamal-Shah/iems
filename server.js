@@ -28,5 +28,5 @@ app.use("/api/adminAuth", require("./routes/api/adminAuth"));
 const PORT = process.env.PORT || 5500;
 
 // Start listening on specified port number
-app.listen(PORT, () => console.log(`Server started at port ${PORT}...`));
+app.listen(PORT, () => {}); //
 app.get("/", (req, res) => res.send("Api Stated.."));
