@@ -114,11 +114,11 @@ const Pedagogy = () => {
   useEffect(() => {
     if (subjectName && pedagogy !== null) {
       setFormData((state) => ({
-        ...state,
+        subjectName,
         noOfComponents: pedagogy.components.length,
       }));
     } else {
-      setFormData((state) => ({ ...state, noOfComponents: 1 }));
+      setFormData((state) => ({ subjectName, noOfComponents: 1 }));
     }
   }, [pedagogy]);
 
